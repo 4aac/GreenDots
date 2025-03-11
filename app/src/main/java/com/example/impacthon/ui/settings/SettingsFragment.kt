@@ -38,11 +38,13 @@ class SettingsFragment : Fragment() {
         }
 
         // Cambiar idioma
+        /*
         val languageButton: Button = binding.languageOption
         languageButton.setOnClickListener {
             // Lógica para cambiar el idioma
             // Por ejemplo, abrir un diálogo para seleccionar el idioma
         }
+        */
 
         // Acceder al repositorio
         val externalLinkButton: Button = binding.externalLinkButton
