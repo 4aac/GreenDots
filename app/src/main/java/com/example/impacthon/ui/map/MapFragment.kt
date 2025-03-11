@@ -14,9 +14,11 @@ import androidx.fragment.app.Fragment
 import com.mapbox.geojson.Point
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.MapboxMap
+import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.extension.compose.rememberMapState
+import com.mapbox.maps.extension.compose.style.MapStyle
 
 class MapFragment : Fragment() {
     override fun onCreateView(
@@ -25,31 +27,25 @@ class MapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): android.view.View {
         return ComposeView(requireContext()).apply {
-            setContent {
-                MapScreen()
-            }
+            setContent { MapScreen() }
         }
     }
 }
 
-
 @Composable
 fun MapScreen() {
-    // Obtenemos el contexto actual para poder iniciar la Activity
     val context = LocalContext.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 64.dp), // Añade un margen inferior
-        verticalArrangement = Arrangement.SpaceBetween // Distribuye los elementos
+            .padding(bottom = 64.dp),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // Se muestra el MapboxMap ocupando la mayor parte de la pantalla
         MapboxMap(
             modifier = Modifier
-                .weight(1f) // Usa un peso menor para permitir espacio para el botón
+                .weight(1f)
                 .fillMaxSize(),
-
             mapState = rememberMapState {
                 gesturesSettings = GesturesSettings {
                     pinchToZoomEnabled = false
@@ -61,38 +57,17 @@ fun MapScreen() {
             mapViewportState = rememberMapViewportState {
                 setCameraOptions {
                     zoom(2.5)
-                    // Ajustar longitud y latitud para inicialización del globo
-                    center(Point.fromLngLat( -5.5, 28.8))
+                    center(Point.fromLngLat(-5.5, 28.8))
                     pitch(0.0)
                     bearing(0.0)
-                    // Añadir padding en el top
                     padding(EdgeInsets(1200.0, 0.0, 0.0, 0.0))
                 }
+            },
+            style = {
+                MapStyle(style = "mapbox://styles/martindios/cm851rhgo004q01qzbcrg0fb9")
             }
-        )
-        /*
-MapboxMap(
-    modifier = Modifier.fillMaxSize(),
-    mapState = rememberMapState {
-        gesturesSettings = GesturesSettings {
-            pinchToZoomEnabled = false
-            doubleTapToZoomInEnabled = false
-            quickZoomEnabled = false
-            doubleTouchToZoomOutEnabled = false
-        }
-    },
-    mapViewportState = rememberMapViewportState {
-        setCameraOptions {
-            zoom(2.5)
-            // Ajustar longitud y latitud para inicialización del globo
-            center(Point.fromLngLat( -5.5, 28.8))
-            pitch(0.0)
-            bearing(0.0)
-            // Añadir padding en el top
-            padding(EdgeInsets(1200.0, 0.0, 0.0, 0.0))
-        }
-    }
-) */
+            )
+
 
         // Botón para lanzar GlobeFlyToActivity
         Button(
@@ -108,4 +83,3 @@ MapboxMap(
         }
     }
 }
-
