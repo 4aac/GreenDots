@@ -12,14 +12,48 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import com.mapbox.geojson.Point
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
+import com.mapbox.maps.extension.compose.rememberMapState
 
 class MapFragment : Fragment() {
     override fun onCreateView(
         inflater: android.view.LayoutInflater,
         container: android.view.ViewGroup?,
         savedInstanceState: Bundle?
+<<<<<<< HEAD
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setContent {
+                MapboxMap(
+                    modifier = Modifier.fillMaxSize(),
+                    mapState = rememberMapState {
+                        gesturesSettings = GesturesSettings {
+                            pinchToZoomEnabled = false
+                            doubleTapToZoomInEnabled = false
+                            quickZoomEnabled = false
+                            doubleTouchToZoomOutEnabled = false
+                        }
+                    },
+                    mapViewportState = rememberMapViewportState {
+                        setCameraOptions {
+                            zoom(2.5)
+                            // Ajustar longitud y latitud para inicialización del globo
+                            center(Point.fromLngLat( -5.5, 28.8))
+                            pitch(0.0)
+                            bearing(0.0)
+                            // Añadir padding en el top
+                            padding(EdgeInsets(1200.0, 0.0, 0.0, 0.0))
+                        }
+                    }
+                )
+            }
+        }
+    }
+}
+=======
     ): android.view.View {
         return ComposeView(requireContext()).apply {
             setContent {
@@ -69,3 +103,4 @@ fun MapScreen() {
         }
     }
 }
+>>>>>>> 12d347cef5e580ace29263ce74d0297b9b0fb259
