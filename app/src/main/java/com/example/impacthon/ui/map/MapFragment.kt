@@ -40,8 +40,8 @@ class MapFragment : Fragment() {
                             center(Point.fromLngLat( -5.5, 28.8))
                             pitch(0.0)
                             bearing(0.0)
-                            // Añadir paddin en el top
-                            padding(EdgeInsets(1000.0, 0.0, 0.0, 0.0))
+                            // Añadir padding en el top
+                            padding(EdgeInsets(1200.0, 0.0, 0.0, 0.0))
                         }
                     }
                 )
