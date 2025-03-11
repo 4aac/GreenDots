@@ -1,7 +1,9 @@
 <resources>
+
     <string name="app_name">impacthon</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_profile_es">Perfil</string>
+    <string name="title_settings_es">Configuración</string>
+    <string name="title_map_es">Mapa</string>
     <string name="tap_on_map_instruction">Toca el mapa para volar a la ubicación designada</string>
+
 </resources>
