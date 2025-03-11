@@ -21,17 +21,6 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Se incluye el destino del mapa (R.id.navigation_map) junto a los demás
-        /*
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_profile,
-                R.id.navigation_map, // Nuevo destino para el MapFragment
-                R.id.navigation_settings,
-            )
-        )
-        */
-        //setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
 }
