@@ -42,11 +42,11 @@ class GlobeFlyToActivity : AppCompatActivity() {
 
         // Cargar el estilo con proyección Globe y efectos 3D
         mapboxMap.loadStyle(
-            style(Style.SATELLITE_STREETS) {
+            style(Style.MAPBOX_STREETS) {
                 +projection(ProjectionName.GLOBE)
                 +atmosphere {
-                    color(Color.rgb(220, 159, 159))
-                    highColor(Color.rgb(220, 159, 159))
+                    color(Color.rgb(60, 155, 245))
+                    highColor(Color.rgb(60, 155, 245))
                     horizonBlend(0.4)
                 }
                 +rasterDemSource("raster-dem") {
