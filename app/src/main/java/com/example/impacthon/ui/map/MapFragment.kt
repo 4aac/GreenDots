@@ -23,37 +23,6 @@ class MapFragment : Fragment() {
         inflater: android.view.LayoutInflater,
         container: android.view.ViewGroup?,
         savedInstanceState: Bundle?
-<<<<<<< HEAD
-    ): View {
-        return ComposeView(requireContext()).apply {
-            setContent {
-                MapboxMap(
-                    modifier = Modifier.fillMaxSize(),
-                    mapState = rememberMapState {
-                        gesturesSettings = GesturesSettings {
-                            pinchToZoomEnabled = false
-                            doubleTapToZoomInEnabled = false
-                            quickZoomEnabled = false
-                            doubleTouchToZoomOutEnabled = false
-                        }
-                    },
-                    mapViewportState = rememberMapViewportState {
-                        setCameraOptions {
-                            zoom(2.5)
-                            // Ajustar longitud y latitud para inicialización del globo
-                            center(Point.fromLngLat( -5.5, 28.8))
-                            pitch(0.0)
-                            bearing(0.0)
-                            // Añadir padding en el top
-                            padding(EdgeInsets(1200.0, 0.0, 0.0, 0.0))
-                        }
-                    }
-                )
-            }
-        }
-    }
-}
-=======
     ): android.view.View {
         return ComposeView(requireContext()).apply {
             setContent {
@@ -62,6 +31,7 @@ class MapFragment : Fragment() {
         }
     }
 }
+
 
 @Composable
 fun MapScreen() {
@@ -79,15 +49,50 @@ fun MapScreen() {
             modifier = Modifier
                 .weight(1f) // Usa un peso menor para permitir espacio para el botón
                 .fillMaxSize(),
+
+            mapState = rememberMapState {
+                gesturesSettings = GesturesSettings {
+                    pinchToZoomEnabled = false
+                    doubleTapToZoomInEnabled = false
+                    quickZoomEnabled = false
+                    doubleTouchToZoomOutEnabled = false
+                }
+            },
             mapViewportState = rememberMapViewportState {
                 setCameraOptions {
-                    zoom(2.0)
-                    center(Point.fromLngLat(-98.0, 39.5))
+                    zoom(2.5)
+                    // Ajustar longitud y latitud para inicialización del globo
+                    center(Point.fromLngLat( -5.5, 28.8))
                     pitch(0.0)
                     bearing(0.0)
+                    // Añadir padding en el top
+                    padding(EdgeInsets(1200.0, 0.0, 0.0, 0.0))
                 }
             }
         )
+        /*
+MapboxMap(
+    modifier = Modifier.fillMaxSize(),
+    mapState = rememberMapState {
+        gesturesSettings = GesturesSettings {
+            pinchToZoomEnabled = false
+            doubleTapToZoomInEnabled = false
+            quickZoomEnabled = false
+            doubleTouchToZoomOutEnabled = false
+        }
+    },
+    mapViewportState = rememberMapViewportState {
+        setCameraOptions {
+            zoom(2.5)
+            // Ajustar longitud y latitud para inicialización del globo
+            center(Point.fromLngLat( -5.5, 28.8))
+            pitch(0.0)
+            bearing(0.0)
+            // Añadir padding en el top
+            padding(EdgeInsets(1200.0, 0.0, 0.0, 0.0))
+        }
+    }
+) */
 
         // Botón para lanzar GlobeFlyToActivity
         Button(
@@ -103,4 +108,4 @@ fun MapScreen() {
         }
     }
 }
->>>>>>> 12d347cef5e580ace29263ce74d0297b9b0fb259
+
