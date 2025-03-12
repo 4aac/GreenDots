@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.impacthon.databinding.ActivityMainBinding
+import com.example.impacthon.ui.settings.SettingsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,6 +22,12 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         navView.setupWithNavController(navController)
+
+        // Instanciar SettingsFragment
+        val settingsFragment = SettingsFragment()
+
+
+        updateBottomNavigationView()
     }
 
     fun updateBottomNavigationView() {

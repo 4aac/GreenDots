@@ -1,13 +1,20 @@
 package com.example.impacthon.ui.profile
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 
-class ProfileViewModel : ViewModel() {
+class ProfileViewModel(private val sharedPreferences: SharedPreferences) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is profile Fragment"
+    fun isUserLoggedIn(): Boolean {
+        return sharedPreferences.getBoolean("is_logged_in", false)
     }
-    val text: LiveData<String> = _text
+
+    // Método para cerrar sesión
+    fun logout() {
+        with(sharedPreferences.edit()) {
+            putBoolean("is_logged_in", false) // Cambiar el estado de inicio de sesión a false
+            apply() // Aplicar los cambios
+        }
+    }
 }
+

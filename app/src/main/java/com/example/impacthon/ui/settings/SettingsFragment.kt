@@ -91,10 +91,6 @@ class SettingsFragment : Fragment() {
         return root
     }
 
-    interface OnLanguageChangeListener {
-        fun onLanguageChanged()
-    }
-
     private fun setLocale(lang: String) {
         val locale = Locale(lang)
         Locale.setDefault(locale)

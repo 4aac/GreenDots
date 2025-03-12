@@ -6,32 +6,62 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import com.example.impacthon.R
 import com.example.impacthon.databinding.FragmentProfileBinding
+import com.example.impacthon.ui.ViewModelFactory
+import com.example.impacthon.ui.login.LoginFragment
 
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
-
-    // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
+    private lateinit var profileViewModel: ProfileViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val profileViewModel =
-            ViewModelProvider(this).get(ProfileViewModel::class.java)
-
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        val textView: TextView = binding.textProfile
-        profileViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        // Crear el ViewModelFactory
+        val factory = ViewModelFactory(requireContext())
+        profileViewModel = ViewModelProvider(this, factory).get(ProfileViewModel::class.java)
+
+        // Verificar si el usuario ha iniciado sesión
+        if (profileViewModel.isUserLoggedIn()) {
+            showProfileDetails()
+        } else {
+            showLoginFragment()
         }
-        return root
+
+        // Configurar el botón de cierre de sesión
+        binding.button2.setOnClickListener {
+            profileViewModel.logout() // Llamar al método de logout
+            showLoginFragment() // Navegar de vuelta al LoginFragment
+        }
+
+        return binding.root
+    }
+
+    private fun showProfileDetails() {
+        // Aquí puedes cargar el contenido del perfil
+        val textView: TextView = binding.textProfile
+        textView.text = "Bienvenido al perfil"
+        textView.visibility = View.VISIBLE
+        binding.button2.visibility = View.VISIBLE
+    }
+
+    private fun showLoginFragment() {
+        binding.textProfile.visibility = View.GONE
+        binding.button2.visibility = View.GONE
+
+        val loginFragment = LoginFragment()
+        val transaction: FragmentTransaction = childFragmentManager.beginTransaction()
+        transaction.replace(R.id.login_container, loginFragment)
+        transaction.commit()
     }
 
     override fun onDestroyView() {

@@ -4,6 +4,11 @@
     <!-- Nombre app -->
     <string name="app_name">Impacthon</string>
 
+    <!-- Login -->
+    <string name="hint_username">Nome de usuario</string>
+    <string name="hint_passwd">Contrasinal</string>
+    <string name="title_login">Iniciar sesión</string>
+
     <!-- Perfil -->
     <string name="title_profile">Perfil</string>
 
