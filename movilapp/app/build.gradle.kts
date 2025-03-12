@@ -56,19 +56,6 @@ dependencies {
     implementation("com.mapbox.maps:android:11.10.2")
     implementation("com.mapbox.extension:maps-compose:11.10.2")
 
-    // Retrofit para hacer peticiones HTTP
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    // Conversor JSON a objetos Kotlin usando Gson
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-    // https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
-
-    implementation("androidx.compose.material:material-icons-extended:1.3.1")
-
-
-
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.compose.ui:ui:1.7.8")
     implementation("androidx.compose.ui:ui-tooling-preview:1.7.8")
