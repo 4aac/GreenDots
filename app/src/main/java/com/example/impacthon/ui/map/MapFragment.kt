@@ -1,8 +1,11 @@
 package com.example.impacthon.ui.map
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -13,7 +16,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.geojson.Point
 import com.mapbox.maps.EdgeInsets
@@ -27,17 +29,32 @@ import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
 
-class MapFragment : Fragment(), PermissionsListener {
-    private lateinit var permissionsManager: PermissionsManager
+class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
+
+    private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Check if location permissions are already granted
+        permissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                // Se determina si al menos uno de los permisos (por ejemplo, FINE o COARSE) fue concedido
+                val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                        permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+                onPermissionResult(granted)
+            }
+
+        // Verifica si ya se han concedido los permisos de ubicación
         permissionsGranted = PermissionsManager.areLocationPermissionsGranted(requireContext())
         if (!permissionsGranted) {
-            permissionsManager = PermissionsManager(this)
-            permissionsManager.requestLocationPermissions(requireActivity())
+            // Lanza la solicitud de permisos
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
         }
     }
 
@@ -53,36 +70,23 @@ class MapFragment : Fragment(), PermissionsListener {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    // PermissionsListener implementation
-    override fun onExplanationNeeded(permissionsToExplain: List<String>) {
-        // This is called if the user needs an explanation about the permission
-        Toast.makeText(
-            requireContext(),
-            "This app needs location permissions to show your location on the map",
-            Toast.LENGTH_LONG
-        ).show()
-    }
-
-    override fun onPermissionResult(granted: Boolean) {
+    // Este método se invoca desde el callback del launcher de permisos
+    fun onPermissionResult(granted: Boolean) {
         permissionsGranted = granted
         if (granted) {
-            // Refresh the UI now that we have permissions
+            // Si se concedieron los permisos, se refresca la interfaz
             view?.findViewById<ComposeView>(android.R.id.content)?.setContent {
                 MapScreenWithPermissions(true)
             }
         } else {
             Toast.makeText(
                 requireContext(),
-                "Location permissions were denied. Some features will be disabled.",
+                "Los permisos de ubicación han sido denegados. Algunas funciones estarán deshabilitadas.",
                 Toast.LENGTH_LONG
             ).show()
         }
     }
+
 
     @Composable
     fun MapScreenWithPermissions(permissionsGranted: Boolean) {
@@ -103,14 +107,19 @@ class MapFragment : Fragment(), PermissionsListener {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("Location permissions are required to show your location on the map")
+                Text("Se requieren permisos de ubicación para mostrar tu posición en el mapa")
                 Button(
                     onClick = {
-                        permissionsManager = PermissionsManager(this@MapFragment)
-                        permissionsManager.requestLocationPermissions(requireActivity())
+                        // Al pulsar el botón se vuelve a solicitar los permisos
+                        permissionLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                            )
+                        )
                     }
                 ) {
-                    Text("Request Permissions")
+                    Text("Solicitar Permisos")
                 }
             }
         }
