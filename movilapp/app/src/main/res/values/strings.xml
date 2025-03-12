@@ -1,0 +1,27 @@
+<resources>
+
+    <!-- Nombre app -->
+    <string name="app_name">Impacthon</string>
+
+    <!-- Login -->
+    <string name="hint_username">Username</string>
+    <string name="hint_passwd">Password</string>
+    <string name="title_login">Login</string>
+
+    <!-- Perfil -->
+    <string name="title_profile">Profile</string>
+
+    <!-- Configuración -->
+    <string name="title_settings">Settings</string>
+    <string name="title_language">Language</string>
+    <string name="title_español">Spanish</string>
+    <string name="title_galego">Galician</string>
+    <string name="title_english">English</string>
+    <string name="title_github">Github Repository</string>
+    <string name="description_icon_mode">Light/Dark mode icon</string>
+
+    <!-- Mapa -->
+    <string name="title_map">Map</string>
+    <string name="tap_on_map_instruction">Tap on the map to fly to the location</string>
+
+</resources>

@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:13
+    container_name: postgresDb
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: 12345678
+      POSTGRES_DB: DBAPP
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresData:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgresData:
+
