@@ -8,20 +8,20 @@ import androidx.lifecycle.ViewModel
 class SettingsViewModel(private val context: Context) : ViewModel() {
     private val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "Configuraciones"
-    }
-    val text: LiveData<String> = _text
-
     // LiveData para el idioma
     private val _selectedLanguage = MutableLiveData<String>().apply {
-        value = "es" // Valor predeterminado (español)
+        value = sharedPreferences.getString("selected_language", "es") // Valor predeterminado (español)
     }
     val selectedLanguage: LiveData<String> = _selectedLanguage
 
     // Método para cambiar el idioma
     fun changeLanguage(language: String) {
         _selectedLanguage.value = language
+        // Guardar el idioma en SharedPreferences
+        with(sharedPreferences.edit()) {
+            putString("selected_language", language)
+            apply()
+        }
     }
 
     // LiveData para el estado del modo claro/oscuro

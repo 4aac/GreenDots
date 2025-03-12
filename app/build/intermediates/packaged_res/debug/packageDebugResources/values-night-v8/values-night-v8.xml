@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Impacthon" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        
+        <item name="colorPrimary">@color/bluegreen700</item>
+        <item name="colorPrimaryVariant">@color/darkgreen900</item>
+        <item name="colorOnPrimary">@color/black</item>
+        
+        <item name="colorSecondary">@color/green700</item>
+        <item name="colorSecondaryVariant">@color/darkgreen900</item>
+        <item name="colorOnSecondary">@color/black</item>
+        
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        
+    </style>
+</resources>
