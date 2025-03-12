@@ -15,7 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Impacthon"
         tools:targetApi="31">
-        <activity android:name=".ui.map.GlobeFlyToActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -1,7 +1,7 @@
 package com.example.impacthon.ui.map
 
 import android.Manifest
-import android.content.Intent
+import android.animation.Animator
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -19,27 +19,30 @@ import androidx.fragment.app.Fragment
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.geojson.Point
 import com.mapbox.maps.EdgeInsets
+import com.mapbox.maps.dsl.cameraOptions
+import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.plugin.animation.flyTo
+import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.MapEffect
-import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
-import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
-import com.mapbox.maps.extension.compose.rememberMapState
 import com.mapbox.maps.extension.compose.style.MapStyle
-import com.mapbox.maps.plugin.PuckBearing
+import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.extension.compose.rememberMapState
+import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.plugin.PuckBearing
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
-
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Check if location permissions are already granted
+        // Inicializa el launcher para solicitar permisos de ubicación
         permissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-                // Se determina si al menos uno de los permisos (por ejemplo, FINE o COARSE) fue concedido
+                // Se determina si al menos uno de los permisos fue concedido
                 val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
                         permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
                 onPermissionResult(granted)
@@ -48,7 +51,7 @@ class MapFragment : Fragment() {
         // Verifica si ya se han concedido los permisos de ubicación
         permissionsGranted = PermissionsManager.areLocationPermissionsGranted(requireContext())
         if (!permissionsGranted) {
-            // Lanza la solicitud de permisos
+            // Solicita los permisos
             permissionLauncher.launch(
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -70,11 +73,10 @@ class MapFragment : Fragment() {
         }
     }
 
-    // Este método se invoca desde el callback del launcher de permisos
+    // Método invocado desde el callback del launcher de permisos
     fun onPermissionResult(granted: Boolean) {
         permissionsGranted = granted
         if (granted) {
-            // Si se concedieron los permisos, se refresca la interfaz
             view?.findViewById<ComposeView>(android.R.id.content)?.setContent {
                 MapScreenWithPermissions(true)
             }
@@ -86,7 +88,6 @@ class MapFragment : Fragment() {
             ).show()
         }
     }
-
 
     @Composable
     fun MapScreenWithPermissions(permissionsGranted: Boolean) {
@@ -110,7 +111,6 @@ class MapFragment : Fragment() {
                 Text("Se requieren permisos de ubicación para mostrar tu posición en el mapa")
                 Button(
                     onClick = {
-                        // Al pulsar el botón se vuelve a solicitar los permisos
                         permissionLauncher.launch(
                             arrayOf(
                                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -137,6 +137,8 @@ class MapFragment : Fragment() {
                 padding(EdgeInsets(1200.0, 0.0, 0.0, 0.0))
             }
         }
+        // Estado para guardar la referencia al MapboxMap
+        val mapboxMapRef = remember { mutableStateOf<MapboxMap?>(null) }
 
         Column(
             modifier = Modifier
@@ -161,37 +163,72 @@ class MapFragment : Fragment() {
                     MapStyle(style = "mapbox://styles/martindios/cm851rhgo004q01qzbcrg0fb9")
                 }
             ) {
-                // Configure location component when permissions are granted
+                // MapEffect nos permite interactuar con el MapView subyacente
                 MapEffect(Unit) { mapView ->
+                    // Guarda la referencia del MapboxMap para usarla luego
+                    mapboxMapRef.value = mapView.mapboxMap
+
                     mapView.location.updateSettings {
                         locationPuck = createDefault2DPuck(withBearing = true)
                         puckBearing = PuckBearing.HEADING
                         puckBearingEnabled = true
                         enabled = true
                     }
-                    // Make camera follow the user's location
+                    // Hace que la cámara siga la ubicación del usuario
                     mapViewportState.transitionToFollowPuckState()
                 }
             }
 
-            // Button to launch GlobeFlyToActivity
+            // Botón para disparar la animación flyTo en el mismo mapa
             Button(
                 onClick = {
-                    val intent = Intent(context, GlobeFlyToActivity::class.java)
-                    context.startActivity(intent)
+                    mapboxMapRef.value?.flyTo(
+                        cameraOptions {
+                            center(Point.fromLngLat(-8.560296146026845, 42.873506927274846))
+                            zoom(12.5)
+                            pitch(75.0)
+                            bearing(130.0)
+                        },
+                        mapAnimationOptions {
+                            duration(12_000)
+                        },
+                        animatorListener = object : Animator.AnimatorListener {
+                            override fun onAnimationStart(animation: Animator) {
+                                // Opcional: acción al iniciar la animación
+                            }
+                            override fun onAnimationEnd(animation: Animator) {
+                                // Segunda animación: vuelve a una vista cenital (pitch y bearing a 0)
+                                mapboxMapRef.value?.flyTo(
+                                    cameraOptions {
+                                        center(Point.fromLngLat(-8.560296146026845, 42.873506927274846))
+                                        zoom(12.5)
+                                        pitch(0.0)
+                                        bearing(0.0)
+                                    },
+                                    mapAnimationOptions {
+                                        duration(4_000)
+                                    }
+                                )
+                            }
+                            override fun onAnimationCancel(animation: Animator) {
+                                // Opcional: acción si se cancela la animación
+                            }
+                            override fun onAnimationRepeat(animation: Animator) {
+                                // Opcional: acción si se repite la animación
+                            }
+                        }
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Text(text = "Abrir GlobeFlyTo")
+                Text(text = "Globe Fly To")
             }
 
-            // Optional: Add a button to recenter on user's location
+            // Botón opcional para recenter en la ubicación del usuario
             Button(
-                onClick = {
-                    mapViewportState.transitionToFollowPuckState()
-                },
+                onClick = { mapViewportState.transitionToFollowPuckState() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
