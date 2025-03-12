@@ -6,12 +6,22 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -37,26 +47,57 @@ import com.mapbox.maps.extension.compose.annotation.generated.PointAnnotation
 import com.mapbox.maps.extension.compose.annotation.rememberIconImage
 import com.example.impacthon.R
 import kotlinx.coroutines.delay
+import android.content.Context
+import android.util.Log
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import com.example.impacthon.backend.models.Usuario
+import com.example.impacthon.backend.RetrofitClient
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
 
+    // Función de prueba (puedes eliminarla si ya no la usas)
+    private fun createTestUser(context: Context) {
+        val newUser = Usuario(
+            nickname = "testuser",
+            nombre = "Test User",
+            email = "test@example.com",
+            password = "123456",
+            fechaCreacion = "2025-03-12T12:00:00.000+0000",
+            admin = false,
+            fotoPerfil = null
+        )
+
+        RetrofitClient.instance.createUser(newUser).enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(context, "Usuario creado exitosamente", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Error al crear usuario: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Log.e("RetrofitError", "Fallo petición", t)
+                Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Inicializa el launcher para solicitar permisos de ubicación
         permissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-                // Se determina si al menos uno de los permisos fue concedido
                 val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
                         permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
                 onPermissionResult(granted)
             }
 
-        // Verifica si ya se han concedido los permisos de ubicación
         permissionsGranted = PermissionsManager.areLocationPermissionsGranted(requireContext())
         if (!permissionsGranted) {
-            // Solicita los permisos
             permissionLauncher.launch(
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -78,7 +119,6 @@ class MapFragment : Fragment() {
         }
     }
 
-    // Método invocado desde el callback del launcher de permisos
     fun onPermissionResult(granted: Boolean) {
         permissionsGranted = granted
         if (granted) {
@@ -133,6 +173,7 @@ class MapFragment : Fragment() {
     @Composable
     fun MapScreen() {
         val context = LocalContext.current
+        var showMarkerInfo by remember { mutableStateOf(false) }
         val mapViewportState = rememberMapViewportState {
             setCameraOptions {
                 zoom(2.5)
@@ -142,137 +183,190 @@ class MapFragment : Fragment() {
                 padding(EdgeInsets(1200.0, 0.0, 0.0, 0.0))
             }
         }
-        // Estado para guardar la referencia al MapboxMap
         val mapboxMapRef = remember { mutableStateOf<MapboxMap?>(null) }
-
-        // Variable para asegurar que la animación se ejecute solo una vez
         var animationStarted by remember { mutableStateOf(false) }
 
-        // Lanza la animación hacia Galicia una vez que el mapa esté listo
         LaunchedEffect(mapboxMapRef.value) {
             if (mapboxMapRef.value != null && !animationStarted) {
                 animationStarted = true
                 delay(1500L)
                 mapboxMapRef.value?.flyTo(
-                    cameraOptions { // 41.88448973513718, -7.868491393372855
-                        center(Point.fromLngLat(-7.868491393372855, 41.88448973513718)) // Coordenadas de Galicia (Santiago de Compostela)
+                    cameraOptions {
+                        center(Point.fromLngLat(-7.868491393372855, 41.88448973513718))
                         zoom(6.0)
                         pitch(15.0)
                         bearing(0.0)
                     },
                     mapAnimationOptions {
-                        duration(6_000) // Duración de la animación en milisegundos
+                        duration(6000)
                     }
                 )
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 64.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            MapboxMap(
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize(),
-                mapState = rememberMapState {
-                    gesturesSettings = GesturesSettings {
-                        pinchToZoomEnabled = false
-                        doubleTapToZoomInEnabled = false
-                        quickZoomEnabled = false
-                        doubleTouchToZoomOutEnabled = false
-                    }
-                },
-                mapViewportState = mapViewportState,
-                style = {
-                    MapStyle(style = "mapbox://styles/martindios/cm851rhgo004q01qzbcrg0fb9")
-                }
+                    .fillMaxSize()
+                    .padding(bottom = 64.dp),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-
-                val markerResourceId = R.drawable.red_marker
-                val marker = rememberIconImage(key = markerResourceId, painter = painterResource(markerResourceId))
-                PointAnnotation(
-                    point = Point.fromLngLat(-8.560296146026845, 42.873506927274846)) {
-                    iconImage = marker
-                    interactionsState.onClicked { // para crear la interactuación cuando se clicke en el marker
-                        Toast.makeText(context, "Marker clicker", Toast.LENGTH_SHORT).show()
-                        true
-                    }
-                }
-
-                // MapEffect nos permite interactuar con el MapView subyacente
-                MapEffect(Unit) { mapView ->
-                    // Guarda la referencia del MapboxMap para usarla luego
-                    mapboxMapRef.value = mapView.mapboxMap
-
-                    mapView.location.updateSettings {
-                        locationPuck = createDefault2DPuck(withBearing = true)
-                        puckBearing = PuckBearing.HEADING
-                        puckBearingEnabled = true
-                        enabled = true
-                    }
-                    // Hace que la cámara siga la ubicación del usuario
-                    //mapViewportState.transitionToFollowPuckState()
-                }
-            }
-
-            // Botón para disparar la animación flyTo en el mismo mapa
-            Button(
-                onClick = {
-                    mapboxMapRef.value?.flyTo(
-                        cameraOptions {
-                            center(Point.fromLngLat(-8.560296146026845, 42.873506927274846))
-                            zoom(12.5)
-                            pitch(75.0)
-                            bearing(130.0)
-                        },
-                        mapAnimationOptions {
-                            duration(6_000)
-                        },
-                        animatorListener = object : Animator.AnimatorListener {
-                            override fun onAnimationStart(animation: Animator) {
-                                // Opcional: acción al iniciar la animación
-                            }
-                            override fun onAnimationEnd(animation: Animator) {
-                                // Segunda animación: vuelve a una vista cenital (pitch y bearing a 0)
-                                mapboxMapRef.value?.flyTo(
-                                    cameraOptions {
-                                        center(Point.fromLngLat(-8.560296146026845, 42.873506927274846))
-                                        zoom(12.5)
-                                        pitch(0.0)
-                                        bearing(0.0)
-                                    },
-                                    mapAnimationOptions {
-                                        duration(3_000)
-                                    }
-                                )
-                            }
-                            override fun onAnimationCancel(animation: Animator) {
-                                // Opcional: acción si se cancela la animación
-                            }
-                            override fun onAnimationRepeat(animation: Animator) {
-                                // Opcional: acción si se repite la animación
-                            }
+                MapboxMap(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize(),
+                    mapState = rememberMapState {
+                        gesturesSettings = GesturesSettings {
+                            pinchToZoomEnabled = false
+                            doubleTapToZoomInEnabled = false
+                            quickZoomEnabled = false
+                            doubleTouchToZoomOutEnabled = false
                         }
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(text = "Globe Fly To")
+                    },
+                    mapViewportState = mapViewportState,
+                    style = {
+                        MapStyle(style = "mapbox://styles/martindios/cm851rhgo004q01qzbcrg0fb9")
+                    }
+                ) {
+                    val markerResourceId = R.drawable.red_marker
+                    val marker = rememberIconImage(key = markerResourceId, painter = painterResource(markerResourceId))
+                    PointAnnotation(
+                        point = Point.fromLngLat(-8.560296146026845, 42.873506927274846)
+                    ) {
+                        iconImage = marker
+                        interactionsState.onClicked {
+                            // Al hacer click se muestra la info del marker
+                            showMarkerInfo = !showMarkerInfo
+                            //Toast.makeText(context, "Marker clicker", Toast.LENGTH_SHORT).show()
+                            //createTestUser(context);
+                            true
+                        }
+                    }
+
+                    MapEffect(Unit) { mapView ->
+                        mapboxMapRef.value = mapView.mapboxMap
+                        mapView.location.updateSettings {
+                            locationPuck = createDefault2DPuck(withBearing = true)
+                            puckBearing = PuckBearing.HEADING
+                            puckBearingEnabled = true
+                            enabled = true
+                        }
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        mapboxMapRef.value?.flyTo(
+                            cameraOptions {
+                                center(Point.fromLngLat(-8.560296146026845, 42.873506927274846))
+                                zoom(12.5)
+                                pitch(75.0)
+                                bearing(130.0)
+                            },
+                            mapAnimationOptions {
+                                duration(6000)
+                            },
+                            animatorListener = object : Animator.AnimatorListener {
+                                override fun onAnimationStart(animation: Animator) { }
+                                override fun onAnimationEnd(animation: Animator) {
+                                    mapboxMapRef.value?.flyTo(
+                                        cameraOptions {
+                                            center(Point.fromLngLat(-8.560296146026845, 42.873506927274846))
+                                            zoom(12.5)
+                                            pitch(0.0)
+                                            bearing(0.0)
+                                        },
+                                        mapAnimationOptions {
+                                            duration(3000)
+                                        }
+                                    )
+                                }
+                                override fun onAnimationCancel(animation: Animator) { }
+                                override fun onAnimationRepeat(animation: Animator) { }
+                            }
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(text = "Globe Fly To")
+                }
+
+                Button(
+                    onClick = { mapViewportState.transitionToFollowPuckState() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(text = "Center on My Location")
+                }
             }
 
-            // Botón opcional para recenter en la ubicación del usuario
-            Button(
-                onClick = { mapViewportState.transitionToFollowPuckState() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+            if (showMarkerInfo) {
+                MarkerInfoSheet(
+                    onClose = { showMarkerInfo = false }
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun MarkerInfoSheet(onClose: () -> Unit) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f)
+                .background(MaterialTheme.colors.surface)
+
+            //.align(Alignment.BottomCenter)
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Información del Lugar", style = MaterialTheme.typography.h6)
+                    IconButton(onClick = onClose) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Cerrar"
+                        )
+                    }
+                }
+                Divider()
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    InfoCard(title = "Nombre", description = "Café Verde")
+                    InfoCard(title = "Dirección", description = "Calle Mayor 123, Madrid")
+                    InfoCard(title = "Teléfono", description = "123-456-789")
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun InfoCard(title: String, description: String) {
+        Card(
+            modifier = Modifier
+                .width(200.dp)
+                .height(150.dp),
+            elevation = 4.dp
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "Center on My Location")
+                Text(text = title, style = MaterialTheme.typography.subtitle1)
+                Text(text = description, style = MaterialTheme.typography.body2)
             }
         }
     }
