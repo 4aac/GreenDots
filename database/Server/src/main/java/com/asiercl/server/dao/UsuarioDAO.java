@@ -104,4 +104,25 @@ public class UsuarioDAO {
             e.printStackTrace();
         }
     }
+
+    public void actualizarUsuario(Usuario usuario) {
+        String sql = "UPDATE usuarios SET nombrecompleto = ?, email = ?, password = ?, admin = ?, fotoperfil = ? WHERE nickname = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            pstmt.setString(1, usuario.getNombreCompleto());
+            pstmt.setString(2, usuario.getEmail());  // Se agrega la contraseña cifrada
+            pstmt.setString(3, usuario.getPassword()); // Se agrega la fecha de creación
+            pstmt.setBoolean(4, usuario.isAdmin()); // Se agrega la fecha de creación
+            pstmt.setBytes(5, usuario.getFotoPerfil()); // Se agrega la fecha de creación
+
+            pstmt.setString(6, usuario.getNickname());
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
