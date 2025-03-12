@@ -1,24 +1,35 @@
 package com.example.impacthon.backend
 
+import com.example.impacthon.backend.models.Local
 import com.example.impacthon.backend.models.Usuario
 import retrofit2.Call
 import retrofit2.http.*
 
 interface ApiService {
 
-    // Crear un usuario
+    // Endpoints para Usuarios
     @POST("/user/new")
     fun createUser(@Body usuario: Usuario): Call<String>
 
-    // Obtener un usuario por nickname
     @GET("/user/get/{nickname}")
     fun getUser(@Path("nickname") nickname: String): Call<Usuario>
 
-    // Obtener todos los usuarios
     @GET("/user/getall")
     fun getAllUsers(): Call<List<Usuario>>
 
-    // Eliminar un usuario por nickname
     @DELETE("/user/delete/{nickname}")
     fun deleteUser(@Path("nickname") nickname: String): Call<Void>
+
+    // Endpoints para Locales
+    @GET("/local/get/{id}")
+    fun getLocal(@Path("id") id: Int): Call<Local>
+
+    @GET("/local/getall")
+    fun getAllLocales(): Call<List<Local>>
+
+    @POST("/local/new")
+    fun createLocal(@Body local: Local): Call<String>
+
+    @DELETE("/local/delete/{id}")
+    fun deleteLocal(@Path("id") id: Int): Call<String>
 }

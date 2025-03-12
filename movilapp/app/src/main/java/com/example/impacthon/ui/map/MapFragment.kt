@@ -54,10 +54,34 @@ import retrofit2.Callback
 import retrofit2.Response
 import com.example.impacthon.backend.models.Usuario
 import com.example.impacthon.backend.RetrofitClient
+import com.example.impacthon.backend.models.Local
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
+
+    /**
+     * Función para obtener un Local por su ID usando Retrofit.
+     * Recibe el id, el contexto y un callback para devolver el resultado.
+     */
+    private fun fetchLocalById(id: Int, context: Context, onResult: (Local?) -> Unit) {
+        RetrofitClient.instance.getLocal(id).enqueue(object : Callback<Local> {
+            override fun onResponse(call: Call<Local>, response: Response<Local>) {
+                if (response.isSuccessful && response.body() != null) {
+                    onResult(response.body())
+                } else {
+                    Toast.makeText(context, "Error al obtener el local", Toast.LENGTH_SHORT).show()
+                    onResult(null)
+                }
+            }
+
+            override fun onFailure(call: Call<Local>, t: Throwable) {
+                Log.e("RetrofitError", "Fallo en la petición", t)
+                Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
+                onResult(null)
+            }
+        })
+    }
 
     // Función de prueba (puedes eliminarla si ya no la usas)
     private fun createTestUser(context: Context) {
@@ -173,7 +197,11 @@ class MapFragment : Fragment() {
     @Composable
     fun MapScreen() {
         val context = LocalContext.current
+
+        // Estados para controlar la visibilidad y la información del marker
         var showMarkerInfo by remember { mutableStateOf(false) }
+        val markerLocal = remember { mutableStateOf<Local?>(null) }
+
         val mapViewportState = rememberMapViewportState {
             setCameraOptions {
                 zoom(2.5)
@@ -235,10 +263,13 @@ class MapFragment : Fragment() {
                     ) {
                         iconImage = marker
                         interactionsState.onClicked {
-                            // Al hacer click se muestra la info del marker
-                            showMarkerInfo = !showMarkerInfo
-                            //Toast.makeText(context, "Marker clicker", Toast.LENGTH_SHORT).show()
-                            //createTestUser(context);
+                            // Llamamos a la función fetchLocalById para obtener el local con id 1
+                            fetchLocalById(1, context) { local ->
+                                if (local != null) {
+                                    markerLocal.value = local
+                                    showMarkerInfo = true
+                                }
+                            }
                             true
                         }
                     }
@@ -303,34 +334,32 @@ class MapFragment : Fragment() {
                 }
             }
 
-            if (showMarkerInfo) {
-                MarkerInfoSheet(
-                    onClose = { showMarkerInfo = false }
-                )
+            if (showMarkerInfo && markerLocal.value != null) {
+                MarkerInfoSheet(local = markerLocal.value!!, onClose = { showMarkerInfo = false })
             }
         }
     }
 
     @Composable
-    fun MarkerInfoSheet(onClose: () -> Unit) {
+    fun MarkerInfoSheet(local: Local, onClose: () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.5f)
                 .background(MaterialTheme.colors.surface)
-
-            //.align(Alignment.BottomCenter)
+                .padding(top = 64.dp)
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
+                // Encabezado con el título y la X para cerrar
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Información del Lugar", style = MaterialTheme.typography.h6)
-                    IconButton(onClick = onClose) {
+                    IconButton(onClick = { onClose() }) { // Se llama a onClose para cerrar la hoja
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Cerrar"
@@ -338,6 +367,7 @@ class MapFragment : Fragment() {
                     }
                 }
                 Divider()
+                // Contenido desplazable con información del Local
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
@@ -345,13 +375,14 @@ class MapFragment : Fragment() {
                         .padding(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    InfoCard(title = "Nombre", description = "Café Verde")
-                    InfoCard(title = "Dirección", description = "Calle Mayor 123, Madrid")
-                    InfoCard(title = "Teléfono", description = "123-456-789")
+                    InfoCard(title = "Nombre", description = local.nombre)
+                    InfoCard(title = "Dirección", description = local.ubicacion)
+                    InfoCard(title = "Categoría", description = local.categoria)
                 }
             }
         }
     }
+
 
     @Composable
     fun InfoCard(title: String, description: String) {
