@@ -36,6 +36,7 @@ import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.extension.compose.annotation.generated.PointAnnotation
 import com.mapbox.maps.extension.compose.annotation.rememberIconImage
 import com.example.impacthon.R
+import kotlinx.coroutines.delay
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
@@ -135,14 +136,36 @@ class MapFragment : Fragment() {
         val mapViewportState = rememberMapViewportState {
             setCameraOptions {
                 zoom(2.5)
-                center(Point.fromLngLat(-5.5, 28.8))
+                center(Point.fromLngLat(-3.74922, 40.463667))
                 pitch(0.0)
-                bearing(0.0)
+                bearing(-10.0)
                 padding(EdgeInsets(1200.0, 0.0, 0.0, 0.0))
             }
         }
         // Estado para guardar la referencia al MapboxMap
         val mapboxMapRef = remember { mutableStateOf<MapboxMap?>(null) }
+
+        // Variable para asegurar que la animación se ejecute solo una vez
+        var animationStarted by remember { mutableStateOf(false) }
+
+        // Lanza la animación hacia Galicia una vez que el mapa esté listo
+        LaunchedEffect(mapboxMapRef.value) {
+            if (mapboxMapRef.value != null && !animationStarted) {
+                animationStarted = true
+                delay(1500L)
+                mapboxMapRef.value?.flyTo(
+                    cameraOptions { // 41.88448973513718, -7.868491393372855
+                        center(Point.fromLngLat(-7.868491393372855, 41.88448973513718)) // Coordenadas de Galicia (Santiago de Compostela)
+                        zoom(6.0)
+                        pitch(15.0)
+                        bearing(0.0)
+                    },
+                    mapAnimationOptions {
+                        duration(6_000) // Duración de la animación en milisegundos
+                    }
+                )
+            }
+        }
 
         Column(
             modifier = Modifier
@@ -187,7 +210,7 @@ class MapFragment : Fragment() {
                         enabled = true
                     }
                     // Hace que la cámara siga la ubicación del usuario
-                    mapViewportState.transitionToFollowPuckState()
+                    //mapViewportState.transitionToFollowPuckState()
                 }
             }
 
@@ -202,7 +225,7 @@ class MapFragment : Fragment() {
                             bearing(130.0)
                         },
                         mapAnimationOptions {
-                            duration(12_000)
+                            duration(6_000)
                         },
                         animatorListener = object : Animator.AnimatorListener {
                             override fun onAnimationStart(animation: Animator) {
@@ -218,7 +241,7 @@ class MapFragment : Fragment() {
                                         bearing(0.0)
                                     },
                                     mapAnimationOptions {
-                                        duration(4_000)
+                                        duration(3_000)
                                     }
                                 )
                             }
