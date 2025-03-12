@@ -8,8 +8,8 @@ data class Usuario(
     @SerializedName("nombreCompleto") val nombre: String,
     val email: String,
     val password: String,
-    @SerializedName("fechaCreacion") val fechaCreacion: Timestamp,
+    @SerializedName("fechaCreacion") val fechaCreacion: String,
     val admin: Boolean,
     val fotoPerfil: ByteArray?, // El JSON lo envía como null, por lo que se usa ByteArray?
-    val favoritos: List<Local>
+    //val favoritos: List<Local>
 )
