@@ -196,6 +196,10 @@ class MapFragment : Fragment() {
                 PointAnnotation(
                     point = Point.fromLngLat(-8.560296146026845, 42.873506927274846)) {
                     iconImage = marker
+                    interactionsState.onClicked { // para crear la interactuación cuando se clicke en el marker
+                        Toast.makeText(context, "Marker clicker", Toast.LENGTH_SHORT).show()
+                        true
+                    }
                 }
 
                 // MapEffect nos permite interactuar con el MapView subyacente
