@@ -16,7 +16,6 @@ import com.mapbox.maps.extension.style.style
 import com.mapbox.maps.extension.style.terrain.generated.terrain
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
-import com.example.impacthon.R
 
 class GlobeFlyToActivity : AppCompatActivity() {
 
@@ -28,7 +27,7 @@ class GlobeFlyToActivity : AppCompatActivity() {
         // Crear el MapView y establecerlo como contenido
         val mapView = MapView(this)
         setContentView(mapView)
-        mapboxMap = mapView.getMapboxMap()
+        mapboxMap = mapView.mapboxMap
 
         // Configurar la cámara inicial para mostrar el globo en vista amplia
         mapboxMap.setCamera(

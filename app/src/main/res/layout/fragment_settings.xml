@@ -4,49 +4,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:translationX="0dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="85dp"
     tools:context=".ui.settings.SettingsFragment">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/text_settings"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
         android:layout_marginBottom="16dp"
+        android:text="@string/title_settings"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:layout_width="370dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:layout_marginBottom="256dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/last_linear_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/text_settings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="16dp"
-            android:textAlignment="center"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+        app:layout_constraintTop_toBottomOf="@+id/text_settings">
 
         <TextView
             android:id="@+id/text_languages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Idioma"
+            android:text="@string/title_language"
             android:textAlignment="center"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:translationX="0dp"
-            android:translationY="0dp" />
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp" >
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_espanhol"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:text="@string/title_español" />
 
             <Button
                 android:id="@+id/button_galego"
@@ -54,42 +65,48 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:layout_weight="1"
-                android:text="Galego" />
+                android:text="@string/title_galego" />
 
             <Button
-                android:id="@+id/button_español"
+                android:id="@+id/button_english"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:layout_weight="1"
-                android:text="Español" />
+                android:text="@string/title_english" />
         </LinearLayout>
+    </LinearLayout>
 
-        <LinearLayout
+    <LinearLayout
+        android:id="@+id/last_linear_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/button_github"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="0.25"
+            android:text="@string/title_github" />
 
-            <Button
-                android:id="@+id/external_link_button"
-                android:layout_width="244dp"
-                android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                android:layout_marginTop="580dp"
-                android:layout_marginEnd="50dp"
-                android:text="Repositorio Github" />
+        <ImageView
+            android:id="@+id/mode_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:contentDescription="@string/description_icon_mode" />
 
-            <Switch
-                android:id="@+id/dark_mode_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="580dp"
-                android:text="Modo Oscuro" />
-
-        </LinearLayout>
-
+        <Switch
+            android:id="@+id/dark_mode_switch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="0.75" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
