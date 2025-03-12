@@ -3,6 +3,11 @@
     <!-- Nombre app -->
     <string name="app_name">Impacthon</string>
 
+    <!-- Login -->
+    <string name="hint_username">Username</string>
+    <string name="hint_passwd">Password</string>
+    <string name="title_login">Login</string>
+
     <!-- Perfil -->
     <string name="title_profile">Profile</string>
 
