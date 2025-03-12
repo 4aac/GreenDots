@@ -26,5 +26,25 @@ public class Opinion {
         this.fotos = fotos;
     }
 
-    // Getters y Setters
+    // Getters
+    public int getId() { return id; }
+    public Usuario getUsuario() { return usuario; }
+    public Local getLocal() { return local; }
+    public Timestamp getFechaPublicacion() { return fechaPublicacion; }
+    public String getResenaTexto() { return resenaTexto; }
+    public int getEcosostenible() { return ecosostenible; }
+    public int getInclusionSocial() { return inclusionSocial; }
+    public int getAccesibilidad() { return accesibilidad; }
+    public ArrayList<byte[]> getFotos() { return fotos; }
+
+    // Setters
+    public void setId(int id) { this.id = id; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public void setLocal(Local local) { this.local = local; }
+    public void setFechaPublicacion(Timestamp fechaPublicacion) { this.fechaPublicacion = fechaPublicacion; }
+    public void setResenaTexto(String resenaTexto) { this.resenaTexto = resenaTexto; }
+    public void setEcosostenible(int ecosostenible) { this.ecosostenible = ecosostenible; }
+    public void setInclusionSocial(int inclusionSocial) { this.inclusionSocial = inclusionSocial; }
+    public void setAccesibilidad(int accesibilidad) { this.accesibilidad = accesibilidad; }
+    public void setFotos(ArrayList<byte[]> fotos) { this.fotos = fotos; }
 }
