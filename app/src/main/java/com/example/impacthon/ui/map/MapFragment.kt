@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import com.mapbox.android.core.permissions.PermissionsManager
@@ -32,6 +33,9 @@ import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.PuckBearing
+import com.mapbox.maps.extension.compose.annotation.generated.PointAnnotation
+import com.mapbox.maps.extension.compose.annotation.rememberIconImage
+import com.example.impacthon.R
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
@@ -163,6 +167,14 @@ class MapFragment : Fragment() {
                     MapStyle(style = "mapbox://styles/martindios/cm851rhgo004q01qzbcrg0fb9")
                 }
             ) {
+
+                val markerResourceId = R.drawable.red_marker
+                val marker = rememberIconImage(key = markerResourceId, painter = painterResource(markerResourceId))
+                PointAnnotation(
+                    point = Point.fromLngLat(-8.560296146026845, 42.873506927274846)) {
+                    iconImage = marker
+                }
+
                 // MapEffect nos permite interactuar con el MapView subyacente
                 MapEffect(Unit) { mapView ->
                     // Guarda la referencia del MapboxMap para usarla luego
