@@ -26,6 +26,7 @@ class LoginFragment : Fragment() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var sharedPreferences: SharedPreferences
+    var usuario: Usuario? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,11 +58,13 @@ class LoginFragment : Fragment() {
 
             val credentials: Map<String, String> = mapOf("nickname" to user, "password" to pass)
 
+
             // Intentar iniciar sesión
             RetrofitClient.instance.login(credentials).enqueue(object : Callback<Usuario> {
                 override fun onResponse(call: Call<Usuario>, response: Response<Usuario>) {
                     if (response.isSuccessful && response.body() != null) {
                         // Si el inicio de sesión es exitoso, actualizar el estado de inicio de sesión
+                        usuario = response.body()
                         loginViewModel.setUserLoggedIn()
 
                         // Navegar al ProfileFragment
@@ -74,18 +77,6 @@ class LoginFragment : Fragment() {
                     Toast.makeText(requireContext(), "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
                 }
             })
-
-/*
-            if (loginViewModel.login(user, pass)) {
-                // Si el inicio de sesión es exitoso, actualizar el estado de inicio de sesión
-                loginViewModel.setUserLoggedIn()
-
-                // Navegar al ProfileFragment
-                findNavController().navigate(R.id.navigation_profile) // Regresar al ProfileFragment
-            } else {
-                // Mostrar un mensaje de error
-                Toast.makeText(requireContext(), "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
-            }*/
         }
     }
 }

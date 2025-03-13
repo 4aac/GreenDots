@@ -3,16 +3,18 @@ package com.example.impacthon.ui.map
 import android.Manifest
 import android.animation.Animator
 import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
@@ -57,6 +59,7 @@ import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -78,6 +81,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.viewinterop.AndroidView
+
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)

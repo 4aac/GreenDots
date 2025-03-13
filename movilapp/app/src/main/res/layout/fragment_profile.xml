@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" >
+        app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -32,24 +32,77 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="85dp">
 
-            <TextView
-                android:id="@+id/text_profile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="200dp"
-                android:textAlignment="center"
-                android:text="Bienvenido al perfil"
-                android:textSize="20sp"
+            <!-- Imagen de perfil -->
+            <ImageView
+                android:id="@+id/image_profile"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription="Imagen de perfil"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="8dp" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@mipmap/logo_app_redondo" /> <!-- Imagen por defecto -->
 
-            <Button
-                android:id="@+id/button2"
+            <!-- Nombre completo -->
+            <TextView
+                android:id="@+id/text_full_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Log Out"
+                android:layout_marginTop="8dp"
+                android:textSize="24sp"
+                app:layout_constraintTop_toBottomOf="@id/image_profile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Nickname -->
+            <TextView
+                android:id="@+id/text_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textSize="16sp"
+                android:textColor="@android:color/darker_gray"
+                app:layout_constraintTop_toBottomOf="@id/text_full_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Espacio para opiniones -->
+
+            <TextView
+                android:id="@+id/text_reviews_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="140dp"
+                android:layout_marginTop="16dp"
+                android:text="Opiniones"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_nickname" />
+
+            <Button
+                android:id="@+id/button_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_logout"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
+
+            <ScrollView
+                android:layout_width="369dp"
+                android:layout_height="350dp"
+                android:layout_marginTop="1dp"
+                app:layout_constraintBottom_toTopOf="@+id/button_logout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_reviews_title">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
