@@ -394,11 +394,12 @@ class MapFragment : Fragment() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.5f)
+                .fillMaxHeight(0.5f) // Ocupa el 50% de la pantalla, puedes ajustar según el diseño
                 .background(MaterialTheme.colors.surface)
-                .padding(top = 64.dp)
+                .padding(top = 64.dp) // Para no estar encima de la barra de estado
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
+                // Título y botón de cierre
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -415,13 +416,60 @@ class MapFragment : Fragment() {
                     }
                 }
                 Divider()
-                // Zona de info cards y botones
+
+                // Aquí los botones de las opiniones, ahora arriba
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(onClick = onAddOpinion) {
+                        Text("Añadir Opinión")
+                    }
+                    Button(onClick = {
+                        opinionesList = emptyList()
+                        RetrofitClient.instance.getOpinionesPorLocal(local.id)
+                            .enqueue(object : Callback<List<Opinion>> {
+                                override fun onResponse(
+                                    call: Call<List<Opinion>>,
+                                    response: Response<List<Opinion>>
+                                ) {
+                                    if (response.isSuccessful) {
+                                        opinionesList = response.body() ?: emptyList()
+                                        showOpinionsDialog = true
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Error al obtener opiniones",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+
+                                override fun onFailure(
+                                    call: Call<List<Opinion>>,
+                                    t: Throwable
+                                ) {
+                                    Toast.makeText(
+                                        context,
+                                        "Fallo en la petición: ${t.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            })
+                    }) {
+                        Text("Ver Opiniones")
+                    }
+                }
+
+                // Aquí es donde insertamos las InfoCards
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()) // Permite desplazarse si hay mucho contenido
                         .padding(8.dp)
                 ) {
-                    // Usamos el nuevo InfoCard con los parámetros correctos
                     InfoCard(
                         nombre = local.nombre,
                         categoria = local.categoria,
@@ -429,57 +477,11 @@ class MapFragment : Fragment() {
                         ecosostenible = local.ecosostenible,
                         accesibilidad = local.accesibilidad,
                         inclusion_social = local.inclusionSocial
-
-
                     )
-                    // Botones justo debajo de la tarjeta de Ubicación
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Button(onClick = onAddOpinion) {
-                            Text("Añadir Opinión")
-                        }
-                        Button(onClick = {
-                            opinionesList = emptyList()
-                            RetrofitClient.instance.getOpinionesPorLocal(local.id)
-                                .enqueue(object : Callback<List<Opinion>> {
-                                    override fun onResponse(
-                                        call: Call<List<Opinion>>,
-                                        response: Response<List<Opinion>>
-                                    ) {
-                                        if (response.isSuccessful) {
-                                            opinionesList = response.body() ?: emptyList()
-                                            showOpinionsDialog = true
-                                        } else {
-                                            Toast.makeText(
-                                                context,
-                                                "Error al obtener opiniones",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                    }
-
-                                    override fun onFailure(
-                                        call: Call<List<Opinion>>,
-                                        t: Throwable
-                                    ) {
-                                        Toast.makeText(
-                                            context,
-                                            "Fallo en la petición: ${t.message}",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                })
-                        }) {
-                            Text("Ver Opiniones")
-                        }
-                    }
                 }
             }
 
+            // Mostrar el diálogo de opiniones si se activa
             if (showOpinionsDialog) {
                 AlertDialog(
                     onDismissRequest = { showOpinionsDialog = false },
@@ -515,6 +517,8 @@ class MapFragment : Fragment() {
         }
     }
 
+
+
     @Composable
     fun InfoCard(
         nombre: String,
@@ -523,7 +527,6 @@ class MapFragment : Fragment() {
         ecosostenible: Int,
         accesibilidad: Int,
         inclusion_social: Int
-
     ) {
         Column(
             modifier = Modifier
@@ -648,82 +651,85 @@ class MapFragment : Fragment() {
                         color = colorResource(id = R.color.black),
                         modifier = Modifier.weight(0.3f)
                     )
+                    // Mostrar el puntaje del ecosostenible
                     Text(
-                        text = ecosostenible,
+                        text = "$ecosostenible/5",
                         style = MaterialTheme.typography.body2,
                         color = colorResource(id = R.color.black),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(0.7f)
                     )
                 }
-                // Tarjeta de Accesibilidad
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp), // Tarjeta más fina
-                    elevation = 6.dp,
-                    backgroundColor = colorResource(id = R.color.white)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "Accesibilidad:",
-                            style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
-                            color = colorResource(id = R.color.black),
-                            modifier = Modifier.weight(0.3f)
-                        )
-                        Text(
-                            text = accesibilidad,
-                            style = MaterialTheme.typography.body2,
-                            color = colorResource(id = R.color.black),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(0.7f)
-                        )
-                    }
+            }
 
-                    // Tarjeta de Inclusión social
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp), // Tarjeta más fina
-                        elevation = 6.dp,
-                        backgroundColor = colorResource(id = R.color.white)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                                .fillMaxSize(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = "Inclusión:",
-                                style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
-                                color = colorResource(id = R.color.black),
-                                modifier = Modifier.weight(0.3f)
-                            )
-                            Text(
-                                text = inclusion_social,
-                                style = MaterialTheme.typography.body2,
-                                color = colorResource(id = R.color.black),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(0.7f)
-                            )
-                        }
+            // Tarjeta de Accesibilidad
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp), // Tarjeta más fina
+                elevation = 6.dp,
+                backgroundColor = colorResource(id = R.color.white)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Accesibilidad:",
+                        style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
+                        color = colorResource(id = R.color.black),
+                        modifier = Modifier.weight(0.3f)
+                    )
+                    // Mostrar el puntaje de accesibilidad
+                    Text(
+                        text = "$accesibilidad/5",
+                        style = MaterialTheme.typography.body2,
+                        color = colorResource(id = R.color.black),
+                        modifier = Modifier.weight(0.7f)
+                    )
+                }
+            }
+
+            // Tarjeta de Inclusión Social
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp), // Tarjeta más fina
+                elevation = 6.dp,
+                backgroundColor = colorResource(id = R.color.white)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Inclusión Social:",
+                        style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
+                        color = colorResource(id = R.color.black),
+                        modifier = Modifier.weight(0.3f)
+                    )
+                    // Mostrar el puntaje de inclusión social
+                    Text(
+                        text = "$inclusion_social/5",
+                        style = MaterialTheme.typography.body2,
+                        color = colorResource(id = R.color.black),
+                        modifier = Modifier.weight(0.7f)
+                    )
+                }
             }
         }
     }
 
     @Composable
-    fun NewOpinionFormDialog(local: com.example.impacthon.backend.models.Local, onDismiss: () -> Unit) {
+    fun NewOpinionFormDialog(
+        local: com.example.impacthon.backend.models.Local,
+        onDismiss: () -> Unit
+    ) {
         var reviewText by remember { mutableStateOf("") }
         var ecosostenible by remember { mutableStateOf(0f) }
         var inclusionSocial by remember { mutableStateOf(0f) }
@@ -731,7 +737,10 @@ class MapFragment : Fragment() {
         val context = LocalContext.current
 
         // Genera la fecha actual en formato ISO, por ejemplo "2025-03-12T12:30:00.000+0000"
-        val formattedDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault()).format(Date())
+        val formattedDate = SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+            Locale.getDefault()
+        ).format(Date())
 
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -744,9 +753,11 @@ class MapFragment : Fragment() {
                         label = { Text("Reseña") },
                         modifier = androidx.compose.ui.Modifier.fillMaxWidth()
                     )
-                    androidx.compose.foundation.layout.Spacer(modifier = androidx.compose.ui.Modifier.height(
-                        8.dp
-                    ))
+                    androidx.compose.foundation.layout.Spacer(
+                        modifier = androidx.compose.ui.Modifier.height(
+                            8.dp
+                        )
+                    )
                     Text("Ecosostenible: ${ecosostenible.toInt()}")
                     Slider(
                         value = ecosostenible,
@@ -785,20 +796,40 @@ class MapFragment : Fragment() {
                     )
 
                     // Imprime en el log los atributos de newOpinion
-                    Log.e("NewOpinion", "id: ${newOpinion.id}, usuario: ${newOpinion.usuario.nickname}, local: ${newOpinion.local.id}, fechaPublicacion: ${newOpinion.fechaPublicacion}, resenaTexto: ${newOpinion.resenaTexto}, ecosostenible: ${newOpinion.ecosostenible}, inclusionSocial: ${newOpinion.inclusionSocial}, accesibilidad: ${newOpinion.accesibilidad}, fotos: ${newOpinion.fotos}")
+                    Log.e(
+                        "NewOpinion",
+                        "id: ${newOpinion.id}, usuario: ${newOpinion.usuario.nickname}, local: ${newOpinion.local.id}, fechaPublicacion: ${newOpinion.fechaPublicacion}, resenaTexto: ${newOpinion.resenaTexto}, ecosostenible: ${newOpinion.ecosostenible}, inclusionSocial: ${newOpinion.inclusionSocial}, accesibilidad: ${newOpinion.accesibilidad}, fotos: ${newOpinion.fotos}"
+                    )
 
-                    RetrofitClient.instance.createOpinion(newOpinion).enqueue(object : Callback<String> {
-                        override fun onResponse(call: Call<String>, response: Response<String>) {
-                            if (response.isSuccessful) {
-                                Toast.makeText(context, "Opinión enviada exitosamente", Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(context, "Error al enviar opinión", Toast.LENGTH_SHORT).show()
+                    RetrofitClient.instance.createOpinion(newOpinion)
+                        .enqueue(object : Callback<String> {
+                            override fun onResponse(
+                                call: Call<String>,
+                                response: Response<String>
+                            ) {
+                                if (response.isSuccessful) {
+                                    Toast.makeText(
+                                        context,
+                                        "Opinión enviada exitosamente",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Error al enviar opinión",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
-                        }
-                        override fun onFailure(call: Call<String>, t: Throwable) {
-                            Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
-                        }
-                    })
+
+                            override fun onFailure(call: Call<String>, t: Throwable) {
+                                Toast.makeText(
+                                    context,
+                                    "Fallo en la petición: ${t.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        })
                     onDismiss()
                 }) {
                     Text("Enviar Opinión")
@@ -811,4 +842,4 @@ class MapFragment : Fragment() {
             }
         )
     }
-}
+    }
