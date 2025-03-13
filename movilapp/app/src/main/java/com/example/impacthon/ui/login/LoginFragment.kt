@@ -57,8 +57,8 @@ class LoginFragment : Fragment() {
                 findNavController().navigate(R.id.navigation_profile) // Regresar al ProfileFragment
             } else {
                 // Mostrar un mensaje de error
-                Toast.makeText(requireContext(), R.string.error_login, Toast.LENGTH_SHORT).show()
-            }
+                Toast.makeText(requireContext(), "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
+            }*/
         }
     }
 }

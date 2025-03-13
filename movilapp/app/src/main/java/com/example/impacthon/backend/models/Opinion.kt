@@ -20,7 +20,8 @@ data class Opinion(
     @SerializedName("accesibilidad")
     val accesibilidad: Int,
     @SerializedName("fotos")
-    val fotos: List<ByteArray>
+    val fotos: List<String> = emptyList()
+    //val fotos: List<ByteArray>
 )
 
 data class UsuarioForOpinion(

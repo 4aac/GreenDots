@@ -2,7 +2,9 @@ package com.example.impacthon.ui.map
 
 import android.Manifest
 import android.animation.Animator
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,34 +23,37 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import com.example.impacthon.R
+import com.example.impacthon.backend.api.RetrofitClient
+import com.example.impacthon.backend.models.Local
+import com.example.impacthon.backend.models.LocalForOpinion
+import com.example.impacthon.backend.models.Opinion
+import com.example.impacthon.backend.models.Usuario
+import com.example.impacthon.backend.models.UsuarioForOpinion
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.geojson.Point
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.MapboxMap
-import com.mapbox.maps.plugin.animation.flyTo
-import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
-import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.MapEffect
-import com.mapbox.maps.extension.compose.style.MapStyle
+import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.extension.compose.rememberMapState
+import com.mapbox.maps.extension.compose.style.MapStyle
+import com.mapbox.maps.plugin.animation.flyTo
+import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.extension.compose.annotation.generated.PointAnnotation
 import com.mapbox.maps.extension.compose.annotation.rememberIconImage
-import com.example.impacthon.R
 import kotlinx.coroutines.delay
-import android.content.Context
-import android.util.Log
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -59,6 +64,49 @@ import java.util.Locale
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
+
+    /**
+     * Función para obtener un Local por su ID usando Retrofit.
+     * Recibe el id, el contexto y un callback para devolver el resultado.
+     */
+    private fun fetchLocalById(id: Int, context: Context, onResult: (Local?) -> Unit) {
+        RetrofitClient.instance.getLocal(id).enqueue(object : Callback<Local> {
+            override fun onResponse(call: Call<Local>, response: Response<Local>) {
+                if (response.isSuccessful && response.body() != null) {
+                    onResult(response.body())
+                } else {
+                    Toast.makeText(context, "Error al obtener el local", Toast.LENGTH_SHORT).show()
+                    onResult(null)
+                }
+            }
+            override fun onFailure(call: Call<Local>, t: Throwable) {
+                Log.e("RetrofitError", "Fallo en la petición", t)
+                Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
+                onResult(null)
+            }
+        })
+    }
+
+    /**
+     * Función para obtener todos los locales usando Retrofit.
+     */
+    private fun fetchAllLocales(context: Context, onResult: (List<Local>?) -> Unit) {
+        RetrofitClient.instance.getAllLocales().enqueue(object : Callback<List<Local>> {
+            override fun onResponse(call: Call<List<Local>>, response: Response<List<Local>>) {
+                if (response.isSuccessful && response.body() != null) {
+                    onResult(response.body())
+                } else {
+                    Toast.makeText(context, "Error al obtener los locales", Toast.LENGTH_SHORT).show()
+                    onResult(null)
+                }
+            }
+            override fun onFailure(call: Call<List<Local>>, t: Throwable) {
+                Log.e("RetrofitError", "Fallo en la petición", t)
+                Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
+                onResult(null)
+            }
+        })
+    }
 
     // Función de prueba (puedes eliminarla si ya no la usas)
     private fun createTestUser(context: Context) {
@@ -71,7 +119,6 @@ class MapFragment : Fragment() {
             admin = false,
             fotoPerfil = null
         )
-
         RetrofitClient.instance.createUser(newUser).enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 if (response.isSuccessful) {
@@ -80,12 +127,21 @@ class MapFragment : Fragment() {
                     Toast.makeText(context, "Error al crear usuario: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<String>, t: Throwable) {
                 Log.e("RetrofitError", "Fallo petición", t)
                 Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    // Función auxiliar para parsear la cadena de ubicación al par (latitud, longitud)
+    private fun parseLocation(location: String): Pair<Double, Double>? {
+        val parts = location.split(",")
+        return if (parts.size == 2) {
+            val lat = parts[0].trim().toDoubleOrNull()
+            val lng = parts[1].trim().toDoubleOrNull()
+            if (lat != null && lng != null) Pair(lat, lng) else null
+        } else null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,7 +152,6 @@ class MapFragment : Fragment() {
                         permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
                 onPermissionResult(granted)
             }
-
         permissionsGranted = PermissionsManager.areLocationPermissionsGranted(requireContext())
         if (!permissionsGranted) {
             permissionLauncher.launch(
@@ -114,18 +169,14 @@ class MapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): android.view.View {
         return ComposeView(requireContext()).apply {
-            setContent {
-                MapScreenWithPermissions(permissionsGranted)
-            }
+            setContent { MapScreenWithPermissions(permissionsGranted) }
         }
     }
 
     fun onPermissionResult(granted: Boolean) {
         permissionsGranted = granted
         if (granted) {
-            view?.findViewById<ComposeView>(android.R.id.content)?.setContent {
-                MapScreenWithPermissions(true)
-            }
+            view?.findViewById<ComposeView>(android.R.id.content)?.setContent { MapScreenWithPermissions(true) }
         } else {
             Toast.makeText(
                 requireContext(),
@@ -164,9 +215,7 @@ class MapFragment : Fragment() {
                             )
                         )
                     }
-                ) {
-                    Text(getString(R.string.permision_button))
-                }
+                ) { Text("Solicitar Permisos") }
             }
         }
     }
@@ -174,7 +223,24 @@ class MapFragment : Fragment() {
     @Composable
     fun MapScreen() {
         val context = LocalContext.current
+
+        // Estado para mostrar la información de un marker seleccionado
         var showMarkerInfo by remember { mutableStateOf(false) }
+        val markerLocal = remember { mutableStateOf<Local?>(null) }
+        // Estado para almacenar todos los locales obtenidos de la API
+        var allLocales by remember { mutableStateOf<List<Local>>(emptyList()) }
+        // Estado para controlar si se muestra el formulario para añadir opinión
+        var showNewOpinionForm by remember { mutableStateOf(false) }
+
+        // Cargar todos los locales al iniciar el Composable
+        LaunchedEffect(Unit) {
+            fetchAllLocales(context) { locales ->
+                if (locales != null) {
+                    allLocales = locales
+                }
+            }
+        }
+
         val mapViewportState = rememberMapViewportState {
             setCameraOptions {
                 zoom(2.5)
@@ -198,9 +264,7 @@ class MapFragment : Fragment() {
                         pitch(15.0)
                         bearing(0.0)
                     },
-                    mapAnimationOptions {
-                        duration(6000)
-                    }
+                    mapAnimationOptions { duration(6000) }
                 )
             }
         }
@@ -218,32 +282,34 @@ class MapFragment : Fragment() {
                         .fillMaxSize(),
                     mapState = rememberMapState {
                         gesturesSettings = GesturesSettings {
-                            pinchToZoomEnabled = false
-                            doubleTapToZoomInEnabled = false
-                            quickZoomEnabled = false
+                            pinchToZoomEnabled = true
+                            doubleTapToZoomInEnabled = true
+                            quickZoomEnabled = true
                             doubleTouchToZoomOutEnabled = false
                         }
                     },
                     mapViewportState = mapViewportState,
-                    style = {
-                        MapStyle(style = "mapbox://styles/martindios/cm851rhgo004q01qzbcrg0fb9")
-                    }
+                    style = { MapStyle(style = "mapbox://styles/martindios/cm851rhgo004q01qzbcrg0fb9") }
                 ) {
                     val markerResourceId = R.drawable.red_marker
-                    val marker = rememberIconImage(key = markerResourceId, painter = painterResource(markerResourceId))
-                    PointAnnotation(
-                        point = Point.fromLngLat(-8.560296146026845, 42.873506927274846)
-                    ) {
-                        iconImage = marker
-                        interactionsState.onClicked {
-                            // Al hacer click se muestra la info del marker
-                            showMarkerInfo = !showMarkerInfo
-                            //Toast.makeText(context, "Marker clicker", Toast.LENGTH_SHORT).show()
-                            //createTestUser(context);
-                            true
+                    // Usamos la misma imagen de marker para todos
+                    val markerIcon = rememberIconImage(key = markerResourceId, painter = painterResource(markerResourceId))
+                    // Iteramos sobre cada local obtenido y agregamos un marker en su ubicación
+                    allLocales.forEach { local ->
+                        parseLocation(local.ubicacion)?.let { (lat, lng) ->
+                            PointAnnotation(
+                                point = Point.fromLngLat(lng, lat) // Mapbox espera (lng, lat)
+                            ) {
+                                iconImage = markerIcon
+                                interactionsState.onClicked {
+                                    // Al hacer click en el marker, se muestra la info del local correspondiente
+                                    markerLocal.value = local
+                                    showMarkerInfo = true
+                                    true
+                                }
+                            }
                         }
                     }
-
                     MapEffect(Unit) { mapView ->
                         mapboxMapRef.value = mapView.mapboxMap
                         mapView.location.updateSettings {
@@ -259,31 +325,27 @@ class MapFragment : Fragment() {
                     onClick = {
                         mapboxMapRef.value?.flyTo(
                             cameraOptions {
-                                center(Point.fromLngLat(-8.560296146026845, 42.873506927274846))
-                                zoom(12.5)
+                                center(Point.fromLngLat(-8.544449809109203, 42.877164812903274))
+                                zoom(13.5)
                                 pitch(75.0)
                                 bearing(130.0)
                             },
-                            mapAnimationOptions {
-                                duration(6000)
-                            },
+                            mapAnimationOptions { duration(6000) },
                             animatorListener = object : Animator.AnimatorListener {
-                                override fun onAnimationStart(animation: Animator) { }
+                                override fun onAnimationStart(animation: Animator) {}
                                 override fun onAnimationEnd(animation: Animator) {
                                     mapboxMapRef.value?.flyTo(
                                         cameraOptions {
-                                            center(Point.fromLngLat(-8.560296146026845, 42.873506927274846))
-                                            zoom(12.5)
+                                            center(Point.fromLngLat(-8.544449809109203, 42.877164812903274))
+                                            zoom(13.5)
                                             pitch(0.0)
                                             bearing(0.0)
                                         },
-                                        mapAnimationOptions {
-                                            duration(3000)
-                                        }
+                                        mapAnimationOptions { duration(3000) }
                                     )
                                 }
-                                override fun onAnimationCancel(animation: Animator) { }
-                                override fun onAnimationRepeat(animation: Animator) { }
+                                override fun onAnimationCancel(animation: Animator) {}
+                                override fun onAnimationRepeat(animation: Animator) {}
                             }
                         )
                     },
@@ -304,34 +366,46 @@ class MapFragment : Fragment() {
                 }
             }
 
-            if (showMarkerInfo) {
+            if (showMarkerInfo && markerLocal.value != null) {
                 MarkerInfoSheet(
-                    onClose = { showMarkerInfo = false }
+                    local = markerLocal.value!!,
+                    onClose = { showMarkerInfo = false },
+                    onAddOpinion = { showNewOpinionForm = true }
                 )
             }
+        }
+
+        // Mostrar el formulario para añadir opinión si se activa
+        if (showNewOpinionForm && markerLocal.value != null) {
+            NewOpinionFormDialog(local = markerLocal.value!!, onDismiss = { showNewOpinionForm = false })
         }
     }
 
     @Composable
-    fun MarkerInfoSheet(onClose: () -> Unit) {
+    fun MarkerInfoSheet(local: Local, onClose: () -> Unit, onAddOpinion: () -> Unit) {
+        // Estados para gestionar la visualización del diálogo de opiniones y almacenar la lista obtenida
+        var showOpinionsDialog by remember { mutableStateOf(false) }
+        var opinionesList by remember { mutableStateOf<List<Opinion>>(emptyList()) }
+        val context = LocalContext.current
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.5f)
                 .background(MaterialTheme.colors.surface)
-
-            //.align(Alignment.BottomCenter)
+                .padding(top = 64.dp)
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
+                // Encabezado con el título y la X para cerrar
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Información del Lugar", style = MaterialTheme.typography.h6)
-                    IconButton(onClick = onClose) {
+                    IconButton(onClick = { onClose() }) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Cerrar"
@@ -339,20 +413,101 @@ class MapFragment : Fragment() {
                     }
                 }
                 Divider()
+                // Zona de info cards
                 Row(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .horizontalScroll(rememberScrollState())
-                        .padding(8.dp),
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .weight(1f),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    InfoCard(title = "Nombre", description = "Café Verde")
-                    InfoCard(title = "Dirección", description = "Calle Mayor 123, Madrid")
-                    InfoCard(title = "Teléfono", description = "123-456-789")
+                    InfoCard(title = "Nombre", description = local.nombre)
+                    InfoCard(title = "Dirección", description = local.ubicacion)
+                    InfoCard(title = "Categoría", description = local.categoria)
+                }
+                // Botones para añadir opinión y ver opiniones
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(onClick = onAddOpinion) {
+                        Text("Añadir Opinión")
+                    }
+                    Button(onClick = {
+                        // Realiza la llamada para obtener opiniones del local
+                        opinionesList = emptyList()
+                        RetrofitClient.instance.getOpinionesPorLocal(local.id)
+                            .enqueue(object : Callback<List<Opinion>> {
+                                override fun onResponse(
+                                    call: Call<List<Opinion>>,
+                                    response: Response<List<Opinion>>
+                                ) {
+                                    if (response.isSuccessful) {
+                                        opinionesList = response.body()!!
+                                        showOpinionsDialog = true
+                                    } else if (response.body() == null){
+                                        showOpinionsDialog = true
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Error al obtener opiniones",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                                override fun onFailure(call: Call<List<Opinion>>, t: Throwable) {
+                                    Toast.makeText(
+                                        context,
+                                        "Fallo en la petición: ${t.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            })
+                    }) {
+                        Text("Ver Opiniones")
+                    }
                 }
             }
         }
+
+        // Diálogo para mostrar las opiniones obtenidas
+        if (showOpinionsDialog) {
+            AlertDialog(
+                onDismissRequest = { showOpinionsDialog = false },
+                title = { Text("Opiniones del Local") },
+                text = {
+                    // Muestra la lista de opiniones en un Column con scroll
+                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                        if (opinionesList.isEmpty()) {
+                            Text("No hay opiniones disponibles.")
+                        } else {
+                            opinionesList.forEach { opinion ->
+                                Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                                    Text(
+                                        text = "Usuario: ${opinion.usuario.nickname}",
+                                        style = MaterialTheme.typography.subtitle2
+                                    )
+                                    Text(
+                                        text = "Reseña: ${opinion.resenaTexto}",
+                                        style = MaterialTheme.typography.body2
+                                    )
+                                    Divider(modifier = Modifier.padding(vertical = 4.dp))
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { showOpinionsDialog = false }) {
+                        Text("Cerrar")
+                    }
+                }
+            )
+        }
     }
+
 
     @Composable
     fun InfoCard(title: String, description: String) {
@@ -371,4 +526,171 @@ class MapFragment : Fragment() {
             }
         }
     }
+
+    @Composable
+    fun NewOpinionFormDialog(local: com.example.impacthon.backend.models.Local, onDismiss: () -> Unit) {
+        var reviewText by remember { mutableStateOf("") }
+        var ecosostenible by remember { mutableStateOf(0f) }
+        var inclusionSocial by remember { mutableStateOf(0f) }
+        var accesibilidad by remember { mutableStateOf(0f) }
+        val context = LocalContext.current
+
+        // Estado para mostrar el diálogo de selección de fuente de imagen
+        var showImageSourceDialog by remember { mutableStateOf(false) }
+        // Estado para almacenar la imagen seleccionada como ByteArray
+        var selectedImageByteArray by remember { mutableStateOf<ByteArray?>(null) }
+
+        // Launcher para capturar imagen desde la cámara (preview)
+        val cameraLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicturePreview()
+        ) { bitmap: Bitmap? ->
+            bitmap?.let {
+                val outputStream = ByteArrayOutputStream()
+                it.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                selectedImageByteArray = outputStream.toByteArray()
+            }
+        }
+
+        // Launcher para seleccionar imagen desde la galería
+        val galleryLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let {
+                // Lee el contenido del Uri y lo guarda en un ByteArray
+                context.contentResolver.openInputStream(it)?.use { inputStream ->
+                    selectedImageByteArray = inputStream.readBytes()
+                }
+            }
+        }
+
+        // Función para convertir el ByteArray a Base64 (si es necesario enviarlo como string)
+        fun byteArrayToBase64(bytes: ByteArray): String {
+            return android.util.Base64.encodeToString(bytes, android.util.Base64.DEFAULT)
+        }
+
+        // Genera la fecha actual en formato ISO, por ejemplo "2025-03-12T12:30:00.000+0000"
+        val formattedDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault()).format(Date())
+
+        // Diálogo para elegir la fuente de la imagen
+        if (showImageSourceDialog) {
+            AlertDialog(
+                onDismissRequest = { showImageSourceDialog = false },
+                title = { Text("Selecciona Fuente de Imagen") },
+                text = { Text("Elige entre tomar una foto o seleccionar desde la galería") },
+                confirmButton = {
+                    Button(onClick = {
+                        showImageSourceDialog = false
+                        cameraLauncher.launch(null) // Abre la cámara
+                    }) {
+                        Text("Cámara")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        showImageSourceDialog = false
+                        galleryLauncher.launch("image/*") // Abre la galería
+                    }) {
+                        Text("Galería")
+                    }
+                }
+            )
+        }
+
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("Añadir Opinión") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = reviewText,
+                        onValueChange = { reviewText = it },
+                        label = { Text("Reseña") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Ecosostenible: ${ecosostenible.toInt()}")
+                    Slider(
+                        value = ecosostenible,
+                        onValueChange = { ecosostenible = it },
+                        valueRange = 0f..5f,
+                        steps = 4
+                    )
+                    Text("Inclusión Social: ${inclusionSocial.toInt()}")
+                    Slider(
+                        value = inclusionSocial,
+                        onValueChange = { inclusionSocial = it },
+                        valueRange = 0f..5f,
+                        steps = 4
+                    )
+                    Text("Accesibilidad: ${accesibilidad.toInt()}")
+                    Slider(
+                        value = accesibilidad,
+                        onValueChange = { accesibilidad = it },
+                        valueRange = 0f..5f,
+                        steps = 4
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    // Botón único para añadir foto
+                    Button(onClick = { showImageSourceDialog = true }) {
+                        Text("Añadir Foto")
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    // Muestra un mensaje simple según si se ha seleccionado una imagen
+                    if (selectedImageByteArray != null) {
+                        Text("Imagen seleccionada (${selectedImageByteArray!!.size} bytes)")
+                    }
+                }
+            },
+            confirmButton = {
+                Button(onClick = {
+                    // Se convierte el ByteArray a Base64 y se guarda en la lista de fotos (si se seleccionó imagen)
+                    val fotosList = if (selectedImageByteArray != null)
+                        listOf(byteArrayToBase64(selectedImageByteArray!!))
+                    else emptyList()
+
+                    val newOpinion = Opinion(
+                        id = 0, // El backend generará el id
+                        usuario = UsuarioForOpinion(nickname = "juan23"), // Valor de prueba
+                        local = LocalForOpinion(id = local.id),
+                        fechaPublicacion = formattedDate,
+                        resenaTexto = reviewText,
+                        ecosostenible = ecosostenible.toInt(),
+                        inclusionSocial = inclusionSocial.toInt(),
+                        accesibilidad = accesibilidad.toInt(),
+                        fotos = fotosList
+                    )
+
+                    Log.e(
+                        "NewOpinion",
+                        "id: ${newOpinion.id}, usuario: ${newOpinion.usuario.nickname}, local: ${newOpinion.local.id}, " +
+                                "fechaPublicacion: ${newOpinion.fechaPublicacion}, resenaTexto: ${newOpinion.resenaTexto}, " +
+                                "ecosostenible: ${newOpinion.ecosostenible}, inclusionSocial: ${newOpinion.inclusionSocial}, " +
+                                "accesibilidad: ${newOpinion.accesibilidad}, fotos: ${newOpinion.fotos}"
+                    )
+
+                    RetrofitClient.instance.createOpinion(newOpinion).enqueue(object : Callback<String> {
+                        override fun onResponse(call: Call<String>, response: Response<String>) {
+                            if (response.isSuccessful) {
+                                Toast.makeText(context, "Opinión enviada exitosamente", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Error al enviar opinión", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        override fun onFailure(call: Call<String>, t: Throwable) {
+                            Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                    onDismiss()
+                }) {
+                    Text("Enviar Opinión")
+                }
+            },
+            dismissButton = {
+                Button(onClick = onDismiss) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+
 }
