@@ -64,8 +64,19 @@ import java.util.Locale
 import androidx.activity.compose.rememberLauncherForActivityResult
 import android.graphics.Bitmap
 import android.net.Uri
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import java.io.ByteArrayOutputStream
-
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.viewinterop.AndroidView
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
@@ -92,6 +103,122 @@ class MapFragment : Fragment() {
             }
         })
     }
+
+    @Composable
+    fun SearchBarDropdown(
+        modifier: Modifier = Modifier,
+        onCitySelected: (String) -> Unit
+    ) {
+        AndroidView(
+            factory = { context ->
+                LayoutInflater.from(context).inflate(R.layout.search_bar, null, false).apply {
+                    val spinner = findViewById<Spinner>(R.id.city_spinner)
+                    val cities = context.resources.getStringArray(R.array.cities_array).toMutableList()
+
+                    cities.add(0, "Seleccionar una ciudad")
+                    // Crea un ArrayAdapter con un layout personalizado para el ítem seleccionado
+                    val adapter = ArrayAdapter(context, R.layout.spinner_items, cities).apply {
+                        // Establece el layout para los ítems desplegados
+                        setDropDownViewResource(R.layout.spinner_items)
+                    }
+                    spinner.adapter = adapter
+
+                    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            if (position > 0) {
+                                val city = parent?.getItemAtPosition(position) as String
+                                onCitySelected(city)
+                            }
+                        }
+                        override fun onNothingSelected(parent: AdapterView<*>?) { }
+                    }
+                }
+            },
+            modifier = modifier
+        )
+    }
+
+
+    /*
+    @OptIn(ExperimentalMaterialApi::class)
+    @Composable
+    fun SearchBar(
+        modifier: Modifier = Modifier,
+        onCitySelected: (String) -> Unit
+    ) {
+        var expanded by remember { mutableStateOf(false) }
+        var selectedCity by remember { mutableStateOf("") }
+        val cities = listOf("Vigo", "Santiago", "A Coruña", "Pontevedra")
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+            modifier = modifier
+                .background(
+                    color = Color(0xFF81C784).copy(alpha = 0.75f), // Fondo con 75% de opacidad
+                    shape = RoundedCornerShape(16.dp) // Esquinas redondeadas
+                )
+                .padding(8.dp)
+        ) {
+            OutlinedTextField(
+                value = selectedCity,
+                onValueChange = { /* No editable */ },
+                readOnly = true,
+                placeholder = {
+                    Text(
+                        "Buscar ciudad",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center, // Centra el texto
+                        style = MaterialTheme.typography.body1.copy(color = Color.Gray)
+                    )
+                },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp) // Bordes redondeados en el TextField
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(color = Color(0XDAE2CF).copy(alpha = 0.75f))
+            ) {
+                cities.forEach { city ->
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedCity = city
+                            expanded = false
+                            onCitySelected(city)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        // Utilizamos un Box para centrar el contenido del menú
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = city,
+                                style = MaterialTheme.typography.body1.copy(
+                                    color = MaterialTheme.colors.onSurface,
+                                    fontWeight = FontWeight.Medium // Cambia el peso para un toque elegante
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+    */
+
 
     /**
      * Función para obtener todos los locales usando Retrofit.
@@ -230,20 +357,15 @@ class MapFragment : Fragment() {
     fun MapScreen() {
         val context = LocalContext.current
 
-        // Estado para mostrar la información de un marker seleccionado
+        // Estados y lógica existente
         var showMarkerInfo by remember { mutableStateOf(false) }
         val markerLocal = remember { mutableStateOf<Local?>(null) }
-        // Estado para almacenar todos los locales obtenidos de la API
         var allLocales by remember { mutableStateOf<List<Local>>(emptyList()) }
-        // Estado para controlar si se muestra el formulario para añadir opinión
         var showNewOpinionForm by remember { mutableStateOf(false) }
 
-        // Cargar todos los locales al iniciar el Composable
         LaunchedEffect(Unit) {
             fetchAllLocales(context) { locales ->
-                if (locales != null) {
-                    allLocales = locales
-                }
+                locales?.let { allLocales = it }
             }
         }
 
@@ -298,17 +420,14 @@ class MapFragment : Fragment() {
                     style = { MapStyle(style = "mapbox://styles/martindios/cm851rhgo004q01qzbcrg0fb9") }
                 ) {
                     val markerResourceId = R.drawable.red_marker
-                    // Usamos la misma imagen de marker para todos
                     val markerIcon = rememberIconImage(key = markerResourceId, painter = painterResource(markerResourceId))
-                    // Iteramos sobre cada local obtenido y agregamos un marker en su ubicación
                     allLocales.forEach { local ->
                         parseLocation(local.ubicacion)?.let { (lat, lng) ->
                             PointAnnotation(
-                                point = Point.fromLngLat(lng, lat) // Mapbox espera (lng, lat)
+                                point = Point.fromLngLat(lng, lat)
                             ) {
                                 iconImage = markerIcon
                                 interactionsState.onClicked {
-                                    // Al hacer click en el marker, se muestra la info del local correspondiente
                                     markerLocal.value = local
                                     showMarkerInfo = true
                                     true
@@ -327,6 +446,7 @@ class MapFragment : Fragment() {
                     }
                 }
 
+                // Botón Globe Fly To
                 Button(
                     onClick = {
                         mapboxMapRef.value?.flyTo(
@@ -371,6 +491,32 @@ class MapFragment : Fragment() {
                     Text(text = "Center on My Location")
                 }
             }
+            SearchBarDropdown(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .offset(y = 50.dp),  // Ajusta según lo necesites
+                onCitySelected = { city ->
+                    // Define las coordenadas para cada ciudad
+                    val (lng, lat) = when (city) {
+                        "Vigo" -> Pair(-8.720, 42.240)
+                        "Pontevedra" -> Pair(-8.640, 42.431)
+                        "A Coruña" -> Pair(-8.406, 43.362)
+                        "Santiago" -> Pair(-8.546, 42.878)
+                        else -> Pair(-3.74922, 40.463667)
+                    }
+                    // Ejecuta el flyTo hacia la ciudad seleccionada
+                    mapboxMapRef.value?.flyTo(
+                        cameraOptions {
+                            center(Point.fromLngLat(lng, lat))
+                            zoom(13.5)
+                            pitch(0.0)
+                            bearing(0.0)
+                        },
+                        mapAnimationOptions { duration(3000) }
+                    )
+                }
+            )
 
             if (showMarkerInfo && markerLocal.value != null) {
                 MarkerInfoSheet(
@@ -381,11 +527,11 @@ class MapFragment : Fragment() {
             }
         }
 
-        // Mostrar el formulario para añadir opinión si se activa
         if (showNewOpinionForm && markerLocal.value != null) {
             NewOpinionFormDialog(local = markerLocal.value!!, onDismiss = { showNewOpinionForm = false })
         }
     }
+
 
     @Composable
     fun MarkerInfoSheet(local: Local, onClose: () -> Unit, onAddOpinion: () -> Unit) {
