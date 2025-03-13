@@ -8,9 +8,12 @@
     <string name="hint_username">Nombre de usuario</string>
     <string name="hint_passwd">Contraseña</string>
     <string name="title_login">Iniciar sesión</string>
+    <string name="error_login">Usuario o contraseña incorrectas</string>
 
     <!-- Perfil -->
     <string name="title_profile">Perfil</string>
+    <string name="title_logout">Cerrar sesión</string>
+    <string name="welcome_string">Bienvenido al perfil</string>
 
     <!-- Configuración -->
     <string name="title_settings">Configuración</string>
@@ -24,5 +27,7 @@
     <!-- Mapa -->
     <string name="title_map">Mapa</string>
     <string name="tap_on_map_instruction">Toca el mapa para volar a la ubicación</string>
+    <string name="permision_denied">LOs permisos de ubicación han sido denegados. Algunas funciones estarán deshabilitadas</string>
+    <string name="permision_button">Solicitar permisos</string>
 
 </resources>

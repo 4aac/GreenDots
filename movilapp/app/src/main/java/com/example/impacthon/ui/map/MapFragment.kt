@@ -53,7 +53,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.impacthon.backend.models.Usuario
-import com.example.impacthon.backend.RetrofitClient
+import com.example.impacthon.backend.api.RetrofitClient
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
@@ -128,7 +128,7 @@ class MapFragment : Fragment() {
         } else {
             Toast.makeText(
                 requireContext(),
-                "Los permisos de ubicación han sido denegados. Algunas funciones estarán deshabilitadas.",
+                R.string.permision_denied,
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -153,7 +153,6 @@ class MapFragment : Fragment() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("Se requieren permisos de ubicación para mostrar tu posición en el mapa")
                 Button(
                     onClick = {
                         permissionLauncher.launch(
@@ -164,7 +163,7 @@ class MapFragment : Fragment() {
                         )
                     }
                 ) {
-                    Text("Solicitar Permisos")
+                    Text(getString(R.string.permision_button))
                 }
             }
         }

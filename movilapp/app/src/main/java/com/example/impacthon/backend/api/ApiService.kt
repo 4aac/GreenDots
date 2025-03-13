@@ -1,4 +1,4 @@
-package com.example.impacthon.backend
+package com.example.impacthon.backend.api
 
 import com.example.impacthon.backend.models.Usuario
 import retrofit2.Call

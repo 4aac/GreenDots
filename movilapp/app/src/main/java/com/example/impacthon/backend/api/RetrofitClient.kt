@@ -1,4 +1,4 @@
-package com.example.impacthon.backend
+package com.example.impacthon.backend.api
 
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit

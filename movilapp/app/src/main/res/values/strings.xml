@@ -7,9 +7,12 @@
     <string name="hint_username">Username</string>
     <string name="hint_passwd">Password</string>
     <string name="title_login">Login</string>
+    <string name="error_login">Incorrect username or password</string>
 
     <!-- Perfil -->
     <string name="title_profile">Profile</string>
+    <string name="title_logout">Log out</string>
+    <string name="welcome_string">Welcome to the profile</string>
 
     <!-- Configuración -->
     <string name="title_settings">Settings</string>
@@ -23,5 +26,7 @@
     <!-- Mapa -->
     <string name="title_map">Map</string>
     <string name="tap_on_map_instruction">Tap on the map to fly to the location</string>
+    <string name="permision_denied">Location permissions have been denied. Some features will be disabled</string>
+    <string name="permision_button">Request permits</string>
 
 </resources>

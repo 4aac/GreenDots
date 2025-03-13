@@ -38,7 +38,7 @@ class ProfileFragment : Fragment() {
         }
 
         // Configurar el botón de cierre de sesión
-        binding.button2.setOnClickListener {
+        binding.buttonLogout.setOnClickListener {
             profileViewModel.logout() // Llamar al método de logout
             showLoginFragment() // Navegar de vuelta al LoginFragment
         }
@@ -47,16 +47,11 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showProfileDetails() {
-        // Aquí puedes cargar el contenido del perfil
-        val textView: TextView = binding.textProfile
-        textView.text = "Bienvenido al perfil"
-        textView.visibility = View.VISIBLE
-        binding.button2.visibility = View.VISIBLE
+        binding.profileContainer.visibility = View.VISIBLE
     }
 
     private fun showLoginFragment() {
-        binding.textProfile.visibility = View.GONE
-        binding.button2.visibility = View.GONE
+        binding.profileContainer.visibility = View.GONE
 
         val loginFragment = LoginFragment()
         val transaction: FragmentTransaction = childFragmentManager.beginTransaction()
