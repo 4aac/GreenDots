@@ -718,7 +718,7 @@ class MapFragment : Fragment() {
 
                     val newOpinion = Opinion(
                         id = 0, // El backend generará el id
-                        usuario = UsuarioForOpinion(nickname = "testuser"), // Valor de prueba
+                        usuario = UsuarioForOpinion(nickname = "juan23"), // Valor de prueba
                         local = LocalForOpinion(id = local.id),
                         fechaPublicacion = formattedDate,
                         resenaTexto = reviewText,
