@@ -57,4 +57,7 @@ interface ApiService {
 
     @GET("/opiniones/get/local/{id}")
     fun getOpinionesPorLocal(@Path("id") id: Int): Call<List<Opinion>>
+
+    @GET("/opiniones/get/user/{nickname}")
+    fun getOpinionesPorUsuario(@Path("nickname") nickname: String): Call<List<Opinion>>
 }
