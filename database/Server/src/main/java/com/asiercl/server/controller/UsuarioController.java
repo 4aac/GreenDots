@@ -18,10 +18,7 @@ import java.util.List;
 public class UsuarioController {
     private UsuarioDAO usuarioDAO = new UsuarioDAO();
 
-    @GetMapping("/")
-    public String index() {
-        return "Hello World!";
-    }
+    // Endpoints //
 
     @GetMapping("/get/{nickname}")
     public Usuario getUser(@PathVariable String nickname) {

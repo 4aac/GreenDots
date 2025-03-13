@@ -23,7 +23,8 @@ public class Opinion {
         this.ecosostenible = ecosostenible;
         this.inclusionSocial = inclusionSocial;
         this.accesibilidad = accesibilidad;
-        this.fotos = fotos;
+        if(fotos == null) { fotos = new ArrayList<>(); }
+        else{ this.fotos = fotos; }
     }
 
     // Getters
@@ -47,4 +48,6 @@ public class Opinion {
     public void setInclusionSocial(int inclusionSocial) { this.inclusionSocial = inclusionSocial; }
     public void setAccesibilidad(int accesibilidad) { this.accesibilidad = accesibilidad; }
     public void setFotos(ArrayList<byte[]> fotos) { this.fotos = fotos; }
+
+    public void addFoto(byte[] foto) { fotos.add(foto); }
 }
