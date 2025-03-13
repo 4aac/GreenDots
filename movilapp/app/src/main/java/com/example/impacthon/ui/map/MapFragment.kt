@@ -329,6 +329,8 @@ class MapFragment : Fragment() {
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 MapboxMap(
+
+                    scaleBar = { },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize(),
@@ -367,6 +369,7 @@ class MapFragment : Fragment() {
                             puckBearingEnabled = true
                             enabled = true
                         }
+
                     }
                 }
             }
