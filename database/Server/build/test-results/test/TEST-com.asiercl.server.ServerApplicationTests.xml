@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.asiercl.server.ServerApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-03-12T22:49:02" hostname="archlinux" time="0.464">
+<testsuite name="com.asiercl.server.ServerApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-03-13T12:32:27" hostname="ASIER" time="0.649">
   <properties/>
-  <testcase name="contextLoads()" classname="com.asiercl.server.ServerApplicationTests" time="0.464"/>
-  <system-out><![CDATA[23:49:02.055 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.asiercl.server.ServerApplicationTests]: ServerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-23:49:02.113 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.asiercl.server.ServerApplication for test class com.asiercl.server.ServerApplicationTests
+  <testcase name="contextLoads()" classname="com.asiercl.server.ServerApplicationTests" time="0.649"/>
+  <system-out><![CDATA[13:32:26.522 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.asiercl.server.ServerApplicationTests]: ServerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+13:32:26.633 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.asiercl.server.ServerApplication for test class com.asiercl.server.ServerApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -14,9 +14,9 @@
 
  :: Spring Boot ::                (v3.4.3)
 
-2025-03-12T23:49:02.332+01:00  INFO 34069 --- [Server] [    Test worker] c.asiercl.server.ServerApplicationTests  : Starting ServerApplicationTests using Java 17.0.14 with PID 34069 (started by dios in /home/dios/AndroidStudioProjects/impacthon/database/Server)
-2025-03-12T23:49:02.333+01:00  INFO 34069 --- [Server] [    Test worker] c.asiercl.server.ServerApplicationTests  : No active profile set, falling back to 1 default profile: "default"
-2025-03-12T23:49:02.919+01:00  INFO 34069 --- [Server] [    Test worker] c.asiercl.server.ServerApplicationTests  : Started ServerApplicationTests in 0.726 seconds (process running for 1.337)
+2025-03-13T13:32:27.038+01:00  INFO 2568 --- [Server] [    Test worker] c.asiercl.server.ServerApplicationTests  : Starting ServerApplicationTests using Java 17.0.12 with PID 2568 (started by asher in C:\Users\asher\Desktop\impacthon\database\Server)
+2025-03-13T13:32:27.040+01:00  INFO 2568 --- [Server] [    Test worker] c.asiercl.server.ServerApplicationTests  : No active profile set, falling back to 1 default profile: "default"
+2025-03-13T13:32:27.981+01:00  INFO 2568 --- [Server] [    Test worker] c.asiercl.server.ServerApplicationTests  : Started ServerApplicationTests in 1.201 seconds (process running for 2.39)
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
