@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import com.asiercl.server.models.Local;
 import com.asiercl.server.database.DatabaseConnection;
+import com.asiercl.server.models.Usuario;
+
 import java.time.LocalDate;
 
 public class LocalDAO {
@@ -98,6 +100,28 @@ public class LocalDAO {
 
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void actualizarLocal(Local local) {
+        String sql = "UPDATE locales SET nombre = ?, categoria = ?, ubicacion = ?, descripcionTextual = ?, ecosostenible = ?, inclusionSocial = ?, accesibilidad = ?, WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            pstmt.setString(1, local.getNombre());
+            pstmt.setString(2, local.getCategoria());
+            pstmt.setString(3, local.getUbicacion());
+            pstmt.setString(4, local.getDescripcionTextual());
+            pstmt.setInt(5, local.getEcosostenible());
+            pstmt.setInt(6, local.getInclusionSocial());
+            pstmt.setInt(7, local.getAccesibilidad());
+            pstmt.setInt(8, local.getId());
+
+            pstmt.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
