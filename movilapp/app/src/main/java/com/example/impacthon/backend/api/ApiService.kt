@@ -2,6 +2,7 @@ package com.example.impacthon.backend
 
 import com.example.impacthon.backend.models.Local
 import com.example.impacthon.backend.models.Usuario
+import com.example.impacthon.backend.models.Opinion
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -32,4 +33,11 @@ interface ApiService {
 
     @DELETE("/local/delete/{id}")
     fun deleteLocal(@Path("id") id: Int): Call<String>
+
+    // Endpoints para Opiniones
+    @POST("/opiniones/crear")
+    fun createOpinion(@Body opinion: Opinion): Call<String>
+
+    @GET("/opiniones/local/{id}")
+    fun getOpinionesPorLocal(@Path("id") id: Int): Call<List<Opinion>>
 }
