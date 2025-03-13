@@ -5,25 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cb015baf-ea3f-44bc-85e9-84ca716980fe" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/controller/LocalController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/controller/LocalController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/controller/OpinionController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/controller/OpinionController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/controller/UsuarioController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/controller/UsuarioController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/dao/LocalDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/dao/LocalDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/dao/OpinionDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/dao/OpinionDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/models/Local.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/models/Local.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/models/Opinion.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/models/Opinion.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/compileTransaction/stash-dir/UsuarioController.class.uniqueId1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/compileTransaction/stash-dir/UsuarioDAO.class.uniqueId0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/LocalController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/LocalController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/OpinionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/OpinionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/UsuarioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/UsuarioController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/asiercl/server/dao/LocalDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/asiercl/server/dao/LocalDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/asiercl/server/dao/OpinionDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/asiercl/server/dao/OpinionDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/asiercl/server/models/Local.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/asiercl/server/models/Local.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/asiercl/server/models/Opinion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/asiercl/server/models/Opinion.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../movilapp/app/src/main/java/com/example/impacthon/backend/api/ApiService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../movilapp/app/src/main/java/com/example/impacthon/backend/api/ApiService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../movilapp/app/src/main/java/com/example/impacthon/ui/map/MapFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../movilapp/app/src/main/java/com/example/impacthon/ui/map/MapFragment.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,7 +86,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.ServerApplication.executor": "Run",
-    "git-widget-placeholder": "imagenesbackend",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/home/osbby/Documents/Hackatoon/impacthon/database/Server",
     "node.js.detected.package.eslint": "true",
@@ -224,6 +208,8 @@
       <workItem from="1741820999431" duration="7154000" />
       <workItem from="1741855361692" duration="1182000" />
       <workItem from="1741856560619" duration="2603000" />
+      <workItem from="1741874185001" duration="239000" />
+      <workItem from="1741874437582" duration="1610000" />
     </task>
     <servers />
   </component>
@@ -250,6 +236,33 @@
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/OpinionController.java</url>
+          <line>19</line>
+          <properties class="com.asiercl.server.controller.OpinionController" method="crearOpinion">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/OpinionController.java</url>
+          <line>38</line>
+          <properties class="com.asiercl.server.controller.OpinionController" method="obtenerOpinionesPorLocal">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/OpinionController.java</url>
+          <line>29</line>
+          <properties class="com.asiercl.server.controller.OpinionController" method="obtenerOpinionesPorId">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
