@@ -61,6 +61,11 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.activity.compose.rememberLauncherForActivityResult
+import android.graphics.Bitmap
+import android.net.Uri
+import java.io.ByteArrayOutputStream
+
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
@@ -536,21 +541,79 @@ class MapFragment : Fragment() {
         var accesibilidad by remember { mutableStateOf(0f) }
         val context = LocalContext.current
 
+        // Estado para mostrar el diálogo de selección de fuente de imagen
+        var showImageSourceDialog by remember { mutableStateOf(false) }
+        // Estado para almacenar la imagen seleccionada como ByteArray
+        var selectedImageByteArray by remember { mutableStateOf<ByteArray?>(null) }
+
+        // Launcher para capturar imagen desde la cámara (preview)
+        val cameraLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicturePreview()
+        ) { bitmap: Bitmap? ->
+            bitmap?.let {
+                val outputStream = ByteArrayOutputStream()
+                it.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                selectedImageByteArray = outputStream.toByteArray()
+            }
+        }
+
+        // Launcher para seleccionar imagen desde la galería
+        val galleryLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let {
+                // Lee el contenido del Uri y lo guarda en un ByteArray
+                context.contentResolver.openInputStream(it)?.use { inputStream ->
+                    selectedImageByteArray = inputStream.readBytes()
+                }
+            }
+        }
+
+        // Función para convertir el ByteArray a Base64 (si es necesario enviarlo como string)
+        fun byteArrayToBase64(bytes: ByteArray): String {
+            return android.util.Base64.encodeToString(bytes, android.util.Base64.DEFAULT)
+        }
+
         // Genera la fecha actual en formato ISO, por ejemplo "2025-03-12T12:30:00.000+0000"
         val formattedDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault()).format(Date())
+
+        // Diálogo para elegir la fuente de la imagen
+        if (showImageSourceDialog) {
+            AlertDialog(
+                onDismissRequest = { showImageSourceDialog = false },
+                title = { Text("Selecciona Fuente de Imagen") },
+                text = { Text("Elige entre tomar una foto o seleccionar desde la galería") },
+                confirmButton = {
+                    Button(onClick = {
+                        showImageSourceDialog = false
+                        cameraLauncher.launch(null) // Abre la cámara
+                    }) {
+                        Text("Cámara")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        showImageSourceDialog = false
+                        galleryLauncher.launch("image/*") // Abre la galería
+                    }) {
+                        Text("Galería")
+                    }
+                }
+            )
+        }
 
         AlertDialog(
             onDismissRequest = onDismiss,
             title = { Text("Añadir Opinión") },
             text = {
-                androidx.compose.foundation.layout.Column {
+                Column {
                     OutlinedTextField(
                         value = reviewText,
                         onValueChange = { reviewText = it },
                         label = { Text("Reseña") },
-                        modifier = androidx.compose.ui.Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     )
-                    androidx.compose.foundation.layout.Spacer(modifier = androidx.compose.ui.Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text("Ecosostenible: ${ecosostenible.toInt()}")
                     Slider(
                         value = ecosostenible,
@@ -572,24 +635,44 @@ class MapFragment : Fragment() {
                         valueRange = 0f..5f,
                         steps = 4
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    // Botón único para añadir foto
+                    Button(onClick = { showImageSourceDialog = true }) {
+                        Text("Añadir Foto")
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    // Muestra un mensaje simple según si se ha seleccionado una imagen
+                    if (selectedImageByteArray != null) {
+                        Text("Imagen seleccionada (${selectedImageByteArray!!.size} bytes)")
+                    }
                 }
             },
             confirmButton = {
                 Button(onClick = {
+                    // Se convierte el ByteArray a Base64 y se guarda en la lista de fotos (si se seleccionó imagen)
+                    val fotosList = if (selectedImageByteArray != null)
+                        listOf(byteArrayToBase64(selectedImageByteArray!!))
+                    else emptyList()
+
                     val newOpinion = Opinion(
-                        id = 0, // Se deja 0 para que el backend genere el id
-                        usuario = UsuarioForOpinion(nickname = "testuser"), // Valor de prueba, ya existe en la BD
+                        id = 0, // El backend generará el id
+                        usuario = UsuarioForOpinion(nickname = "testuser"), // Valor de prueba
                         local = LocalForOpinion(id = local.id),
                         fechaPublicacion = formattedDate,
                         resenaTexto = reviewText,
                         ecosostenible = ecosostenible.toInt(),
                         inclusionSocial = inclusionSocial.toInt(),
                         accesibilidad = accesibilidad.toInt(),
-                        fotos = emptyList()
+                        fotos = fotosList
                     )
 
-                    // Imprime en el log los atributos de newOpinion
-                    Log.e("NewOpinion", "id: ${newOpinion.id}, usuario: ${newOpinion.usuario.nickname}, local: ${newOpinion.local.id}, fechaPublicacion: ${newOpinion.fechaPublicacion}, resenaTexto: ${newOpinion.resenaTexto}, ecosostenible: ${newOpinion.ecosostenible}, inclusionSocial: ${newOpinion.inclusionSocial}, accesibilidad: ${newOpinion.accesibilidad}, fotos: ${newOpinion.fotos}")
+                    Log.e(
+                        "NewOpinion",
+                        "id: ${newOpinion.id}, usuario: ${newOpinion.usuario.nickname}, local: ${newOpinion.local.id}, " +
+                                "fechaPublicacion: ${newOpinion.fechaPublicacion}, resenaTexto: ${newOpinion.resenaTexto}, " +
+                                "ecosostenible: ${newOpinion.ecosostenible}, inclusionSocial: ${newOpinion.inclusionSocial}, " +
+                                "accesibilidad: ${newOpinion.accesibilidad}, fotos: ${newOpinion.fotos}"
+                    )
 
                     RetrofitClient.instance.createOpinion(newOpinion).enqueue(object : Callback<String> {
                         override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -615,4 +698,5 @@ class MapFragment : Fragment() {
             }
         )
     }
+
 }
