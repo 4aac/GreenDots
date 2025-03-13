@@ -11,6 +11,9 @@ import retrofit2.http.*
 interface ApiService {
 
     // Endpoints para Usuarios
+    @POST("/user/login")
+    fun login(@Body credentials: Map<String, String>): Call<Usuario>
+
     @POST("/user/new")
     fun createUser(@Body usuario: Usuario): Call<String>
 

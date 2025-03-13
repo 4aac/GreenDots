@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cb015baf-ea3f-44bc-85e9-84ca716980fe" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../movilapp/app/src/main/java/com/example/impacthon/ui/map/MapFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../movilapp/app/src/main/java/com/example/impacthon/ui/map/MapFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/UsuarioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/UsuarioController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -209,7 +208,7 @@
       <workItem from="1741855361692" duration="1182000" />
       <workItem from="1741856560619" duration="2603000" />
       <workItem from="1741874185001" duration="239000" />
-      <workItem from="1741874437582" duration="1610000" />
+      <workItem from="1741874437582" duration="4705000" />
     </task>
     <servers />
   </component>
@@ -221,7 +220,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/UsuarioController.java</url>
-          <line>57</line>
+          <line>72</line>
           <properties class="com.asiercl.server.controller.UsuarioController" method="subirImagen">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -230,7 +229,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/UsuarioController.java</url>
-          <line>114</line>
+          <line>129</line>
           <properties class="com.asiercl.server.controller.UsuarioController" method="eliminarImagen">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />

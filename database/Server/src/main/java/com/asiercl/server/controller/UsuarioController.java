@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -19,6 +20,20 @@ public class UsuarioController {
     private UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     // Endpoints //
+
+    @PostMapping("/login")
+    public ResponseEntity<Usuario> login(@RequestBody Map<String, String> credentials) {
+        String nickname = credentials.get("nickname");
+        String password = credentials.get("password");
+
+        Usuario usuario = usuarioDAO.obtenerUsuarioPorNickname(nickname);
+        if (usuario == null || !usuario.getPassword().equals(password)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(usuario);
+    }
+
+
 
     @GetMapping("/get/{nickname}")
     public Usuario getUser(@PathVariable String nickname) {
