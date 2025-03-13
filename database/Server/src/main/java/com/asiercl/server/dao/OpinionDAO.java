@@ -93,6 +93,37 @@ public class OpinionDAO {
         return opiniones;
     }
 
+    public List<Opinion> obtenerOpinionesPorUsuario(String usuarioNickname) {
+        List<Opinion> opiniones = new ArrayList<>();
+        String sql = "SELECT * FROM Opiniones WHERE usuarioNickname = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, usuarioNickname);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Opinion opinion = new Opinion(
+                        rs.getInt("id"),
+                        new Usuario(rs.getString("usuarioNickname"), "", "", "", null, false, null, new ArrayList<>()),
+                        new Local(rs.getInt("localId"), "", "", null, "", "", 0, 0, 0),
+                        rs.getTimestamp("fechaPublicacion"),
+                        rs.getString("resenaTexto"),
+                        rs.getInt("ecosostenible"),
+                        rs.getInt("inclusionSocial"),
+                        rs.getInt("accesibilidad"),
+                        new ArrayList<>()
+                );
+                opiniones.add(opinion);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return opiniones;
+    }
+
+
     public void actualizarOpinion(Opinion opinion) {
         String sql = "UPDATE Opiniones SET usuarioNickname = ?, localId = ?, resenaTexto = ?, ecosostenible = ?, inclusionSocial = ?, accesibilidad = ?, WHERE id = ?";
 

@@ -6,7 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="cb015baf-ea3f-44bc-85e9-84ca716980fe" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/UsuarioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/UsuarioController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/controller/OpinionController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/controller/OpinionController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/controller/UsuarioController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/controller/UsuarioController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/dao/OpinionDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/dao/OpinionDAO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/database/DatabaseConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/asiercl/server/database/DatabaseConnection.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/compileTransaction/stash-dir/OpinionController.class.uniqueId0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/OpinionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/asiercl/server/controller/OpinionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/asiercl/server/dao/OpinionDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/asiercl/server/dao/OpinionDAO.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +92,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.ServerApplication.executor": "Run",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "asier-info",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/home/osbby/Documents/Hackatoon/impacthon/database/Server",
     "node.js.detected.package.eslint": "true",

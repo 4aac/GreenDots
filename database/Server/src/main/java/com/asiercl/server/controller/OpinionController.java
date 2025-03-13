@@ -44,6 +44,15 @@ public class OpinionController {
         return ResponseEntity.ok(opiniones);
     }
 
+    @GetMapping("/get/user/{nickname}")
+    public ResponseEntity<List<Opinion>> obtenerOpinionesPorUsuario(@PathVariable String nickname) {
+        List<Opinion> opiniones = opinionDAO.obtenerOpinionesPorUsuario(nickname);
+        if (opiniones.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(opiniones);
+        }
+        return ResponseEntity.ok(opiniones);
+    }
+
     // Añadir imagen a opinion
     @PostMapping("/uploadImage/{id}")
     public ResponseEntity<String> subirImagen(@PathVariable int id, @RequestParam("imagen") MultipartFile file) {
