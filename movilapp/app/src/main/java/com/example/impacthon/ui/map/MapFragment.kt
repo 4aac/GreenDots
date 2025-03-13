@@ -425,7 +425,12 @@ class MapFragment : Fragment() {
                     InfoCard(
                         nombre = local.nombre,
                         categoria = local.categoria,
-                        ubicacion = local.ubicacion
+                        ubicacion = local.ubicacion,
+                        ecosostenible = local.ecosostenible,
+                        accesibilidad = local.accesibilidad,
+                        inclusion_social = local.inclusionSocial
+
+
                     )
                     // Botones justo debajo de la tarjeta de Ubicación
                     Row(
@@ -449,11 +454,23 @@ class MapFragment : Fragment() {
                                             opinionesList = response.body() ?: emptyList()
                                             showOpinionsDialog = true
                                         } else {
-                                            Toast.makeText(context, "Error al obtener opiniones", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(
+                                                context,
+                                                "Error al obtener opiniones",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
                                     }
-                                    override fun onFailure(call: Call<List<Opinion>>, t: Throwable) {
-                                        Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
+
+                                    override fun onFailure(
+                                        call: Call<List<Opinion>>,
+                                        t: Throwable
+                                    ) {
+                                        Toast.makeText(
+                                            context,
+                                            "Fallo en la petición: ${t.message}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 })
                         }) {
@@ -502,7 +519,11 @@ class MapFragment : Fragment() {
     fun InfoCard(
         nombre: String,
         categoria: String,
-        ubicacion: String
+        ubicacion: String,
+        ecosostenible: Int,
+        accesibilidad: Int,
+        inclusion_social: Int
+
     ) {
         Column(
             modifier = Modifier
@@ -605,6 +626,99 @@ class MapFragment : Fragment() {
                     )
                 }
             }
+
+            // Tarjeta de Ecosostenible
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp), // Tarjeta más fina
+                elevation = 6.dp,
+                backgroundColor = colorResource(id = R.color.white)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Ecosostenible:",
+                        style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
+                        color = colorResource(id = R.color.black),
+                        modifier = Modifier.weight(0.3f)
+                    )
+                    Text(
+                        text = ecosostenible,
+                        style = MaterialTheme.typography.body2,
+                        color = colorResource(id = R.color.black),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(0.7f)
+                    )
+                }
+                // Tarjeta de Accesibilidad
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp), // Tarjeta más fina
+                    elevation = 6.dp,
+                    backgroundColor = colorResource(id = R.color.white)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Accesibilidad:",
+                            style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
+                            color = colorResource(id = R.color.black),
+                            modifier = Modifier.weight(0.3f)
+                        )
+                        Text(
+                            text = accesibilidad,
+                            style = MaterialTheme.typography.body2,
+                            color = colorResource(id = R.color.black),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(0.7f)
+                        )
+                    }
+
+                    // Tarjeta de Inclusión social
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp), // Tarjeta más fina
+                        elevation = 6.dp,
+                        backgroundColor = colorResource(id = R.color.white)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Inclusión:",
+                                style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
+                                color = colorResource(id = R.color.black),
+                                modifier = Modifier.weight(0.3f)
+                            )
+                            Text(
+                                text = inclusion_social,
+                                style = MaterialTheme.typography.body2,
+                                color = colorResource(id = R.color.black),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(0.7f)
+                            )
+                        }
+            }
         }
     }
 
@@ -630,7 +744,9 @@ class MapFragment : Fragment() {
                         label = { Text("Reseña") },
                         modifier = androidx.compose.ui.Modifier.fillMaxWidth()
                     )
-                    androidx.compose.foundation.layout.Spacer(modifier = androidx.compose.ui.Modifier.height(8.dp))
+                    androidx.compose.foundation.layout.Spacer(modifier = androidx.compose.ui.Modifier.height(
+                        8.dp
+                    ))
                     Text("Ecosostenible: ${ecosostenible.toInt()}")
                     Slider(
                         value = ecosostenible,
