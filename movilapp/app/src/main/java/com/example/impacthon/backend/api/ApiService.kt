@@ -52,6 +52,8 @@ interface ApiService {
     @POST("/opiniones/crear")
     fun createOpinion(@Body opinion: Opinion): Call<String>
 
-    @GET("/opiniones/local/{id}")
+    @GET("/opiniones/get/local/{id}")
     fun getOpinionesPorLocal(@Path("id") id: Int): Call<List<Opinion>>
+
+
 }
