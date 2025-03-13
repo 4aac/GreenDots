@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
@@ -29,7 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import com.example.impacthon.R
-import com.example.impacthon.backend.RetrofitClient
+import com.example.impacthon.backend.api.RetrofitClient
 import com.example.impacthon.backend.models.Local
 import com.example.impacthon.backend.models.LocalForOpinion
 import com.example.impacthon.backend.models.Opinion
@@ -383,6 +384,11 @@ class MapFragment : Fragment() {
 
     @Composable
     fun MarkerInfoSheet(local: Local, onClose: () -> Unit, onAddOpinion: () -> Unit) {
+        // Estados para gestionar la visualización del diálogo de opiniones y almacenar la lista obtenida
+        var showOpinionsDialog by remember { mutableStateOf(false) }
+        var opinionesList by remember { mutableStateOf<List<Opinion>>(emptyList()) }
+        val context = LocalContext.current
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -413,25 +419,96 @@ class MapFragment : Fragment() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
-                        .weight(1f), // Ocupa el espacio disponible, dejando lugar para el botón debajo
+                        .weight(1f),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     InfoCard(title = "Nombre", description = local.nombre)
                     InfoCard(title = "Dirección", description = local.ubicacion)
                     InfoCard(title = "Categoría", description = local.categoria)
                 }
-                // Botón para añadir opinión, ubicado debajo de las info cards
-                Button(
-                    onClick = onAddOpinion,
+                // Botones para añadir opinión y ver opiniones
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text("Añadir Opinión")
+                    Button(onClick = onAddOpinion) {
+                        Text("Añadir Opinión")
+                    }
+                    Button(onClick = {
+                        // Realiza la llamada para obtener opiniones del local
+                        opinionesList = emptyList()
+                        RetrofitClient.instance.getOpinionesPorLocal(local.id)
+                            .enqueue(object : Callback<List<Opinion>> {
+                                override fun onResponse(
+                                    call: Call<List<Opinion>>,
+                                    response: Response<List<Opinion>>
+                                ) {
+                                    if (response.isSuccessful) {
+                                        opinionesList = response.body()!!
+                                        showOpinionsDialog = true
+                                    } else if (response.body() == null){
+                                        showOpinionsDialog = true
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Error al obtener opiniones",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                                override fun onFailure(call: Call<List<Opinion>>, t: Throwable) {
+                                    Toast.makeText(
+                                        context,
+                                        "Fallo en la petición: ${t.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            })
+                    }) {
+                        Text("Ver Opiniones")
+                    }
                 }
             }
         }
+
+        // Diálogo para mostrar las opiniones obtenidas
+        if (showOpinionsDialog) {
+            AlertDialog(
+                onDismissRequest = { showOpinionsDialog = false },
+                title = { Text("Opiniones del Local") },
+                text = {
+                    // Muestra la lista de opiniones en un Column con scroll
+                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                        if (opinionesList.isEmpty()) {
+                            Text("No hay opiniones disponibles.")
+                        } else {
+                            opinionesList.forEach { opinion ->
+                                Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                                    Text(
+                                        text = "Usuario: ${opinion.usuario.nickname}",
+                                        style = MaterialTheme.typography.subtitle2
+                                    )
+                                    Text(
+                                        text = "Reseña: ${opinion.resenaTexto}",
+                                        style = MaterialTheme.typography.body2
+                                    )
+                                    Divider(modifier = Modifier.padding(vertical = 4.dp))
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { showOpinionsDialog = false }) {
+                        Text("Cerrar")
+                    }
+                }
+            )
+        }
     }
+
 
     @Composable
     fun InfoCard(title: String, description: String) {
