@@ -22,7 +22,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
@@ -71,6 +70,8 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import java.io.ByteArrayOutputStream
 import androidx.compose.ui.graphics.Color
@@ -142,83 +143,6 @@ class MapFragment : Fragment() {
             modifier = modifier
         )
     }
-
-
-    /*
-    @OptIn(ExperimentalMaterialApi::class)
-    @Composable
-    fun SearchBar(
-        modifier: Modifier = Modifier,
-        onCitySelected: (String) -> Unit
-    ) {
-        var expanded by remember { mutableStateOf(false) }
-        var selectedCity by remember { mutableStateOf("") }
-        val cities = listOf("Vigo", "Santiago", "A Coruña", "Pontevedra")
-
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded },
-            modifier = modifier
-                .background(
-                    color = Color(0xFF81C784).copy(alpha = 0.75f), // Fondo con 75% de opacidad
-                    shape = RoundedCornerShape(16.dp) // Esquinas redondeadas
-                )
-                .padding(8.dp)
-        ) {
-            OutlinedTextField(
-                value = selectedCity,
-                onValueChange = { /* No editable */ },
-                readOnly = true,
-                placeholder = {
-                    Text(
-                        "Buscar ciudad",
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center, // Centra el texto
-                        style = MaterialTheme.typography.body1.copy(color = Color.Gray)
-                    )
-                },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp) // Bordes redondeados en el TextField
-            )
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(color = Color(0XDAE2CF).copy(alpha = 0.75f))
-            ) {
-                cities.forEach { city ->
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedCity = city
-                            expanded = false
-                            onCitySelected(city)
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        // Utilizamos un Box para centrar el contenido del menú
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = city,
-                                style = MaterialTheme.typography.body1.copy(
-                                    color = MaterialTheme.colors.onSurface,
-                                    fontWeight = FontWeight.Medium // Cambia el peso para un toque elegante
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-    */
-
 
     /**
      * Función para obtener todos los locales usando Retrofit.
@@ -401,7 +325,7 @@ class MapFragment : Fragment() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 64.dp),
+                    .padding(bottom = 80.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 MapboxMap(
@@ -445,51 +369,22 @@ class MapFragment : Fragment() {
                         }
                     }
                 }
-
-                // Botón Globe Fly To
-                Button(
-                    onClick = {
-                        mapboxMapRef.value?.flyTo(
-                            cameraOptions {
-                                center(Point.fromLngLat(-8.544449809109203, 42.877164812903274))
-                                zoom(13.5)
-                                pitch(75.0)
-                                bearing(130.0)
-                            },
-                            mapAnimationOptions { duration(6000) },
-                            animatorListener = object : Animator.AnimatorListener {
-                                override fun onAnimationStart(animation: Animator) {}
-                                override fun onAnimationEnd(animation: Animator) {
-                                    mapboxMapRef.value?.flyTo(
-                                        cameraOptions {
-                                            center(Point.fromLngLat(-8.544449809109203, 42.877164812903274))
-                                            zoom(13.5)
-                                            pitch(0.0)
-                                            bearing(0.0)
-                                        },
-                                        mapAnimationOptions { duration(3000) }
-                                    )
-                                }
-                                override fun onAnimationCancel(animation: Animator) {}
-                                override fun onAnimationRepeat(animation: Animator) {}
-                            }
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(text = "Globe Fly To")
-                }
-
-                Button(
-                    onClick = { mapViewportState.transitionToFollowPuckState() },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Text(text = "Center on My Location")
-                }
+            }
+            FloatingActionButton(
+                onClick = {
+                    // Llama a tu método para centrar el mapa en la ubicación actual
+                    mapViewportState.transitionToFollowPuckState()
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
+                    .padding(bottom = 86.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MyLocation,
+                    contentDescription = "Ir a mi ubicación",
+                    modifier = Modifier.size(24.dp)
+                )
             }
             SearchBarDropdown(
                 modifier = Modifier
@@ -505,16 +400,7 @@ class MapFragment : Fragment() {
                         "Santiago" -> Pair(-8.546, 42.878)
                         else -> Pair(-3.74922, 40.463667)
                     }
-                    // Ejecuta el flyTo hacia la ciudad seleccionada
-                    mapboxMapRef.value?.flyTo(
-                        cameraOptions {
-                            center(Point.fromLngLat(lng, lat))
-                            zoom(13.5)
-                            pitch(0.0)
-                            bearing(0.0)
-                        },
-                        mapAnimationOptions { duration(3000) }
-                    )
+                    animateFlyTo(mapboxMapRef, lng, lat)
                 }
             )
 
@@ -531,6 +417,36 @@ class MapFragment : Fragment() {
             NewOpinionFormDialog(local = markerLocal.value!!, onDismiss = { showNewOpinionForm = false })
         }
     }
+
+    fun animateFlyTo(mapboxMapRef: MutableState<MapboxMap?>, lng: Double, lat: Double) {
+        mapboxMapRef.value?.flyTo(
+            cameraOptions {
+                center(Point.fromLngLat(lng, lat))
+                zoom(13.5)
+                pitch(75.0)
+                bearing(130.0)
+            },
+            mapAnimationOptions { duration(4500) },
+            animatorListener = object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {}
+                override fun onAnimationEnd(animation: Animator) {
+                    mapboxMapRef.value?.flyTo(
+                        cameraOptions {
+                            center(Point.fromLngLat(lng, lat))
+                            zoom(13.5)
+                            pitch(0.0)
+                            bearing(0.0)
+                        },
+                        mapAnimationOptions { duration(1750) }
+                    )
+                }
+                override fun onAnimationCancel(animation: Animator) {}
+                override fun onAnimationRepeat(animation: Animator) {}
+            }
+        )
+    }
+
+
 
 
     @Composable
