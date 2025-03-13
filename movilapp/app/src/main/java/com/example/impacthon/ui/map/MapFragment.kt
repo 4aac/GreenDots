@@ -63,26 +63,16 @@ import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.res.colorResource
-import androidx.activity.compose.rememberLauncherForActivityResult
-import android.graphics.Bitmap
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import java.io.ByteArrayOutputStream
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
 
 
@@ -336,8 +326,6 @@ class MapFragment : Fragment() {
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 MapboxMap(
-
-                    scaleBar = { },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize(),
@@ -376,7 +364,6 @@ class MapFragment : Fragment() {
                             puckBearingEnabled = true
                             enabled = true
                         }
-
                     }
                 }
             }
@@ -800,10 +787,7 @@ class MapFragment : Fragment() {
     }
 
     @Composable
-    fun NewOpinionFormDialog(
-        local: com.example.impacthon.backend.models.Local,
-        onDismiss: () -> Unit
-    ) {
+    fun NewOpinionFormDialog(local: com.example.impacthon.backend.models.Local, onDismiss: () -> Unit) {
         var reviewText by remember { mutableStateOf("") }
         var ecosostenible by remember { mutableStateOf(0f) }
         var inclusionSocial by remember { mutableStateOf(0f) }
@@ -844,10 +828,7 @@ class MapFragment : Fragment() {
         }
 
         // Genera la fecha actual en formato ISO, por ejemplo "2025-03-12T12:30:00.000+0000"
-        val formattedDate = SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
-            Locale.getDefault()
-        ).format(Date())
+        val formattedDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault()).format(Date())
 
         // Diálogo para elegir la fuente de la imagen
         if (showImageSourceDialog) {
@@ -886,7 +867,6 @@ class MapFragment : Fragment() {
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-
                     Text("Ecosostenible: ${ecosostenible.toInt()}")
                     Slider(
                         value = ecosostenible,
@@ -938,6 +918,7 @@ class MapFragment : Fragment() {
                         accesibilidad = accesibilidad.toInt(),
                         fotos = fotosList
                     )
+
                     Log.e(
                         "NewOpinion",
                         "id: ${newOpinion.id}, usuario: ${newOpinion.usuario.nickname}, local: ${newOpinion.local.id}, " +
@@ -946,35 +927,18 @@ class MapFragment : Fragment() {
                                 "accesibilidad: ${newOpinion.accesibilidad}, fotos: ${newOpinion.fotos}"
                     )
 
-                    RetrofitClient.instance.createOpinion(newOpinion)
-                        .enqueue(object : Callback<String> {
-                            override fun onResponse(
-                                call: Call<String>,
-                                response: Response<String>
-                            ) {
-                                if (response.isSuccessful) {
-                                    Toast.makeText(
-                                        context,
-                                        "Opinión enviada exitosamente",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "Error al enviar opinión",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                    RetrofitClient.instance.createOpinion(newOpinion).enqueue(object : Callback<String> {
+                        override fun onResponse(call: Call<String>, response: Response<String>) {
+                            if (response.isSuccessful) {
+                                Toast.makeText(context, "Opinión enviada exitosamente", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Error al enviar opinión", Toast.LENGTH_SHORT).show()
                             }
-
-                            override fun onFailure(call: Call<String>, t: Throwable) {
-                                Toast.makeText(
-                                    context,
-                                    "Fallo en la petición: ${t.message}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        })
+                        }
+                        override fun onFailure(call: Call<String>, t: Throwable) {
+                            Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    })
                     onDismiss()
                 }) {
                     Text("Enviar Opinión")
@@ -987,4 +951,5 @@ class MapFragment : Fragment() {
             }
         )
     }
+
 }

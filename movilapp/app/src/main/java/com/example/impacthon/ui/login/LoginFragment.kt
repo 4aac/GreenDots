@@ -65,10 +65,13 @@ class LoginFragment : Fragment() {
                     if (response.isSuccessful && response.body() != null) {
                         // Si el inicio de sesión es exitoso, actualizar el estado de inicio de sesión
                         usuario = response.body()
-                        loginViewModel.setUserLoggedIn()
+                        usuario?.let { it1 -> loginViewModel.setUserLoggedIn(it1) }
+
+                        val bundle = Bundle()
+                        bundle.putParcelable("usuario", usuario)
 
                         // Navegar al ProfileFragment
-                        findNavController().navigate(R.id.navigation_profile) // Regresar al ProfileFragment
+                        findNavController().navigate(R.id.navigation_profile, bundle) // Regresar al ProfileFragment
                     } else {
                         Toast.makeText(context, "Error al obtener el Usuario", Toast.LENGTH_SHORT).show()
                     }

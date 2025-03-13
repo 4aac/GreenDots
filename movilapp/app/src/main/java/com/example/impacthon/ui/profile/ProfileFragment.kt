@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.example.impacthon.R
+import com.example.impacthon.backend.models.Usuario
 import com.example.impacthon.databinding.FragmentProfileBinding
 import com.example.impacthon.ui.ViewModelFactory
 import com.example.impacthon.ui.login.LoginFragment
@@ -18,6 +19,7 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var profileViewModel: ProfileViewModel
+    private var usuario: Usuario? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,7 +49,26 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showProfileDetails() {
-        binding.profileContainer.visibility = View.VISIBLE
+        arguments?.let {
+            usuario = it.getParcelable("usuario")!! // Asegúrate de que Usuario es Parcelable
+        }
+
+        // Verifica si el usuario no es nulo antes de mostrar los detalles
+        usuario?.let {
+            binding.textFullName.text = it.nombre // Rellenar el TextView con el nombre
+            binding.textNickname.text = it.nickname // Rellenar el TextView con el nickname
+            binding.profileContainer.visibility = View.VISIBLE
+        } ?: run {
+            // Si el usuario es nulo, puedes manejarlo aquí
+            // Por ejemplo, ocultar el contenedor del perfil
+            usuario = profileViewModel.usuarioLogueado()
+
+            binding.textFullName.text = usuario!!.nombre // Rellenar el TextView con el nombre
+            binding.textNickname.text = usuario!!.nickname // Rellenar el TextView con el nickname
+            binding.profileContainer.visibility = View.VISIBLE
+            //binding.profileContainer.visibility = View.GONE
+        }
+
     }
 
     private fun showLoginFragment() {

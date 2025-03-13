@@ -1,7 +1,8 @@
 package com.example.impacthon.backend.models
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import java.sql.Timestamp
 
 data class Usuario(
     val nickname: String,
@@ -10,8 +11,9 @@ data class Usuario(
     val password: String,
     @SerializedName("fechaCreacion") val fechaCreacion: String,
     val admin: Boolean,
-    val fotoPerfil: ByteArray?, // El JSON lo envía como null, por lo que se usa ByteArray?
-) {
+    val fotoPerfil: ByteArray? // El JSON lo envía como null, por lo que se usa ByteArray?
+) : Parcelable {
+
     // Función para verificar si el usuario es administrador
     fun esAdmin(): Boolean {
         return admin
@@ -20,6 +22,39 @@ data class Usuario(
     // Función para obtener una representación en cadena del usuario sin la contraseña
     override fun toString(): String {
         return "Usuario(nickname='$nickname', nombre='$nombre', email='$email', fechaCreacion='$fechaCreacion', admin=$admin)"
+    }
+
+    // Implementación de Parcelable
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(nickname)
+        parcel.writeString(nombre)
+        parcel.writeString(email)
+        parcel.writeString(password)
+        parcel.writeString(fechaCreacion)
+        parcel.writeByte(if (admin) 1 else 0)
+        parcel.writeByteArray(fotoPerfil)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Usuario> {
+        override fun createFromParcel(parcel: Parcel): Usuario {
+            return Usuario(
+                nickname = parcel.readString() ?: "",
+                nombre = parcel.readString() ?: "",
+                email = parcel.readString() ?: "",
+                password = parcel.readString() ?: "",
+                fechaCreacion = parcel.readString() ?: "",
+                admin = parcel.readByte() != 0.toByte(),
+                fotoPerfil = parcel.createByteArray()
+            )
+        }
+
+        override fun newArray(size: Int): Array<Usuario?> {
+            return arrayOfNulls(size)
+        }
     }
 
     override fun equals(other: Any?): Boolean {
