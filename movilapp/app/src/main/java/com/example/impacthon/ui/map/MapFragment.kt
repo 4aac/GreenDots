@@ -3,6 +3,7 @@ package com.example.impacthon.ui.map
 import android.Manifest
 import android.animation.Animator
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -74,11 +75,15 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.ViewModelProvider
+import com.example.impacthon.ui.ViewModelFactory
+import com.example.impacthon.ui.profile.ProfileViewModel
 
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
+    private lateinit var mapViewModel: MapViewModel
 
     /**
      * Función para obtener un Local por su ID usando Retrofit.
@@ -222,6 +227,8 @@ class MapFragment : Fragment() {
         container: android.view.ViewGroup?,
         savedInstanceState: Bundle?
     ): android.view.View {
+        mapViewModel = ViewModelProvider(this, ViewModelFactory(requireContext())).get(MapViewModel::class.java)
+
         return ComposeView(requireContext()).apply {
             setContent { MapScreenWithPermissions(permissionsGranted) }
         }
@@ -793,6 +800,7 @@ class MapFragment : Fragment() {
         var inclusionSocial by remember { mutableStateOf(0f) }
         var accesibilidad by remember { mutableStateOf(0f) }
         val context = LocalContext.current
+        var nickname = mapViewModel.nicknameUsuario()
 
         // Estado para mostrar el diálogo de selección de fuente de imagen
         var showImageSourceDialog by remember { mutableStateOf(false) }
@@ -909,7 +917,7 @@ class MapFragment : Fragment() {
 
                     val newOpinion = Opinion(
                         id = 0, // El backend generará el id
-                        usuario = UsuarioForOpinion(nickname = "juan23"), // Valor de prueba
+                        usuario = UsuarioForOpinion(nickname = nickname), // Valor de prueba
                         local = LocalForOpinion(id = local.id),
                         fechaPublicacion = formattedDate,
                         resenaTexto = reviewText,
