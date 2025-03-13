@@ -1,7 +1,9 @@
-package com.example.impacthon.backend
+package com.example.impacthon.backend.api
 
 import com.example.impacthon.backend.models.Local
 import com.example.impacthon.backend.models.Usuario
+import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import com.example.impacthon.backend.models.Opinion
 import retrofit2.Call
 import retrofit2.http.*
@@ -20,6 +22,18 @@ interface ApiService {
 
     @DELETE("/user/delete/{nickname}")
     fun deleteUser(@Path("nickname") nickname: String): Call<Void>
+
+    // Obtener foto de usuario
+    @GET("/user/image/{nickname}")
+    fun getUserImage(@Path("nickname") nickname: String): Call<ResponseBody>
+
+    // Subir foto de usuario
+    @Multipart
+    @POST("/user/upload/{nickname}")
+    fun uploadUserImage(
+        @Path("nickname") nickname: String,
+        @Part imagen: MultipartBody.Part
+    ): Call<String>
 
     // Endpoints para Locales
     @GET("/local/get/{id}")

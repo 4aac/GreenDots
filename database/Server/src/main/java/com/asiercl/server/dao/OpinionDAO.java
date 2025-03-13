@@ -32,6 +32,36 @@ public class OpinionDAO {
         }
     }
 
+    // Método para obtener opinion en especifico
+    public Opinion obtenerOpinionesPorId(int Id) {
+        Opinion opinion = null;
+        String sql = "SELECT * FROM Opiniones WHERE Id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, Id);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                opinion = new Opinion(
+                        rs.getInt("id"),
+                        new Usuario(rs.getString("usuarioNickname"), "", "", "", null, false, null, new ArrayList<>()),
+                        new Local(rs.getInt("localId"), "", "", null, "", "", 0, 0, 0),
+                        rs.getTimestamp("fechaPublicacion"),
+                        rs.getString("resenaTexto"),
+                        rs.getInt("ecosostenible"),
+                        rs.getInt("inclusionSocial"),
+                        rs.getInt("accesibilidad"),
+                        new ArrayList<>()
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return opinion;
+    }
+
     // Método para obtener opiniones de un local específico
     public List<Opinion> obtenerOpinionesPorLocal(int localId) {
         List<Opinion> opiniones = new ArrayList<>();
@@ -61,5 +91,26 @@ public class OpinionDAO {
             e.printStackTrace();
         }
         return opiniones;
+    }
+
+    public void actualizarOpinion(Opinion opinion) {
+        String sql = "UPDATE Opiniones SET usuarioNickname = ?, localId = ?, resenaTexto = ?, ecosostenible = ?, inclusionSocial = ?, accesibilidad = ?, WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            pstmt.setString(1, opinion.getUsuario().getNickname());
+            pstmt.setInt(2, opinion.getLocal().getId());
+            pstmt.setString(3, opinion.getResenaTexto());
+            pstmt.setInt(4, opinion.getEcosostenible());
+            pstmt.setInt(5, opinion.getInclusionSocial());
+            pstmt.setInt(6, opinion.getAccesibilidad());
+
+            pstmt.setInt(7, opinion.getId());
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

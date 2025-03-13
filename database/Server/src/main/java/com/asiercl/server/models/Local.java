@@ -39,9 +39,14 @@ public class Local {
     public int getEcosostenible() { return ecosostenible; }
     public int getInclusionSocial() { return inclusionSocial; }
     public int getAccesibilidad() { return accesibilidad; }
+
+    public ArrayList<byte[]> getFotos() { return fotos; }
     public ArrayList<Opinion> getOpiniones() { return opiniones; }
+
+    public void addFoto(byte[] foto) { fotos.add(foto); }
 
     public void agregarOpinion(Opinion opinion) {
         opiniones.add(opinion);
     }
+    public void eliminarOpinion(Opinion opinion) { opiniones.remove(opinion); }
 }

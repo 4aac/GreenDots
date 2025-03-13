@@ -1,11 +1,14 @@
 package com.asiercl.server.controller;
 
 import com.asiercl.server.dao.OpinionDAO;
+import com.asiercl.server.models.Local;
 import com.asiercl.server.models.Opinion;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,12 +26,47 @@ public class OpinionController {
         }
     }
 
-    @GetMapping("/local/{id}")
+    @GetMapping("/get/{id}")
+    public ResponseEntity<Opinion> obtenerOpinionesPorId(@PathVariable int id) {
+        Opinion opinion = opinionDAO.obtenerOpinionesPorId(id);
+        if (opinion == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(opinion);
+        }
+        return ResponseEntity.ok(opinion);
+    }
+
+    @GetMapping("/get/local/{id}")
     public ResponseEntity<List<Opinion>> obtenerOpinionesPorLocal(@PathVariable int id) {
         List<Opinion> opiniones = opinionDAO.obtenerOpinionesPorLocal(id);
         if (opiniones.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(opiniones);
         }
         return ResponseEntity.ok(opiniones);
+    }
+
+    // Añadir imagen a opinion
+    @PostMapping("/uploadImage/{id}")
+    public ResponseEntity<String> subirImagen(@PathVariable int id, @RequestParam("imagen") MultipartFile file) {
+        try {
+            Opinion opinion = opinionDAO.obtenerOpinionesPorId(id);
+            if (opinion == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Opinion no encontrada.");
+            }
+
+            byte[] imagenBytes = file.getBytes();
+
+            // Verificar que la imagen no esté vacía
+            System.out.println("Tamaño de la imagen recibida: " + imagenBytes.length + " bytes");
+
+            if (imagenBytes.length == 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Archivo vacío.");
+            }
+
+            opinion.addFoto(file.getBytes());
+            opinionDAO.actualizarOpinion(opinion);
+            return ResponseEntity.ok("Imagen subida con éxito.");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al subir la imagen.");
+        }
     }
 }

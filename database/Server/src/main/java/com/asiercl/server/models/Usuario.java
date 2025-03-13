@@ -33,6 +33,7 @@ public class Usuario {
     public boolean isAdmin() { return admin; }
     public ArrayList<Local> getFavoritos() { return favoritos; }
     public byte[] getFotoPerfil() { return fotoPerfil; }
+    public void setFotoPerfil(byte[] fotoPerfil) { this.fotoPerfil = fotoPerfil; }
 
     public void setFechaCreacion(Timestamp fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
