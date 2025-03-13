@@ -57,6 +57,4 @@ interface ApiService {
 
     @GET("/opiniones/get/local/{id}")
     fun getOpinionesPorLocal(@Path("id") id: Int): Call<List<Opinion>>
-
-
 }
