@@ -22,7 +22,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
@@ -64,6 +63,24 @@ import java.util.Locale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.res.colorResource
+import androidx.activity.compose.rememberLauncherForActivityResult
+import android.graphics.Bitmap
+import android.net.Uri
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import java.io.ByteArrayOutputStream
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.viewinterop.AndroidView
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
@@ -89,6 +106,45 @@ class MapFragment : Fragment() {
                 onResult(null)
             }
         })
+    }
+
+    @Composable
+    fun SearchBarDropdown(
+        modifier: Modifier = Modifier,
+        onCitySelected: (String) -> Unit
+    ) {
+        AndroidView(
+            factory = { context ->
+                LayoutInflater.from(context).inflate(R.layout.search_bar, null, false).apply {
+                    val spinner = findViewById<Spinner>(R.id.city_spinner)
+                    val cities = context.resources.getStringArray(R.array.cities_array).toMutableList()
+
+                    cities.add(0, "Seleccionar una ciudad")
+                    // Crea un ArrayAdapter con un layout personalizado para el ítem seleccionado
+                    val adapter = ArrayAdapter(context, R.layout.spinner_items, cities).apply {
+                        // Establece el layout para los ítems desplegados
+                        setDropDownViewResource(R.layout.spinner_items)
+                    }
+                    spinner.adapter = adapter
+
+                    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            if (position > 0) {
+                                val city = parent?.getItemAtPosition(position) as String
+                                onCitySelected(city)
+                            }
+                        }
+                        override fun onNothingSelected(parent: AdapterView<*>?) { }
+                    }
+                }
+            },
+            modifier = modifier
+        )
     }
 
     /**
@@ -228,20 +284,15 @@ class MapFragment : Fragment() {
     fun MapScreen() {
         val context = LocalContext.current
 
-        // Estado para mostrar la información de un marker seleccionado
+        // Estados y lógica existente
         var showMarkerInfo by remember { mutableStateOf(false) }
         val markerLocal = remember { mutableStateOf<Local?>(null) }
-        // Estado para almacenar todos los locales obtenidos de la API
         var allLocales by remember { mutableStateOf<List<Local>>(emptyList()) }
-        // Estado para controlar si se muestra el formulario para añadir opinión
         var showNewOpinionForm by remember { mutableStateOf(false) }
 
-        // Cargar todos los locales al iniciar el Composable
         LaunchedEffect(Unit) {
             fetchAllLocales(context) { locales ->
-                if (locales != null) {
-                    allLocales = locales
-                }
+                locales?.let { allLocales = it }
             }
         }
 
@@ -277,10 +328,12 @@ class MapFragment : Fragment() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 64.dp),
+                    .padding(bottom = 80.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 MapboxMap(
+
+                    scaleBar = { },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize(),
@@ -296,17 +349,14 @@ class MapFragment : Fragment() {
                     style = { MapStyle(style = "mapbox://styles/martindios/cm851rhgo004q01qzbcrg0fb9") }
                 ) {
                     val markerResourceId = R.drawable.red_marker
-                    // Usamos la misma imagen de marker para todos
                     val markerIcon = rememberIconImage(key = markerResourceId, painter = painterResource(markerResourceId))
-                    // Iteramos sobre cada local obtenido y agregamos un marker en su ubicación
                     allLocales.forEach { local ->
                         parseLocation(local.ubicacion)?.let { (lat, lng) ->
                             PointAnnotation(
-                                point = Point.fromLngLat(lng, lat) // Mapbox espera (lng, lat)
+                                point = Point.fromLngLat(lng, lat)
                             ) {
                                 iconImage = markerIcon
                                 interactionsState.onClicked {
-                                    // Al hacer click en el marker, se muestra la info del local correspondiente
                                     markerLocal.value = local
                                     showMarkerInfo = true
                                     true
@@ -322,53 +372,43 @@ class MapFragment : Fragment() {
                             puckBearingEnabled = true
                             enabled = true
                         }
+
                     }
                 }
-
-                Button(
-                    onClick = {
-                        mapboxMapRef.value?.flyTo(
-                            cameraOptions {
-                                center(Point.fromLngLat(-8.544449809109203, 42.877164812903274))
-                                zoom(13.5)
-                                pitch(75.0)
-                                bearing(130.0)
-                            },
-                            mapAnimationOptions { duration(6000) },
-                            animatorListener = object : Animator.AnimatorListener {
-                                override fun onAnimationStart(animation: Animator) {}
-                                override fun onAnimationEnd(animation: Animator) {
-                                    mapboxMapRef.value?.flyTo(
-                                        cameraOptions {
-                                            center(Point.fromLngLat(-8.544449809109203, 42.877164812903274))
-                                            zoom(13.5)
-                                            pitch(0.0)
-                                            bearing(0.0)
-                                        },
-                                        mapAnimationOptions { duration(3000) }
-                                    )
-                                }
-                                override fun onAnimationCancel(animation: Animator) {}
-                                override fun onAnimationRepeat(animation: Animator) {}
-                            }
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(text = "Globe Fly To")
-                }
-
-                Button(
-                    onClick = { mapViewportState.transitionToFollowPuckState() },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Text(text = "Center on My Location")
-                }
             }
+            FloatingActionButton(
+                onClick = {
+                    // Llama a tu método para centrar el mapa en la ubicación actual
+                    mapViewportState.transitionToFollowPuckState()
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
+                    .padding(bottom = 86.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MyLocation,
+                    contentDescription = "Ir a mi ubicación",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            SearchBarDropdown(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .offset(y = 50.dp),  // Ajusta según lo necesites
+                onCitySelected = { city ->
+                    // Define las coordenadas para cada ciudad
+                    val (lng, lat) = when (city) {
+                        "Vigo" -> Pair(-8.720, 42.240)
+                        "Pontevedra" -> Pair(-8.640, 42.431)
+                        "A Coruña" -> Pair(-8.406, 43.362)
+                        "Santiago" -> Pair(-8.546, 42.878)
+                        else -> Pair(-3.74922, 40.463667)
+                    }
+                    animateFlyTo(mapboxMapRef, lng, lat)
+                }
+            )
 
             if (showMarkerInfo && markerLocal.value != null) {
                 MarkerInfoSheet(
@@ -379,11 +419,41 @@ class MapFragment : Fragment() {
             }
         }
 
-        // Mostrar el formulario para añadir opinión si se activa
         if (showNewOpinionForm && markerLocal.value != null) {
             NewOpinionFormDialog(local = markerLocal.value!!, onDismiss = { showNewOpinionForm = false })
         }
     }
+
+    fun animateFlyTo(mapboxMapRef: MutableState<MapboxMap?>, lng: Double, lat: Double) {
+        mapboxMapRef.value?.flyTo(
+            cameraOptions {
+                center(Point.fromLngLat(lng, lat))
+                zoom(13.5)
+                pitch(75.0)
+                bearing(130.0)
+            },
+            mapAnimationOptions { duration(4500) },
+            animatorListener = object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {}
+                override fun onAnimationEnd(animation: Animator) {
+                    mapboxMapRef.value?.flyTo(
+                        cameraOptions {
+                            center(Point.fromLngLat(lng, lat))
+                            zoom(13.5)
+                            pitch(0.0)
+                            bearing(0.0)
+                        },
+                        mapAnimationOptions { duration(1750) }
+                    )
+                }
+                override fun onAnimationCancel(animation: Animator) {}
+                override fun onAnimationRepeat(animation: Animator) {}
+            }
+        )
+    }
+
+
+
 
     @Composable
     fun MarkerInfoSheet(local: Local, onClose: () -> Unit, onAddOpinion: () -> Unit) {
@@ -736,28 +806,83 @@ class MapFragment : Fragment() {
         var accesibilidad by remember { mutableStateOf(0f) }
         val context = LocalContext.current
 
+        // Estado para mostrar el diálogo de selección de fuente de imagen
+        var showImageSourceDialog by remember { mutableStateOf(false) }
+        // Estado para almacenar la imagen seleccionada como ByteArray
+        var selectedImageByteArray by remember { mutableStateOf<ByteArray?>(null) }
+
+        // Launcher para capturar imagen desde la cámara (preview)
+        val cameraLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicturePreview()
+        ) { bitmap: Bitmap? ->
+            bitmap?.let {
+                val outputStream = ByteArrayOutputStream()
+                it.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                selectedImageByteArray = outputStream.toByteArray()
+            }
+        }
+
+        // Launcher para seleccionar imagen desde la galería
+        val galleryLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let {
+                // Lee el contenido del Uri y lo guarda en un ByteArray
+                context.contentResolver.openInputStream(it)?.use { inputStream ->
+                    selectedImageByteArray = inputStream.readBytes()
+                }
+            }
+        }
+
+        // Función para convertir el ByteArray a Base64 (si es necesario enviarlo como string)
+        fun byteArrayToBase64(bytes: ByteArray): String {
+            return android.util.Base64.encodeToString(bytes, android.util.Base64.DEFAULT)
+        }
+
         // Genera la fecha actual en formato ISO, por ejemplo "2025-03-12T12:30:00.000+0000"
         val formattedDate = SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
             Locale.getDefault()
         ).format(Date())
 
+        // Diálogo para elegir la fuente de la imagen
+        if (showImageSourceDialog) {
+            AlertDialog(
+                onDismissRequest = { showImageSourceDialog = false },
+                title = { Text("Selecciona Fuente de Imagen") },
+                text = { Text("Elige entre tomar una foto o seleccionar desde la galería") },
+                confirmButton = {
+                    Button(onClick = {
+                        showImageSourceDialog = false
+                        cameraLauncher.launch(null) // Abre la cámara
+                    }) {
+                        Text("Cámara")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        showImageSourceDialog = false
+                        galleryLauncher.launch("image/*") // Abre la galería
+                    }) {
+                        Text("Galería")
+                    }
+                }
+            )
+        }
+
         AlertDialog(
             onDismissRequest = onDismiss,
             title = { Text("Añadir Opinión") },
             text = {
-                androidx.compose.foundation.layout.Column {
+                Column {
                     OutlinedTextField(
                         value = reviewText,
                         onValueChange = { reviewText = it },
                         label = { Text("Reseña") },
-                        modifier = androidx.compose.ui.Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     )
-                    androidx.compose.foundation.layout.Spacer(
-                        modifier = androidx.compose.ui.Modifier.height(
-                            8.dp
-                        )
-                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     Text("Ecosostenible: ${ecosostenible.toInt()}")
                     Slider(
                         value = ecosostenible,
@@ -779,26 +904,42 @@ class MapFragment : Fragment() {
                         valueRange = 0f..5f,
                         steps = 4
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    // Botón único para añadir foto
+                    Button(onClick = { showImageSourceDialog = true }) {
+                        Text("Añadir Foto")
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    // Muestra un mensaje simple según si se ha seleccionado una imagen
+                    if (selectedImageByteArray != null) {
+                        Text("Imagen seleccionada (${selectedImageByteArray!!.size} bytes)")
+                    }
                 }
             },
             confirmButton = {
                 Button(onClick = {
+                    // Se convierte el ByteArray a Base64 y se guarda en la lista de fotos (si se seleccionó imagen)
+                    val fotosList = if (selectedImageByteArray != null)
+                        listOf(byteArrayToBase64(selectedImageByteArray!!))
+                    else emptyList()
+
                     val newOpinion = Opinion(
-                        id = 0, // Se deja 0 para que el backend genere el id
-                        usuario = UsuarioForOpinion(nickname = "juan23"), // Valor de prueba, ya existe en la BD
+                        id = 0, // El backend generará el id
+                        usuario = UsuarioForOpinion(nickname = "juan23"), // Valor de prueba
                         local = LocalForOpinion(id = local.id),
                         fechaPublicacion = formattedDate,
                         resenaTexto = reviewText,
                         ecosostenible = ecosostenible.toInt(),
                         inclusionSocial = inclusionSocial.toInt(),
                         accesibilidad = accesibilidad.toInt(),
-                        fotos = emptyList()
+                        fotos = fotosList
                     )
-
-                    // Imprime en el log los atributos de newOpinion
                     Log.e(
                         "NewOpinion",
-                        "id: ${newOpinion.id}, usuario: ${newOpinion.usuario.nickname}, local: ${newOpinion.local.id}, fechaPublicacion: ${newOpinion.fechaPublicacion}, resenaTexto: ${newOpinion.resenaTexto}, ecosostenible: ${newOpinion.ecosostenible}, inclusionSocial: ${newOpinion.inclusionSocial}, accesibilidad: ${newOpinion.accesibilidad}, fotos: ${newOpinion.fotos}"
+                        "id: ${newOpinion.id}, usuario: ${newOpinion.usuario.nickname}, local: ${newOpinion.local.id}, " +
+                                "fechaPublicacion: ${newOpinion.fechaPublicacion}, resenaTexto: ${newOpinion.resenaTexto}, " +
+                                "ecosostenible: ${newOpinion.ecosostenible}, inclusionSocial: ${newOpinion.inclusionSocial}, " +
+                                "accesibilidad: ${newOpinion.accesibilidad}, fotos: ${newOpinion.fotos}"
                     )
 
                     RetrofitClient.instance.createOpinion(newOpinion)
@@ -842,4 +983,4 @@ class MapFragment : Fragment() {
             }
         )
     }
-    }
+}
