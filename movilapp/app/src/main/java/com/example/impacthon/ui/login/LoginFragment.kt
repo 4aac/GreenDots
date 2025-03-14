@@ -22,11 +22,19 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+import java.security.MessageDigest
+
 class LoginFragment : Fragment() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var sharedPreferences: SharedPreferences
     var usuario: Usuario? = null
+
+    fun hashPassword(password: String): String {
+        val md = MessageDigest.getInstance("SHA-256")
+        val hashedBytes = md.digest(password.toByteArray(Charsets.UTF_8))
+        return hashedBytes.joinToString("") { "%02x".format(it) }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,8 +63,8 @@ class LoginFragment : Fragment() {
 
             val user = username.text.toString()
             val pass = password.text.toString()
-
-            val credentials: Map<String, String> = mapOf("nickname" to user, "password" to pass)
+            val hashedPass = hashPassword(pass)
+            val credentials: Map<String, String> = mapOf("nickname" to user, "password" to hashedPass)
 
             // Intentar iniciar sesión
             RetrofitClient.instance.login(credentials).enqueue(object : Callback<Usuario> {

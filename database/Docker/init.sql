@@ -54,9 +54,10 @@ CREATE TABLE OpinionesFotos (
 
 -- Insertar Usuarios
 INSERT INTO Usuarios (Nickname, NombreCompleto, Email, Password, Admin) VALUES
-('juan23', 'Juan Pérez', 'juan@example.com', 'hashed_password_juan', TRUE),
-('maria89', 'María López', 'maria@example.com', 'hashed_password_maria', FALSE),
-('carlos_m', 'Carlos Martínez', 'carlos@example.com', 'hashed_password_carlos', FALSE);
+('asier', 'Asier Cabo', 'asier@example.com', 'e507f1a62080a184a06e719846ce6bb64542ad1789e70982a8ecc6cedf5ea20e', TRUE),
+('juan23', 'Juan Pérez', 'juan@example.com', 'ed08c290d7e22f7bb324b15cbadce35b0b348564fd2d5f95752388d86d71bcca', TRUE),
+('maria89', 'María López', 'maria@example.com', '94aec9fbed989ece189a7e172c9cf41669050495152bc4c1dbf2a38d7fd85627', FALSE),
+('carlos_m', 'Carlos Martínez', 'carlos@example.com', '7b85175b455060e3237e925f023053ca9515e8682a83c8b09911c724a1f8b75f', FALSE);
 
 -- Insertar Locales
 INSERT INTO Locales (Nombre, Categoria, Ubicacion, DescripcionTextual, Ecosostenible, InclusionSocial, Accesibilidad) VALUES
