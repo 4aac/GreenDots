@@ -48,5 +48,6 @@
     <string name="text_sent_opinion">Opinion submitted successfully</string>
     <string name="error_send_opinion">Error sending opinion</string>
     <string name="title_opinions">Opinions</string>
+    <string name="text_must_loggin">You shoud log in first</string>
 
 </resources>
