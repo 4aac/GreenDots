@@ -7,9 +7,9 @@ import com.google.gson.Gson
 
 class MapViewModel(private val sharedPreferences: SharedPreferences) : ViewModel() {
 
-    fun nicknameUsuario(): String {
+    fun nicknameUsuario(): String? {
         val usuario = Gson().fromJson(sharedPreferences.getString("usuario", "")!!, Usuario::class.java)
-        return usuario.nickname
+        return usuario?.nickname
     }
 
 
