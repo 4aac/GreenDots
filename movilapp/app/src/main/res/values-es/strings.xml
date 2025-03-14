@@ -2,7 +2,6 @@
 <resources>
 
     <!-- Nombre app -->
-    <string name="app_name">GreenDots</string>
 
     <!-- Login -->
     <string name="hint_username">Nombre de usuario</string>
@@ -13,7 +12,6 @@
     <!-- Perfil -->
     <string name="title_profile">Perfil</string>
     <string name="title_logout">Cerrar sesión</string>
-    <string name="welcome_string">Bienvenido al perfil</string>
 
     <!-- Configuración -->
     <string name="title_settings">Configuración</string>
@@ -26,8 +24,29 @@
 
     <!-- Mapa -->
     <string name="title_map">Mapa</string>
-    <string name="tap_on_map_instruction">Toca el mapa para volar a la ubicación</string>
-    <string name="permision_denied">LOs permisos de ubicación han sido denegados. Algunas funciones estarán deshabilitadas</string>
+    <string name="permision_denied">Los permisos de ubicación han sido denegados. Algunas funciones estarán deshabilitadas</string>
     <string name="permision_button">Solicitar permisos</string>
+    <string name="select_city">Selecciona una ciudad</string>
+    <string name="text_no_permisions">Se requieren permisos de ubicación para mostrar tu posición en el mapa</string>
+    <string name="title_place_information">Información del lugar</string>
+    <string name="add_opinion_buton">Añadir opinión</string>
+    <string name="show_opinions_button">Ver opiniones</string>
+    <string name="title_local_opinions">Opiniones del local</string>
+    <string name="text_no_opinions">No hay opiniones disponibles</string>
+    <string name="title_user">Usuario</string>
+    <string name="title_opinion">Opinión</string>
+    <string name="title_close">Cerrar</string>
+    <string name="title_name">Nombre</string>
+    <string name="title_category">Categoría</string>
+    <string name="title_location">Ubicación</string>
+    <string name="title_ecosustainable">Ecosostenible</string>
+    <string name="title_accessibility">Accesibilidad</string>
+    <string name="title_socialinclusion">Inclusión social</string>
+    <string name="add_photo_button">Añadir foto</string>
+    <string name="send_opinion_button">Enviar opinión</string>
+    <string name="cancel_button">Cancelar</string>
+    <string name="text_sent_opinion">Opinión enviada exitosamente</string>
+    <string name="error_send_opinion">Error al enviar la opinión</string>
+    <string name="title_opinions">Opiniones</string>
 
 </resources>

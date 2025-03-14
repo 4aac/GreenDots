@@ -2,7 +2,6 @@
 <resources>
 
     <!-- Nombre app -->
-    <string name="app_name">GreenDots</string>
 
     <!-- Login -->
     <string name="hint_username">Nome de usuario</string>
@@ -13,7 +12,6 @@
     <!-- Perfil -->
     <string name="title_profile">Perfil</string>
     <string name="title_logout">Pechar sesión</string>
-    <string name="welcome_string">Benvido ao perfil</string>
 
     <!-- Configuración -->
     <string name="title_settings">Configuración</string>
@@ -26,8 +24,29 @@
 
     <!-- Mapa -->
     <string name="title_map">Mapa</string>
-    <string name="tap_on_map_instruction">Toca no mapa para volar á ubicación</string>
     <string name="permision_denied">Os permisos de ubicación foron denegados. Algunhas funcións estarán deshabilitadas</string>
     <string name="permision_button">Solicitar permisos</string>
+    <string name="select_city">Selecciona unha cidade</string>
+    <string name="text_no_permisions">Requírense permisos de ubicación para mostrar o mapa</string>
+    <string name="title_place_information">Información do lugar</string>
+    <string name="add_opinion_buton">Engadir opinión</string>
+    <string name="show_opinions_button">Ver opinións</string>
+    <string name="title_local_opinions">Opinións do local</string>
+    <string name="text_no_opinions">Non hai opinións dispoñibles</string>
+    <string name="title_user">Usuario</string>
+    <string name="title_opinion">Opinión</string>
+    <string name="title_close">Pechar</string>
+    <string name="title_name">Nome</string>
+    <string name="title_category">Categoría</string>
+    <string name="title_location">Ubicación</string>
+    <string name="title_ecosustainable">Ecosostible</string>
+    <string name="title_accessibility">Accesibilidade</string>
+    <string name="title_socialinclusion">Inclusión social</string>
+    <string name="add_photo_button">Engadir foto</string>
+    <string name="send_opinion_button">Enviar opinión</string>
+    <string name="cancel_button">Cancelar</string>
+    <string name="text_sent_opinion">Opinión enviada exitosamente</string>
+    <string name="error_send_opinion">Error ao enviar a opinión</string>
+    <string name="title_opinions">Opinións</string>
 
 </resources>
