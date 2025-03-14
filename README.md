@@ -1,8 +1,8 @@
-# 🌍 Sustainable Maps
+# 🌍 Green Dots
 
 ## 🚀 Impact-thon ETSE - USC
 
-Welcome to **Sustainable Maps**, a mobile application designed to empower users to explore businesses that contribute to a more sustainable and responsible world. As society moves forward towards eco-friendly and ethical practices, Sustainable Maps provides a platform to discover, review, and evaluate businesses based on their adherence to Sustainable Development Goals (SDGs).
+Welcome to **Green Dots**, a mobile application designed to empower users to explore businesses that contribute to a more sustainable and responsible world. As society moves forward towards eco-friendly and ethical practices, Sustainable Maps provides a platform to discover, review, and evaluate businesses based on their adherence to Sustainable Development Goals (SDGs).
 
 ---
 
