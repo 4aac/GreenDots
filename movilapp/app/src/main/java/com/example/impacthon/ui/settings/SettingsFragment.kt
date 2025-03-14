@@ -51,7 +51,7 @@ class SettingsFragment : Fragment() {
 
         // Configurar botón de enlace externo
         binding.buttonGithub.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/martindios/impacthon"))
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/martindios/GreenDots/"))
             startActivity(intent)
         }
 

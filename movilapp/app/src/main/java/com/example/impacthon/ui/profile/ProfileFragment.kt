@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
@@ -120,7 +121,7 @@ class ProfileFragment : Fragment() {
 
         if (opinionesList.isEmpty()) {
             val noOpinionesText = TextView(context).apply {
-                text = "No hay opiniones disponibles."
+                text = getString(R.string.text_no_opinions)
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT

@@ -58,7 +58,6 @@ class LoginFragment : Fragment() {
 
             val credentials: Map<String, String> = mapOf("nickname" to user, "password" to pass)
 
-
             // Intentar iniciar sesión
             RetrofitClient.instance.login(credentials).enqueue(object : Callback<Usuario> {
                 override fun onResponse(call: Call<Usuario>, response: Response<Usuario>) {
@@ -77,7 +76,7 @@ class LoginFragment : Fragment() {
                     }
                 }
                 override fun onFailure(call: Call<Usuario>, t: Throwable) {
-                    Toast.makeText(requireContext(), "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), R.string.error_login, Toast.LENGTH_SHORT).show()
                 }
             })
         }

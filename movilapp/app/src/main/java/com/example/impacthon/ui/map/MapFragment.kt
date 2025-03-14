@@ -3,7 +3,6 @@ package com.example.impacthon.ui.map
 import android.Manifest
 import android.animation.Animator
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -72,40 +71,18 @@ import android.widget.Spinner
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModelProvider
 import com.example.impacthon.ui.ViewModelFactory
-import com.example.impacthon.ui.profile.ProfileViewModel
-
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var mapViewModel: MapViewModel
-
-    /**
-     * Función para obtener un Local por su ID usando Retrofit.
-     * Recibe el id, el contexto y un callback para devolver el resultado.
-     */
-    private fun fetchLocalById(id: Int, context: Context, onResult: (Local?) -> Unit) {
-        RetrofitClient.instance.getLocal(id).enqueue(object : Callback<Local> {
-            override fun onResponse(call: Call<Local>, response: Response<Local>) {
-                if (response.isSuccessful && response.body() != null) {
-                    onResult(response.body())
-                } else {
-                    Toast.makeText(context, "Error al obtener el local", Toast.LENGTH_SHORT).show()
-                    onResult(null)
-                }
-            }
-            override fun onFailure(call: Call<Local>, t: Throwable) {
-                Log.e("RetrofitError", "Fallo en la petición", t)
-                Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
-                onResult(null)
-            }
-        })
-    }
 
     @Composable
     fun SearchBarDropdown(
@@ -118,7 +95,7 @@ class MapFragment : Fragment() {
                     val spinner = findViewById<Spinner>(R.id.city_spinner)
                     val cities = context.resources.getStringArray(R.array.cities_array).toMutableList()
 
-                    cities.add(0, "Seleccionar una ciudad")
+                    cities.add(0, getString(R.string.select_city))
                     // Crea un ArrayAdapter con un layout personalizado para el ítem seleccionado
                     val adapter = ArrayAdapter(context, R.layout.spinner_items, cities).apply {
                         // Establece el layout para los ítems desplegados
@@ -146,9 +123,7 @@ class MapFragment : Fragment() {
         )
     }
 
-    /**
-     * Función para obtener todos los locales usando Retrofit.
-     */
+    // Función para obtener todos los locales usando Retrofit.
     private fun fetchAllLocales(context: Context, onResult: (List<Local>?) -> Unit) {
         RetrofitClient.instance.getAllLocales().enqueue(object : Callback<List<Local>> {
             override fun onResponse(call: Call<List<Local>>, response: Response<List<Local>>) {
@@ -163,32 +138,6 @@ class MapFragment : Fragment() {
                 Log.e("RetrofitError", "Fallo en la petición", t)
                 Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
                 onResult(null)
-            }
-        })
-    }
-
-    // Función de prueba (puedes eliminarla si ya no la usas)
-    private fun createTestUser(context: Context) {
-        val newUser = Usuario(
-            nickname = "testuser",
-            nombre = "Test User",
-            email = "test@example.com",
-            password = "123456",
-            fechaCreacion = "2025-03-12T12:00:00.000+0000",
-            admin = false,
-            fotoPerfil = null
-        )
-        RetrofitClient.instance.createUser(newUser).enqueue(object : Callback<String> {
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(context, "Usuario creado exitosamente", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, "Error al crear usuario: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
-                }
-            }
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                Log.e("RetrofitError", "Fallo petición", t)
-                Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -223,10 +172,10 @@ class MapFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: android.view.LayoutInflater,
+        inflater: LayoutInflater,
         container: android.view.ViewGroup?,
         savedInstanceState: Bundle?
-    ): android.view.View {
+    ): View {
         mapViewModel = ViewModelProvider(this, ViewModelFactory(requireContext())).get(MapViewModel::class.java)
 
         return ComposeView(requireContext()).apply {
@@ -241,7 +190,7 @@ class MapFragment : Fragment() {
         } else {
             Toast.makeText(
                 requireContext(),
-                "Los permisos de ubicación han sido denegados. Algunas funciones estarán deshabilitadas.",
+                R.string.permision_denied,
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -259,14 +208,19 @@ class MapFragment : Fragment() {
     @Composable
     fun PermissionRequestScreen() {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("Se requieren permisos de ubicación para mostrar tu posición en el mapa")
+                Text(
+                    text = stringResource(id = R.string.text_no_permisions),
+                    textAlign = TextAlign.Center
+                )
                 Button(
                     onClick = {
                         permissionLauncher.launch(
@@ -276,7 +230,7 @@ class MapFragment : Fragment() {
                             )
                         )
                     }
-                ) { Text("Solicitar Permisos") }
+                ) { Text(stringResource(id = R.string.permision_button)) }
             }
         }
     }
@@ -394,7 +348,7 @@ class MapFragment : Fragment() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .offset(y = 50.dp),  // Ajusta según lo necesites
+                    .offset(y = 50.dp),
                 onCitySelected = { city ->
                     // Define las coordenadas para cada ciudad
                     val (lng, lat) = when (city) {
@@ -450,9 +404,6 @@ class MapFragment : Fragment() {
         )
     }
 
-
-
-
     @Composable
     fun MarkerInfoSheet(local: Local, onClose: () -> Unit, onAddOpinion: () -> Unit) {
         var showOpinionsDialog by remember { mutableStateOf(false) }
@@ -475,7 +426,7 @@ class MapFragment : Fragment() {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Información del Lugar", style = MaterialTheme.typography.h6)
+                    Text(text = stringResource(id = R.string.title_place_information), style = MaterialTheme.typography.h6)
                     IconButton(onClick = { onClose() }) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -493,7 +444,7 @@ class MapFragment : Fragment() {
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Button(onClick = onAddOpinion) {
-                        Text("Añadir Opinión")
+                        Text(stringResource(id = R.string.add_opinion_buton))
                     }
                     Button(onClick = {
                         opinionesList = emptyList()
@@ -527,7 +478,7 @@ class MapFragment : Fragment() {
                                 }
                             })
                     }) {
-                        Text("Ver Opiniones")
+                        Text(stringResource(id = R.string.show_opinions_button))
                     }
                 }
 
@@ -553,20 +504,20 @@ class MapFragment : Fragment() {
             if (showOpinionsDialog) {
                 AlertDialog(
                     onDismissRequest = { showOpinionsDialog = false },
-                    title = { Text("Opiniones del Local") },
+                    title = { Text(stringResource(id = R.string.title_local_opinions)) },
                     text = {
                         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                             if (opinionesList.isEmpty()) {
-                                Text("No hay opiniones disponibles.")
+                                Text(stringResource(id = R.string.text_no_opinions))
                             } else {
                                 opinionesList.forEach { opinion ->
                                     Column(modifier = Modifier.padding(vertical = 4.dp)) {
                                         Text(
-                                            text = "Usuario: ${opinion.usuario.nickname}",
+                                            text = String.format("%s: %s", stringResource(id = R.string.title_user), opinion.usuario.nickname),
                                             style = MaterialTheme.typography.subtitle2
                                         )
                                         Text(
-                                            text = "Reseña: ${opinion.resenaTexto}",
+                                            text = String.format("%s: %s", stringResource(id = R.string.title_opinion), opinion.resenaTexto),
                                             style = MaterialTheme.typography.body2
                                         )
                                         Divider(modifier = Modifier.padding(vertical = 4.dp))
@@ -577,15 +528,13 @@ class MapFragment : Fragment() {
                     },
                     confirmButton = {
                         Button(onClick = { showOpinionsDialog = false }) {
-                            Text("Cerrar")
+                            Text(stringResource(id = R.string.title_close))
                         }
                     }
                 )
             }
         }
     }
-
-
 
     @Composable
     fun InfoCard(
@@ -618,7 +567,7 @@ class MapFragment : Fragment() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Nombre:",
+                        text = String.format("%s:", stringResource(id = R.string.title_name)),
                         style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black),
                         modifier = Modifier.weight(0.3f)
@@ -650,7 +599,7 @@ class MapFragment : Fragment() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Categoría:",
+                        text = String.format("%s:", stringResource(id = R.string.title_category)),
                         style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black),
                         modifier = Modifier.weight(0.3f)
@@ -682,7 +631,7 @@ class MapFragment : Fragment() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Ubicación:",
+                        text = String.format("%s:", stringResource(id = R.string.title_location)),
                         style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black),
                         modifier = Modifier.weight(0.3f)
@@ -714,8 +663,7 @@ class MapFragment : Fragment() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Ecosostenible:",
-                        style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
+                        text = String.format("%s:", stringResource(id = R.string.title_ecosustainable)),                        style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black),
                         modifier = Modifier.weight(0.3f)
                     )
@@ -745,7 +693,7 @@ class MapFragment : Fragment() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Accesibilidad:",
+                        text = String.format("%s:", stringResource(id = R.string.title_accessibility)),
                         style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black),
                         modifier = Modifier.weight(0.3f)
@@ -776,7 +724,7 @@ class MapFragment : Fragment() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Inclusión Social:",
+                        text = String.format("%s:", stringResource(id = R.string.title_socialinclusion)),
                         style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black),
                         modifier = Modifier.weight(0.3f)
@@ -865,31 +813,31 @@ class MapFragment : Fragment() {
 
         AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text("Añadir Opinión") },
+            title = { Text(stringResource(id = R.string.add_opinion_buton)) },
             text = {
                 Column {
                     OutlinedTextField(
                         value = reviewText,
                         onValueChange = { reviewText = it },
-                        label = { Text("Reseña") },
+                        label = { Text(stringResource(id = R.string.title_opinion)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Ecosostenible: ${ecosostenible.toInt()}")
+                    Text(text = String.format("%s: %d", stringResource(id = R.string.title_ecosustainable), ecosostenible.toInt()))
                     Slider(
                         value = ecosostenible,
                         onValueChange = { ecosostenible = it },
                         valueRange = 0f..5f,
                         steps = 4
                     )
-                    Text("Inclusión Social: ${inclusionSocial.toInt()}")
+                    Text(text = String.format("%s: %d", stringResource(id = R.string.title_socialinclusion), inclusionSocial.toInt()))
                     Slider(
                         value = inclusionSocial,
                         onValueChange = { inclusionSocial = it },
                         valueRange = 0f..5f,
                         steps = 4
                     )
-                    Text("Accesibilidad: ${accesibilidad.toInt()}")
+                    Text(text = String.format("%s: %d", stringResource(id = R.string.title_accessibility), accesibilidad.toInt()))
                     Slider(
                         value = accesibilidad,
                         onValueChange = { accesibilidad = it },
@@ -899,7 +847,7 @@ class MapFragment : Fragment() {
                     Spacer(modifier = Modifier.height(8.dp))
                     // Botón único para añadir foto
                     Button(onClick = { showImageSourceDialog = true }) {
-                        Text("Añadir Foto")
+                        Text(stringResource(id = R.string.add_photo_button))
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     // Muestra un mensaje simple según si se ha seleccionado una imagen
@@ -938,9 +886,9 @@ class MapFragment : Fragment() {
                     RetrofitClient.instance.createOpinion(newOpinion).enqueue(object : Callback<String> {
                         override fun onResponse(call: Call<String>, response: Response<String>) {
                             if (response.isSuccessful) {
-                                Toast.makeText(context, "Opinión enviada exitosamente", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, R.string.text_sent_opinion, Toast.LENGTH_SHORT).show()
                             } else {
-                                Toast.makeText(context, "Error al enviar opinión", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, R.string.error_send_opinion, Toast.LENGTH_SHORT).show()
                             }
                         }
                         override fun onFailure(call: Call<String>, t: Throwable) {
@@ -949,12 +897,12 @@ class MapFragment : Fragment() {
                     })
                     onDismiss()
                 }) {
-                    Text("Enviar Opinión")
+                    Text(stringResource(id = R.string.send_opinion_button))
                 }
             },
             dismissButton = {
                 Button(onClick = onDismiss) {
-                    Text("Cancelar")
+                    Text(stringResource(id = R.string.cancel_button))
                 }
             }
         )
