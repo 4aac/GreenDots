@@ -372,7 +372,15 @@ class MapFragment : Fragment() {
         }
 
         if (showNewOpinionForm && markerLocal.value != null) {
-            NewOpinionFormDialog(local = markerLocal.value!!, onDismiss = { showNewOpinionForm = false })
+            if(mapViewModel.nicknameUsuario() == null){
+                Toast.makeText(
+                    context,
+                    "Debes loggearte primero",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }else{
+                NewOpinionFormDialog(local = markerLocal.value!!, onDismiss = { showNewOpinionForm = false })
+            }
         }
     }
 
@@ -865,7 +873,7 @@ class MapFragment : Fragment() {
 
                     val newOpinion = Opinion(
                         id = 0, // El backend generará el id
-                        usuario = UsuarioForOpinion(nickname = nickname), // Valor de prueba
+                        usuario = UsuarioForOpinion(nickname = nickname ?: "Desconocido"),
                         local = LocalForOpinion(id = local.id),
                         fechaPublicacion = formattedDate,
                         resenaTexto = reviewText,
