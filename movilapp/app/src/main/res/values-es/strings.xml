@@ -2,7 +2,7 @@
 <resources>
 
     <!-- Nombre app -->
-    <string name="app_name">Impacthon</string>
+    <string name="app_name">GreenDots</string>
 
     <!-- Login -->
     <string name="hint_username">Nombre de usuario</string>
