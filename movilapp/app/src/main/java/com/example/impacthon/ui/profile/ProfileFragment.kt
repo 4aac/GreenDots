@@ -96,7 +96,7 @@ class ProfileFragment : Fragment() {
                 } else {
                     Toast.makeText(
                         context,
-                        "Error al obtener opiniones",
+                        R.string.text_no_opinions,
                         Toast.LENGTH_SHORT
                     ).show()
                 }

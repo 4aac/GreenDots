@@ -48,5 +48,6 @@
     <string name="text_sent_opinion">Opinión enviada exitosamente</string>
     <string name="error_send_opinion">Error ao enviar a opinión</string>
     <string name="title_opinions">Opinións</string>
+    <string name="text_must_loggin">Deber iniciar sesión primeiro</string>
 
 </resources>

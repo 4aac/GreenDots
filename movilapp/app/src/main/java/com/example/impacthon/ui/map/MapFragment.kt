@@ -35,7 +35,6 @@ import com.example.impacthon.backend.api.RetrofitClient
 import com.example.impacthon.backend.models.Local
 import com.example.impacthon.backend.models.LocalForOpinion
 import com.example.impacthon.backend.models.Opinion
-import com.example.impacthon.backend.models.Usuario
 import com.example.impacthon.backend.models.UsuarioForOpinion
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.geojson.Point
@@ -298,6 +297,7 @@ class MapFragment : Fragment() {
                             doubleTouchToZoomOutEnabled = false
                         }
                     },
+                    scaleBar = {},
                     mapViewportState = mapViewportState,
                     style = { MapStyle(style = "mapbox://styles/martindios/cm851rhgo004q01qzbcrg0fb9") }
                 ) {
@@ -375,7 +375,7 @@ class MapFragment : Fragment() {
             if(mapViewModel.nicknameUsuario() == null){
                 Toast.makeText(
                     context,
-                    "Debes loggearte primero",
+                    R.string.text_must_loggin,
                     Toast.LENGTH_SHORT
                 ).show()
             }else{
@@ -468,7 +468,7 @@ class MapFragment : Fragment() {
                                     } else {
                                         Toast.makeText(
                                             context,
-                                            "Error al obtener opiniones",
+                                            R.string.text_no_opinions,
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
@@ -671,16 +671,17 @@ class MapFragment : Fragment() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = String.format("%s:", stringResource(id = R.string.title_ecosustainable)),                        style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
+                        text = String.format("%s:", stringResource(id = R.string.title_ecosustainable)),
+                        style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black),
-                        modifier = Modifier.weight(0.3f)
+                        modifier = Modifier.weight(0.5f)
                     )
                     // Mostrar el puntaje del ecosostenible
                     Text(
                         text = "$ecosostenible/5",
                         style = MaterialTheme.typography.body2,
                         color = colorResource(id = R.color.black),
-                        modifier = Modifier.weight(0.7f)
+                        modifier = Modifier.weight(0.5f)
                     )
                 }
             }
@@ -704,14 +705,14 @@ class MapFragment : Fragment() {
                         text = String.format("%s:", stringResource(id = R.string.title_accessibility)),
                         style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black),
-                        modifier = Modifier.weight(0.3f)
+                        modifier = Modifier.weight(0.5f)
                     )
                     // Mostrar el puntaje de accesibilidad
                     Text(
                         text = "$accesibilidad/5",
                         style = MaterialTheme.typography.body2,
                         color = colorResource(id = R.color.black),
-                        modifier = Modifier.weight(0.7f)
+                        modifier = Modifier.weight(0.5f)
                     )
                 }
             }
@@ -735,14 +736,14 @@ class MapFragment : Fragment() {
                         text = String.format("%s:", stringResource(id = R.string.title_socialinclusion)),
                         style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black),
-                        modifier = Modifier.weight(0.3f)
+                        modifier = Modifier.weight(0.5f)
                     )
                     // Mostrar el puntaje de inclusión social
                     Text(
                         text = "$inclusion_social/5",
                         style = MaterialTheme.typography.body2,
                         color = colorResource(id = R.color.black),
-                        modifier = Modifier.weight(0.7f)
+                        modifier = Modifier.weight(0.5f)
                     )
                 }
             }
@@ -750,13 +751,13 @@ class MapFragment : Fragment() {
     }
 
     @Composable
-    fun NewOpinionFormDialog(local: com.example.impacthon.backend.models.Local, onDismiss: () -> Unit) {
+    fun NewOpinionFormDialog(local: Local, onDismiss: () -> Unit) {
         var reviewText by remember { mutableStateOf("") }
         var ecosostenible by remember { mutableStateOf(0f) }
         var inclusionSocial by remember { mutableStateOf(0f) }
         var accesibilidad by remember { mutableStateOf(0f) }
         val context = LocalContext.current
-        var nickname = mapViewModel.nicknameUsuario()
+        val nickname = mapViewModel.nicknameUsuario()
 
         // Estado para mostrar el diálogo de selección de fuente de imagen
         var showImageSourceDialog by remember { mutableStateOf(false) }
