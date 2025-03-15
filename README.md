@@ -13,12 +13,12 @@ Welcome to **Green Dots**, a mobile application designed to empower users to exp
 
 ## 📌 How Does It Work?
 
-1. **Sign in** – Create an account, set up your profile with your favorite photo, and add a short description about yourself.
+1. **Sign in** – Create an account, and start exploring your area and submitting your opinions.
 2. **Explore & Search** – Choose an area to explore and search for businesses that interest you.
 3. **Evaluate Businesses** – Check sustainability statistics related to the SDGs for each business.
 4. **Share Your Thoughts** – Leave reviews and contribute valuable feedback to help others make informed choices.
 5. **Enjoy Dynamic Navigation** – Experience seamless transitions and an intuitive interface.
-6. **Customize Your Experience** – Switch between **day mode** and **night mode** for better usability.
+6. **Customize Your Experience** – Switch between **day mode** and **night mode** for better usability or choose the language you are the more comfortable with.
 
 ---
 
@@ -56,7 +56,7 @@ cd ../Server/
 
 ## 🔥 Key Features
 
-✅ **User Profiles** – Personalize your account with a profile picture and description.  
+✅ **User Profiles** – Personalize your account with your name and a nickname.  
 ✅ **Location-Based Search** – Find and explore businesses with ease.  
 ✅ **Sustainability Insights** – Gain visibility into how businesses align with SDGs.  
 ✅ **Smooth Navigation** – Enjoy beautiful animations and transitions.  
