@@ -8,9 +8,17 @@ const translations = {
     emailLabel: "Correo electrónico",
     submit: "Enviar"
   },
+  gl: {
+    headline: "Queres ser o primeiro en saber as últimas novidades de GreenDots?",
+    description: "Deixanos o teu nome e correo para recibir información exclusiva sobre as nosas fases beta, o lanzamento da aplicación e moito máis.",
+    endline: "Únete á nosa comunidade e non perdas ningunha novidade!",
+    nameLabel: "Nome",
+    emailLabel: "Correo electrónico",
+    submit: "Enviar"
+  },
   pt: {
-    headline: "Você quer ser o primeiro a saber das últimas novidades do GreenDots?",
-    description: "Deixe-nos seu nome e e-mail para receber informações exclusivas sobre nossas fases beta, o lançamento do aplicativo e muito mais.",
+    headline: "Quer ser o primeiro a saber das últimas novidades do GreenDots?",
+    description: "Deixe-nos o seu nome e e-mail para receber informações exclusivas sobre as nossas fases beta, o lançamento da aplicação e muito mais.",
     endline: "Junte-se à nossa comunidade e não perca nenhuma novidade!",
     nameLabel: "Nome",
     emailLabel: "E-mail",
