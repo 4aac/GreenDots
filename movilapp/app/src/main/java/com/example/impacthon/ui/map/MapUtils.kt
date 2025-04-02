@@ -15,6 +15,9 @@ import com.mapbox.maps.plugin.animation.flyTo
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 class MapUtils {
     fun animateFlyTo(mapboxMapRef: MutableState<MapboxMap?>, lng: Double, lat: Double) {
@@ -72,6 +75,23 @@ class MapUtils {
             val lng = parts[1].trim().toDoubleOrNull()
             if (lat != null && lng != null) Pair(lat, lng) else null
         } else null
+    }
+
+    // Función auxiliar para formatear la fecha en un formato sencillo
+    fun formatDate(dateString: String): String {
+        // Definir el formato de entrada
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
+        // Definir el formato de salida
+        val outputFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        outputFormat.timeZone = TimeZone.getDefault() // Ajustar a la zona horaria local
+
+        return try {
+            val date = inputFormat.parse(dateString) // Parsear la fecha
+            outputFormat.format(date) // Formatear la fecha en el nuevo formato
+        } catch (e: Exception) {
+            e.printStackTrace()
+            dateString // Retornar el string original en caso de error
+        }
     }
 
 }

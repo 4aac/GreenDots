@@ -1,25 +1,33 @@
 package com.example.impacthon.ui.map
 
 import android.Manifest
-import android.content.Context
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MyLocation
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -29,15 +37,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.impacthon.R
-import com.example.impacthon.backend.api.RetrofitClient
 import com.example.impacthon.backend.models.Local
-import com.example.impacthon.backend.models.LocalForOpinion
-import com.example.impacthon.backend.models.Opinion
-import com.example.impacthon.backend.models.UsuarioForOpinion
 import com.example.impacthon.ui.ViewModelFactory
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.geojson.Point
@@ -58,13 +61,6 @@ import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
 import kotlinx.coroutines.delay
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.io.ByteArrayOutputStream
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class MapFragment : Fragment() {
     private var permissionsGranted by mutableStateOf(false)
@@ -102,7 +98,7 @@ class MapFragment : Fragment() {
         }
     }
 
-    fun onPermissionResult(granted: Boolean) {
+    private fun onPermissionResult(granted: Boolean) {
         permissionsGranted = granted
         if (granted) {
             view?.findViewById<ComposeView>(android.R.id.content)?.setContent { MapScreenWithPermissions(true) }
