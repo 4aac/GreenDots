@@ -1,0 +1,4 @@
+FROM nginx:alpine
+# Copiamos todos los archivos estáticos al directorio que Nginx usa para servir contenido
+COPY . /usr/share/nginx/html
+

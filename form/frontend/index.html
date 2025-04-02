@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Página de Agradecimiento</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header con icono y texto -->
+  <header>
+    <img src="icon.png" alt="Icono" class="icon">
+    <h1>GreenDots</h1>
+  </header>
+
+  <main>
+    <div class="form-container">
+      <!-- Texto de agradecimiento y descripción -->
+      <p class="headline" id="headline">¿Quieres ser el primero en enterarte de las últimas novedades de GreenDots?</p>
+      <p id="description">Déjanos tu nombre y correo para recibir información exclusiva sobre nuestras fases beta, el lanzamiento de la app y mucho más.</p>
+      <p id="endline">¡Únete a nuestra comunidad y no te pierdas ninguna novedad!</p>
+
+      <!-- Formulario básico -->
+      <form id="contactForm">
+        <div class="input-container">
+          <input type="text" id="name" name="name" placeholder=" " required>
+          <label for="name" id="labelName">Nombre</label>
+        </div>
+        <div class="input-container">
+          <input type="email" id="email" name="email" placeholder=" " required>
+          <label for="email" id="labelEmail">Correo electrónico</label>
+        </div>
+        <button type="submit" id="submitButton">Enviar</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Botón flotante para seleccionar idioma -->
+  <div id="language-selector">
+    <button data-lang="es">ES</button>
+    <button data-lang="pt">PT</button>
+    <button data-lang="en">EN</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

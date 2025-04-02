@@ -1,0 +1,41 @@
+services:
+  formgreendotsdb:
+    image: postgres:13
+    container_name: postgresdb
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: formgreendotsdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - greendotsdb:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  formgreendotsbackend:
+    build:
+      context: ./backend
+    container_name: backendserver
+    environment:
+      DB_HOST: formgreendotsdb
+      DB_NAME: greendotsdb
+      DB_USER: testuser
+      DB_PASSWORD: testpassword
+    ports:
+      - "4444:4444"
+    depends_on:
+      - formgreendotsdb
+    volumes:
+      - ./backend/app.py:/app/app.py
+
+  formgreendotsfrontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: frontendserver
+    ports:
+      - "8080:80"
+
+volumes:
+  greendotsdb:
+
