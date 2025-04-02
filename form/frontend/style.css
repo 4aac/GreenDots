@@ -1,0 +1,141 @@
+/* Reset básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+}
+
+/* Estilos del header */
+header {
+  background-color: #349b7e;
+  color: #ffffff;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+header .icon {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+/* Contenedor del formulario */
+.form-container {
+  background-color: #fff;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center; 
+}
+
+/* Texto de agradecimiento */
+.headline {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Estilos del formulario */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form input {
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+form button {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #318b82;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #29736B;
+}
+
+.input-container {
+  position: relative;
+  margin-top: 20px;
+}
+
+/* Ajuste para que el input muestre un borde completo */
+.input-container input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #757575;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* Al enfocar, resaltamos el borde */
+.input-container input:focus {
+  outline: none;
+  border: 1px solid #318b82;
+}
+
+/* Posicionamiento de la etiqueta para el efecto flotante */
+.input-container label {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  pointer-events: none;
+  transition: 0.2s ease all;
+  background-color: #fff; /* Para que la etiqueta no se superponga visualmente al borde */
+  padding: 0 5px;         /* Ajuste para que la etiqueta tenga un fondo */
+}
+
+/* Cuando el input está en foco o tiene contenido, la etiqueta se "eleva" */
+.input-container input:focus ~ label,
+.input-container input:not(:placeholder-shown) ~ label {
+  top: 0;
+  transform: translateY(-15%);
+  font-size: 12px;
+  color: #318b82;
+}
+
+/* Estilos para el selector de idioma (botón flotante) */
+#language-selector {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+
+#language-selector button {
+  margin: 5px;
+  padding: 8px;
+  background-color: #318b82;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#language-selector button:hover {
+  background-color: #29736B;
+}
