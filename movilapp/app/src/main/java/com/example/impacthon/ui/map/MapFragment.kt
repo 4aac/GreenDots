@@ -228,7 +228,11 @@ class MapFragment : Fragment() {
                                 Manifest.permission.ACCESS_COARSE_LOCATION
                             )
                         )
-                    }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = colorResource(R.color.green500),
+                        contentColor = colorResource(R.color.white)
+                    )
                 ) { Text(stringResource(id = R.string.permision_button)) }
             }
         }
@@ -333,6 +337,7 @@ class MapFragment : Fragment() {
                     // Llama a tu método para centrar el mapa en la ubicación actual
                     mapViewportState.transitionToFollowPuckState()
                 },
+                backgroundColor = colorResource(id = R.color.green500),
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp)
@@ -451,41 +456,53 @@ class MapFragment : Fragment() {
                         .padding(top = 16.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(onClick = onAddOpinion) {
+                    Button(
+                        onClick = onAddOpinion,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = colorResource(R.color.green500),
+                            contentColor = colorResource(R.color.white)
+                        )
+                    ) {
                         Text(stringResource(id = R.string.add_opinion_buton))
                     }
-                    Button(onClick = {
-                        opinionesList = emptyList()
-                        RetrofitClient.instance.getOpinionesPorLocal(local.id)
-                            .enqueue(object : Callback<List<Opinion>> {
-                                override fun onResponse(
-                                    call: Call<List<Opinion>>,
-                                    response: Response<List<Opinion>>
-                                ) {
-                                    if (response.isSuccessful) {
-                                        opinionesList = response.body() ?: emptyList()
-                                        showOpinionsDialog = true
-                                    } else {
+                    Button(
+                        onClick = {
+                            opinionesList = emptyList()
+                            RetrofitClient.instance.getOpinionesPorLocal(local.id)
+                                .enqueue(object : Callback<List<Opinion>> {
+                                    override fun onResponse(
+                                        call: Call<List<Opinion>>,
+                                        response: Response<List<Opinion>>
+                                    ) {
+                                        if (response.isSuccessful) {
+                                            opinionesList = response.body() ?: emptyList()
+                                            showOpinionsDialog = true
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                R.string.text_no_opinions,
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+
+                                    override fun onFailure(
+                                        call: Call<List<Opinion>>,
+                                        t: Throwable
+                                    ) {
                                         Toast.makeText(
                                             context,
-                                            R.string.text_no_opinions,
+                                            "Fallo en la petición: ${t.message}",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
-                                }
-
-                                override fun onFailure(
-                                    call: Call<List<Opinion>>,
-                                    t: Throwable
-                                ) {
-                                    Toast.makeText(
-                                        context,
-                                        "Fallo en la petición: ${t.message}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            })
-                    }) {
+                                })
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = colorResource(R.color.green500),
+                            contentColor = colorResource(R.color.white)
+                        )
+                    ) {
                         Text(stringResource(id = R.string.show_opinions_button))
                     }
                 }
@@ -535,7 +552,13 @@ class MapFragment : Fragment() {
                         }
                     },
                     confirmButton = {
-                        Button(onClick = { showOpinionsDialog = false }) {
+                        Button(
+                            onClick = { showOpinionsDialog = false },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = colorResource(R.color.green500),
+                                contentColor = colorResource(R.color.white)
+                            )
+                        ) {
                             Text(stringResource(id = R.string.title_close))
                         }
                     }
@@ -802,18 +825,30 @@ class MapFragment : Fragment() {
                 title = { Text("Selecciona Fuente de Imagen") },
                 text = { Text("Elige entre tomar una foto o seleccionar desde la galería") },
                 confirmButton = {
-                    Button(onClick = {
-                        showImageSourceDialog = false
-                        cameraLauncher.launch(null) // Abre la cámara
-                    }) {
+                    Button(
+                        onClick = {
+                            showImageSourceDialog = false
+                            cameraLauncher.launch(null) // Abre la cámara
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = colorResource(R.color.green500),
+                            contentColor = colorResource(R.color.white)
+                        )
+                    ) {
                         Text("Cámara")
                     }
                 },
                 dismissButton = {
-                    Button(onClick = {
-                        showImageSourceDialog = false
-                        galleryLauncher.launch("image/*") // Abre la galería
-                    }) {
+                    Button(
+                        onClick = {
+                            showImageSourceDialog = false
+                            galleryLauncher.launch("image/*") // Abre la galería
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = colorResource(R.color.green500),
+                            contentColor = colorResource(R.color.white)
+                        )
+                    ) {
                         Text("Galería")
                     }
                 }
@@ -832,30 +867,55 @@ class MapFragment : Fragment() {
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
+
                     Text(text = String.format("%s: %d", stringResource(id = R.string.title_ecosustainable), ecosostenible.toInt()))
                     Slider(
                         value = ecosostenible,
                         onValueChange = { ecosostenible = it },
                         valueRange = 0f..5f,
-                        steps = 4
+                        steps = 4,
+                        colors = SliderDefaults.colors(
+                            thumbColor = colorResource(id = R.color.green500),
+                            activeTrackColor = colorResource(id = R.color.green500),
+                            inactiveTrackColor = colorResource(id = R.color.darkgreen900)
+                        )
                     )
+
                     Text(text = String.format("%s: %d", stringResource(id = R.string.title_socialinclusion), inclusionSocial.toInt()))
                     Slider(
                         value = inclusionSocial,
                         onValueChange = { inclusionSocial = it },
                         valueRange = 0f..5f,
-                        steps = 4
+                        steps = 4,
+                        colors = SliderDefaults.colors(
+                            thumbColor = colorResource(id = R.color.green500),
+                            activeTrackColor = colorResource(id = R.color.green500),
+                            inactiveTrackColor = colorResource(id = R.color.darkgreen900)
+                        )
                     )
+
                     Text(text = String.format("%s: %d", stringResource(id = R.string.title_accessibility), accesibilidad.toInt()))
                     Slider(
                         value = accesibilidad,
                         onValueChange = { accesibilidad = it },
                         valueRange = 0f..5f,
-                        steps = 4
+                        steps = 4,
+                        colors = SliderDefaults.colors(
+                            thumbColor = colorResource(id = R.color.green500),
+                            activeTrackColor = colorResource(id = R.color.green500),
+                            inactiveTrackColor = colorResource(id = R.color.darkgreen900)
+                        )
                     )
+
                     Spacer(modifier = Modifier.height(8.dp))
                     // Botón único para añadir foto
-                    Button(onClick = { showImageSourceDialog = true }) {
+                    Button(
+                        onClick = { showImageSourceDialog = true },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = colorResource(R.color.green500),
+                            contentColor = colorResource(R.color.white)
+                        )
+                    ) {
                         Text(stringResource(id = R.string.add_photo_button))
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -866,54 +926,84 @@ class MapFragment : Fragment() {
                 }
             },
             confirmButton = {
-                Button(onClick = {
-                    // Se convierte el ByteArray a Base64 y se guarda en la lista de fotos (si se seleccionó imagen)
-                    val fotosList = if (selectedImageByteArray != null)
-                        listOf(byteArrayToBase64(selectedImageByteArray!!))
-                    else emptyList()
+                Button(
+                    onClick = {
+                        // Se convierte el ByteArray a Base64 y se guarda en la lista de fotos (si se seleccionó imagen)
+                        val fotosList = if (selectedImageByteArray != null)
+                            listOf(byteArrayToBase64(selectedImageByteArray!!))
+                        else emptyList()
 
-                    val newOpinion = Opinion(
-                        id = 0, // El backend generará el id
-                        usuario = UsuarioForOpinion(nickname = nickname ?: "Desconocido"),
-                        local = LocalForOpinion(id = local.id),
-                        fechaPublicacion = formattedDate,
-                        resenaTexto = reviewText,
-                        ecosostenible = ecosostenible.toInt(),
-                        inclusionSocial = inclusionSocial.toInt(),
-                        accesibilidad = accesibilidad.toInt(),
-                        fotos = fotosList
+                        val newOpinion = Opinion(
+                            id = 0, // El backend generará el id
+                            usuario = UsuarioForOpinion(nickname = nickname ?: "Desconocido"),
+                            local = LocalForOpinion(id = local.id),
+                            fechaPublicacion = formattedDate,
+                            resenaTexto = reviewText,
+                            ecosostenible = ecosostenible.toInt(),
+                            inclusionSocial = inclusionSocial.toInt(),
+                            accesibilidad = accesibilidad.toInt(),
+                            fotos = fotosList
+                        )
+
+                        Log.e(
+                            "NewOpinion",
+                            "id: ${newOpinion.id}, usuario: ${newOpinion.usuario.nickname}, local: ${newOpinion.local.id}, " +
+                                    "fechaPublicacion: ${newOpinion.fechaPublicacion}, resenaTexto: ${newOpinion.resenaTexto}, " +
+                                    "ecosostenible: ${newOpinion.ecosostenible}, inclusionSocial: ${newOpinion.inclusionSocial}, " +
+                                    "accesibilidad: ${newOpinion.accesibilidad}, fotos: ${newOpinion.fotos}"
+                        )
+
+                        RetrofitClient.instance.createOpinion(newOpinion)
+                            .enqueue(object : Callback<String> {
+                                override fun onResponse(
+                                    call: Call<String>,
+                                    response: Response<String>
+                                ) {
+                                    if (response.isSuccessful) {
+                                        Toast.makeText(
+                                            context,
+                                            R.string.text_sent_opinion,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            R.string.error_send_opinion,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<String>, t: Throwable) {
+                                    Toast.makeText(
+                                        context,
+                                        "Fallo en la petición: ${t.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            })
+                        onDismiss()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = colorResource(R.color.green500),
+                        contentColor = colorResource(R.color.white)
                     )
-
-                    Log.e(
-                        "NewOpinion",
-                        "id: ${newOpinion.id}, usuario: ${newOpinion.usuario.nickname}, local: ${newOpinion.local.id}, " +
-                                "fechaPublicacion: ${newOpinion.fechaPublicacion}, resenaTexto: ${newOpinion.resenaTexto}, " +
-                                "ecosostenible: ${newOpinion.ecosostenible}, inclusionSocial: ${newOpinion.inclusionSocial}, " +
-                                "accesibilidad: ${newOpinion.accesibilidad}, fotos: ${newOpinion.fotos}"
-                    )
-
-                    RetrofitClient.instance.createOpinion(newOpinion).enqueue(object : Callback<String> {
-                        override fun onResponse(call: Call<String>, response: Response<String>) {
-                            if (response.isSuccessful) {
-                                Toast.makeText(context, R.string.text_sent_opinion, Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(context, R.string.error_send_opinion, Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                        override fun onFailure(call: Call<String>, t: Throwable) {
-                            Toast.makeText(context, "Fallo en la petición: ${t.message}", Toast.LENGTH_SHORT).show()
-                        }
-                    })
-                    onDismiss()
-                }) {
+                ) {
                     Text(stringResource(id = R.string.send_opinion_button))
                 }
             },
             dismissButton = {
-                Button(onClick = onDismiss) {
+                Button(
+                    onClick = onDismiss,
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = colorResource(R.color.green500),
+                        contentColor = colorResource(R.color.white)
+                    )
+                ) {
                     Text(stringResource(id = R.string.cancel_button))
                 }
             }
+
         )
     }
 
