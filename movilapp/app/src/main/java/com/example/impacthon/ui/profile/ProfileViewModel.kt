@@ -21,7 +21,7 @@ class ProfileViewModel(private val sharedPreferences: SharedPreferences) : ViewM
         with(sharedPreferences.edit()) {
             putBoolean("is_logged_in", false) // Cambiar el estado de inicio de sesión a false
             remove("usuario") // Eliminar el objeto Usuario
-            apply() // Aplicar los cambios
+            apply()
         }
     }
 }
