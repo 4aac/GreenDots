@@ -93,22 +93,24 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="8dp"
-            android:layout_weight="0.25"
+            android:layout_weight="0.3"
             android:text="@string/title_github" />
 
         <ImageView
             android:id="@+id/mode_icon"
-            android:layout_width="wrap_content"
+            android:layout_width="30dp"
             android:layout_height="match_parent"
-            android:layout_margin="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginVertical="8dp"
             android:contentDescription="@string/description_icon_mode" />
 
         <Switch
             android:id="@+id/dark_mode_switch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:layout_weight="0.75" />
+            android:layout_marginEnd="8dp"
+            android:layout_marginVertical="8dp"
+            android:layout_weight="0.7" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
