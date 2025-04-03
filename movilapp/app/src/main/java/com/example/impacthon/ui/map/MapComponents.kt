@@ -12,6 +12,9 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -79,90 +82,105 @@ class MapComponents {
         var showOpinionsDialog by remember { mutableStateOf(false) }
         var opinionesList by remember { mutableStateOf<List<Opinion>>(emptyList()) }
         val context = LocalContext.current
+        var spacerHeight by remember { mutableStateOf(0.6f) }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.5f) // Ocupa el 50% de la pantalla
-                .background(MaterialTheme.colors.surface)
-                .padding(top = 64.dp) // Para no estar encima de la barra de estado
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                // Título y botón de cierre
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = stringResource(id = R.string.title_place_information), style = MaterialTheme.typography.h6)
-                    IconButton(onClick = { onClose() }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Cerrar"
-                        )
-                    }
-                }
-                Divider()
-
-                // Aquí los botones de las opiniones, ahora arriba
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(
-                        onClick = onAddOpinion,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = colorResource(R.color.green500),
-                            contentColor = colorResource(R.color.white)
-                        )
+        Column {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxHeight(spacerHeight)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .background(MaterialTheme.colors.surface)
+                    .padding(bottom = 72.dp)
+                    .draggable(
+                        orientation = Orientation.Vertical,
+                        state = rememberDraggableState { delta ->
+                            spacerHeight = (spacerHeight + delta / 1000).coerceIn(0.3f, 0.85f)
+                        }
+                    )
+            ) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    // Título y botón de cierre
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(stringResource(id = R.string.add_opinion_buton))
+                        Text(
+                            text = stringResource(id = R.string.title_place_information),
+                            style = MaterialTheme.typography.h6,
+                        )
+                        IconButton(onClick = { onClose() }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Cerrar"
+                            )
+                        }
                     }
-                    Button(
-                        onClick = {
-                            opinionesList = emptyList()
-                            RetrofitClient.instance.getOpinionesPorLocal(local.id)
-                                .enqueue(object : Callback<List<Opinion>> {
-                                    override fun onResponse(
-                                        call: Call<List<Opinion>>,
-                                        response: Response<List<Opinion>>
-                                    ) {
-                                        if (response.isSuccessful) {
-                                            opinionesList = response.body() ?: emptyList()
-                                            showOpinionsDialog = true
-                                        } else {
+                    Divider()
+
+                    // Aquí los botones de las opiniones, ahora arriba
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Button(
+                            onClick = onAddOpinion,
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = colorResource(R.color.green500),
+                                contentColor = colorResource(R.color.white)
+                            )
+                        ) {
+                            Text(stringResource(id = R.string.add_opinion_buton))
+                        }
+                        Button(
+                            onClick = {
+                                opinionesList = emptyList()
+                                RetrofitClient.instance.getOpinionesPorLocal(local.id)
+                                    .enqueue(object : Callback<List<Opinion>> {
+                                        override fun onResponse(
+                                            call: Call<List<Opinion>>,
+                                            response: Response<List<Opinion>>
+                                        ) {
+                                            if (response.isSuccessful) {
+                                                opinionesList = response.body() ?: emptyList()
+                                                showOpinionsDialog = true
+                                            } else {
+                                                Toast.makeText(
+                                                    context,
+                                                    R.string.text_no_opinions,
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
+
+                                        override fun onFailure(
+                                            call: Call<List<Opinion>>,
+                                            t: Throwable
+                                        ) {
                                             Toast.makeText(
                                                 context,
-                                                R.string.text_no_opinions,
+                                                "Fallo en la petición: ${t.message}",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                         }
-                                    }
-
-                                    override fun onFailure(
-                                        call: Call<List<Opinion>>,
-                                        t: Throwable
-                                    ) {
-                                        Toast.makeText(
-                                            context,
-                                            "Fallo en la petición: ${t.message}",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                })
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = colorResource(R.color.green500),
-                            contentColor = colorResource(R.color.white)
-                        )
-                    ) {
-                        Text(stringResource(id = R.string.show_opinions_button))
+                                    })
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = colorResource(R.color.green500),
+                                contentColor = colorResource(R.color.white)
+                            )
+                        ) {
+                            Text(stringResource(id = R.string.show_opinions_button))
+                        }
                     }
-                }
 
                 //  insertamos las InfoCards
                 Column(
@@ -182,54 +200,55 @@ class MapComponents {
                 }
             }
 
-            // Mostrar el diálogo de opiniones si se activa
-            if (showOpinionsDialog) {
-                AlertDialog(
-                    onDismissRequest = { showOpinionsDialog = false },
-                    title = { Text(stringResource(id = R.string.title_local_opinions)) },
-                    text = {
-                        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                            if (opinionesList.isEmpty()) {
-                                Text(stringResource(id = R.string.text_no_opinions))
-                            } else {
-                                opinionesList.forEach { opinion ->
-                                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                                        Text(
-                                            text = String.format("%s: %s", stringResource(id = R.string.title_user), opinion.usuario.nickname),
-                                            style = MaterialTheme.typography.subtitle2
-                                        )
-                                        Text(
-                                            text = String.format("%s", opinion.resenaTexto),
-                                            style = MaterialTheme.typography.subtitle1
-                                        )
-                                        Column {
-                                            AddRatingWithStars(stringResource(id = R.string.title_ecosustainable), opinion.ecosostenible)
-                                            AddRatingWithStars(stringResource(id = R.string.title_socialinclusion), opinion.inclusionSocial)
-                                            AddRatingWithStars(stringResource(id = R.string.title_accessibility), opinion.accesibilidad)
+                // Mostrar el diálogo de opiniones si se activa
+                if (showOpinionsDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showOpinionsDialog = false },
+                        title = { Text(stringResource(id = R.string.title_local_opinions)) },
+                        text = {
+                            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                                if (opinionesList.isEmpty()) {
+                                    Text(stringResource(id = R.string.text_no_opinions))
+                                } else {
+                                    opinionesList.forEach { opinion ->
+                                        Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                                            Text(
+                                                text = String.format("%s: %s", stringResource(id = R.string.title_user), opinion.usuario.nickname),
+                                                style = MaterialTheme.typography.subtitle2
+                                            )
+                                            Text(
+                                                text = String.format("%s", opinion.resenaTexto),
+                                                style = MaterialTheme.typography.subtitle1
+                                            )
+                                            Column {
+                                                AddRatingWithStars(stringResource(id = R.string.title_ecosustainable), opinion.ecosostenible)
+                                                AddRatingWithStars(stringResource(id = R.string.title_socialinclusion), opinion.inclusionSocial)
+                                                AddRatingWithStars(stringResource(id = R.string.title_accessibility), opinion.accesibilidad)
+                                            }
+                                            Text(
+                                                text = MapUtils().formatDate(opinion.fechaPublicacion),
+                                                style = MaterialTheme.typography.body2.copy(textAlign = TextAlign.End),
+                                                modifier = Modifier.padding(vertical = 4.dp)
+                                            )
+                                            Divider(modifier = Modifier.padding(vertical = 4.dp))
                                         }
-                                        Text(
-                                            text = MapUtils().formatDate(opinion.fechaPublicacion),
-                                            style = MaterialTheme.typography.body2.copy(textAlign = TextAlign.End),
-                                            modifier = Modifier.padding(vertical = 4.dp)
-                                        )
-                                        Divider(modifier = Modifier.padding(vertical = 4.dp))
                                     }
                                 }
                             }
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = { showOpinionsDialog = false },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = colorResource(R.color.green500),
+                                    contentColor = colorResource(R.color.white)
+                                )
+                            ) {
+                                Text(stringResource(id = R.string.title_close))
+                            }
                         }
-                    },
-                    confirmButton = {
-                        Button(
-                            onClick = { showOpinionsDialog = false },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = colorResource(R.color.green500),
-                                contentColor = colorResource(R.color.white)
-                            )
-                        ) {
-                            Text(stringResource(id = R.string.title_close))
-                        }
-                    }
-                )
+                    )
+                }
             }
         }
     }
@@ -332,6 +351,8 @@ class MapComponents {
                     )
                 }
             }
+
+            // Tarjeta de Ubicación
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -347,7 +368,7 @@ class MapComponents {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Dirección:",
+                        text = String.format("%s:", stringResource(id = R.string.title_location)),
                         style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black),
                         modifier = Modifier.weight(0.3f)
