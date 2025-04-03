@@ -234,7 +234,8 @@ class MapFragment : Fragment() {
                                     markerLocal.value = local
                                     showMarkerInfo = true
                                     resolvedAddress = local.ubicacion
-                                    MapUtils().fetchAddressFromCoordinates(lat, lng, "AÑADIR CLAVE AQUÍ") { address ->
+                                    val accessToken = context.getString(R.string.mapbox_access_token)
+                                    MapUtils().fetchAddressFromCoordinates(lat, lng, accessToken) { address ->
                                         address?.let {
                                             resolvedAddress = it
                                         }
@@ -282,7 +283,7 @@ class MapFragment : Fragment() {
                         "Vigo" -> Pair(-8.720, 42.240)
                         "Pontevedra" -> Pair(-8.640, 42.431)
                         "A Coruña" -> Pair(-8.406, 43.362)
-                        "Santiago" -> Pair(-8.546, 42.878)
+                        "Santiago de Compostela" -> Pair(-8.546, 42.878)
                         else -> Pair(-3.74922, 40.463667)
                     }
                     MapUtils().animateFlyTo(mapboxMapRef, lng, lat)
