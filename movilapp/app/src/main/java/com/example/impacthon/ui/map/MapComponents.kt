@@ -71,7 +71,11 @@ import java.util.Locale
 
 class MapComponents {
     @Composable
-    fun MarkerInfoSheet(local: Local, onClose: () -> Unit, onAddOpinion: () -> Unit) {
+    fun MarkerInfoSheet(
+        local: Local,
+        resolvedAddress: String?,
+        onClose: () -> Unit,
+        onAddOpinion: () -> Unit) {
         var showOpinionsDialog by remember { mutableStateOf(false) }
         var opinionesList by remember { mutableStateOf<List<Opinion>>(emptyList()) }
         val context = LocalContext.current
@@ -79,7 +83,7 @@ class MapComponents {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.5f) // Ocupa el 50% de la pantalla, puedes ajustar según el diseño
+                .fillMaxHeight(0.5f) // Ocupa el 50% de la pantalla
                 .background(MaterialTheme.colors.surface)
                 .padding(top = 64.dp) // Para no estar encima de la barra de estado
         ) {
@@ -160,7 +164,7 @@ class MapComponents {
                     }
                 }
 
-                // Aquí es donde insertamos las InfoCards
+                //  insertamos las InfoCards
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -170,7 +174,7 @@ class MapComponents {
                     InfoCard(
                         nombre = local.nombre,
                         categoria = local.categoria,
-                        ubicacion = local.ubicacion,
+                        direccion = resolvedAddress,
                         ecosostenible = local.ecosostenible,
                         accesibilidad = local.accesibilidad,
                         inclusion_social = local.inclusionSocial
@@ -254,7 +258,7 @@ class MapComponents {
     fun InfoCard(
         nombre: String,
         categoria: String,
-        ubicacion: String,
+        direccion: String?,
         ecosostenible: Int,
         accesibilidad: Int,
         inclusion_social: Int
@@ -328,12 +332,10 @@ class MapComponents {
                     )
                 }
             }
-
-            // Tarjeta de Ubicación
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp), // Tarjeta más fina
+                    .height(60.dp),
                 elevation = 6.dp,
                 backgroundColor = colorResource(id = R.color.white)
             ) {
@@ -345,13 +347,13 @@ class MapComponents {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = String.format("%s:", stringResource(id = R.string.title_location)),
+                        text = "Dirección:",
                         style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black),
                         modifier = Modifier.weight(0.3f)
                     )
                     Text(
-                        text = ubicacion,
+                        text = direccion.toString(),
                         style = MaterialTheme.typography.body2,
                         color = colorResource(id = R.color.black),
                         maxLines = 1,
