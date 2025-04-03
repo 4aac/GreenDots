@@ -11,7 +11,7 @@ data class Usuario(
     val password: String,
     @SerializedName("fechaCreacion") val fechaCreacion: String,
     val admin: Boolean,
-    val fotoPerfil: ByteArray? // El JSON lo envía como null, por lo que se usa ByteArray?
+    val fotoPerfil: String? // El JSON lo envía como null, por lo que se usa ByteArray?
 ) : Parcelable {
 
     // Función para verificar si el usuario es administrador
@@ -32,7 +32,7 @@ data class Usuario(
         parcel.writeString(password)
         parcel.writeString(fechaCreacion)
         parcel.writeByte(if (admin) 1 else 0)
-        parcel.writeByteArray(fotoPerfil)
+        parcel.writeString(fotoPerfil)
     }
 
     override fun describeContents(): Int {
@@ -48,7 +48,7 @@ data class Usuario(
                 password = parcel.readString() ?: "",
                 fechaCreacion = parcel.readString() ?: "",
                 admin = parcel.readByte() != 0.toByte(),
-                fotoPerfil = parcel.createByteArray()
+                fotoPerfil = parcel.readString() ?: ""
             )
         }
 
@@ -84,7 +84,7 @@ data class Usuario(
         result = 31 * result + email.hashCode()
         result = 31 * result + password.hashCode()
         result = 31 * result + fechaCreacion.hashCode()
-        result = 31 * result + (fotoPerfil?.contentHashCode() ?: 0)
+        result = 31 * result + fotoPerfil.hashCode()
         return result
     }
 }
