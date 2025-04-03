@@ -76,158 +76,165 @@ class MapComponents {
         var opinionesList by remember { mutableStateOf<List<Opinion>>(emptyList()) }
         val context = LocalContext.current
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.5f) // Ocupa el 50% de la pantalla, puedes ajustar según el diseño
-                .background(MaterialTheme.colors.surface)
-                .padding(top = 64.dp) // Para no estar encima de la barra de estado
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                // Título y botón de cierre
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = stringResource(id = R.string.title_place_information), style = MaterialTheme.typography.h6)
-                    IconButton(onClick = { onClose() }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Cerrar"
-                        )
-                    }
-                }
-                Divider()
-
-                // Aquí los botones de las opiniones, ahora arriba
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(
-                        onClick = onAddOpinion,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = colorResource(R.color.green500),
-                            contentColor = colorResource(R.color.white)
-                        )
+        Column {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxHeight(0.5f)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .background(MaterialTheme.colors.surface)
+                    .padding(bottom = 72.dp) // Para no estar encima de la barra de estado
+            ) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    // Título y botón de cierre
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(stringResource(id = R.string.add_opinion_buton))
-                    }
-                    Button(
-                        onClick = {
-                            opinionesList = emptyList()
-                            RetrofitClient.instance.getOpinionesPorLocal(local.id)
-                                .enqueue(object : Callback<List<Opinion>> {
-                                    override fun onResponse(
-                                        call: Call<List<Opinion>>,
-                                        response: Response<List<Opinion>>
-                                    ) {
-                                        if (response.isSuccessful) {
-                                            opinionesList = response.body() ?: emptyList()
-                                            showOpinionsDialog = true
-                                        } else {
-                                            Toast.makeText(
-                                                context,
-                                                R.string.text_no_opinions,
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                    }
-
-                                    override fun onFailure(
-                                        call: Call<List<Opinion>>,
-                                        t: Throwable
-                                    ) {
-                                        Toast.makeText(
-                                            context,
-                                            "Fallo en la petición: ${t.message}",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                })
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = colorResource(R.color.green500),
-                            contentColor = colorResource(R.color.white)
-                        )
-                    ) {
-                        Text(stringResource(id = R.string.show_opinions_button))
-                    }
-                }
-
-                // Aquí es donde insertamos las InfoCards
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState()) // Permite desplazarse si hay mucho contenido
-                        .padding(8.dp)
-                ) {
-                    InfoCard(
-                        nombre = local.nombre,
-                        categoria = local.categoria,
-                        ubicacion = local.ubicacion,
-                        ecosostenible = local.ecosostenible,
-                        accesibilidad = local.accesibilidad,
-                        inclusion_social = local.inclusionSocial
-                    )
-                }
-            }
-
-            // Mostrar el diálogo de opiniones si se activa
-            if (showOpinionsDialog) {
-                AlertDialog(
-                    onDismissRequest = { showOpinionsDialog = false },
-                    title = { Text(stringResource(id = R.string.title_local_opinions)) },
-                    text = {
-                        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                            if (opinionesList.isEmpty()) {
-                                Text(stringResource(id = R.string.text_no_opinions))
-                            } else {
-                                opinionesList.forEach { opinion ->
-                                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                                        Text(
-                                            text = String.format("%s: %s", stringResource(id = R.string.title_user), opinion.usuario.nickname),
-                                            style = MaterialTheme.typography.subtitle2
-                                        )
-                                        Text(
-                                            text = String.format("%s", opinion.resenaTexto),
-                                            style = MaterialTheme.typography.subtitle1
-                                        )
-                                        Column {
-                                            AddRatingWithStars(stringResource(id = R.string.title_ecosustainable), opinion.ecosostenible)
-                                            AddRatingWithStars(stringResource(id = R.string.title_socialinclusion), opinion.inclusionSocial)
-                                            AddRatingWithStars(stringResource(id = R.string.title_accessibility), opinion.accesibilidad)
-                                        }
-                                        Text(
-                                            text = MapUtils().formatDate(opinion.fechaPublicacion),
-                                            style = MaterialTheme.typography.body2.copy(textAlign = TextAlign.End),
-                                            modifier = Modifier.padding(vertical = 4.dp)
-                                        )
-                                        Divider(modifier = Modifier.padding(vertical = 4.dp))
-                                    }
-                                }
-                            }
+                        Text(text = stringResource(id = R.string.title_place_information), style = MaterialTheme.typography.h6)
+                        IconButton(onClick = { onClose() }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Cerrar"
+                            )
                         }
-                    },
-                    confirmButton = {
+                    }
+                    Divider()
+
+                    // Aquí los botones de las opiniones, ahora arriba
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
                         Button(
-                            onClick = { showOpinionsDialog = false },
+                            onClick = onAddOpinion,
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = colorResource(R.color.green500),
                                 contentColor = colorResource(R.color.white)
                             )
                         ) {
-                            Text(stringResource(id = R.string.title_close))
+                            Text(stringResource(id = R.string.add_opinion_buton))
+                        }
+                        Button(
+                            onClick = {
+                                opinionesList = emptyList()
+                                RetrofitClient.instance.getOpinionesPorLocal(local.id)
+                                    .enqueue(object : Callback<List<Opinion>> {
+                                        override fun onResponse(
+                                            call: Call<List<Opinion>>,
+                                            response: Response<List<Opinion>>
+                                        ) {
+                                            if (response.isSuccessful) {
+                                                opinionesList = response.body() ?: emptyList()
+                                                showOpinionsDialog = true
+                                            } else {
+                                                Toast.makeText(
+                                                    context,
+                                                    R.string.text_no_opinions,
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
+
+                                        override fun onFailure(
+                                            call: Call<List<Opinion>>,
+                                            t: Throwable
+                                        ) {
+                                            Toast.makeText(
+                                                context,
+                                                "Fallo en la petición: ${t.message}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    })
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = colorResource(R.color.green500),
+                                contentColor = colorResource(R.color.white)
+                            )
+                        ) {
+                            Text(stringResource(id = R.string.show_opinions_button))
                         }
                     }
-                )
+
+                    // Aquí es donde insertamos las InfoCards
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState()) // Permite desplazarse si hay mucho contenido
+                            .padding(8.dp)
+                    ) {
+                        InfoCard(
+                            nombre = local.nombre,
+                            categoria = local.categoria,
+                            ubicacion = local.ubicacion,
+                            ecosostenible = local.ecosostenible,
+                            accesibilidad = local.accesibilidad,
+                            inclusion_social = local.inclusionSocial
+                        )
+                    }
+                }
+
+                // Mostrar el diálogo de opiniones si se activa
+                if (showOpinionsDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showOpinionsDialog = false },
+                        title = { Text(stringResource(id = R.string.title_local_opinions)) },
+                        text = {
+                            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                                if (opinionesList.isEmpty()) {
+                                    Text(stringResource(id = R.string.text_no_opinions))
+                                } else {
+                                    opinionesList.forEach { opinion ->
+                                        Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                                            Text(
+                                                text = String.format("%s: %s", stringResource(id = R.string.title_user), opinion.usuario.nickname),
+                                                style = MaterialTheme.typography.subtitle2
+                                            )
+                                            Text(
+                                                text = String.format("%s", opinion.resenaTexto),
+                                                style = MaterialTheme.typography.subtitle1
+                                            )
+                                            Column {
+                                                AddRatingWithStars(stringResource(id = R.string.title_ecosustainable), opinion.ecosostenible)
+                                                AddRatingWithStars(stringResource(id = R.string.title_socialinclusion), opinion.inclusionSocial)
+                                                AddRatingWithStars(stringResource(id = R.string.title_accessibility), opinion.accesibilidad)
+                                            }
+                                            Text(
+                                                text = MapUtils().formatDate(opinion.fechaPublicacion),
+                                                style = MaterialTheme.typography.body2.copy(textAlign = TextAlign.End),
+                                                modifier = Modifier.padding(vertical = 4.dp)
+                                            )
+                                            Divider(modifier = Modifier.padding(vertical = 4.dp))
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = { showOpinionsDialog = false },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = colorResource(R.color.green500),
+                                    contentColor = colorResource(R.color.white)
+                                )
+                            ) {
+                                Text(stringResource(id = R.string.title_close))
+                            }
+                        }
+                    )
+                }
             }
         }
+
     }
 
     @Composable
