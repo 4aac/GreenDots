@@ -42,7 +42,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,7 +74,11 @@ import java.util.Locale
 
 class MapComponents {
     @Composable
-    fun MarkerInfoSheet(local: Local, onClose: () -> Unit, onAddOpinion: () -> Unit) {
+    fun MarkerInfoSheet(
+        local: Local,
+        resolvedAddress: String?,
+        onClose: () -> Unit,
+        onAddOpinion: () -> Unit) {
         var showOpinionsDialog by remember { mutableStateOf(false) }
         var opinionesList by remember { mutableStateOf<List<Opinion>>(emptyList()) }
         val context = LocalContext.current
@@ -179,23 +182,23 @@ class MapComponents {
                         }
                     }
 
-                    // Aquí es donde insertamos las InfoCards
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState()) // Permite desplazarse si hay mucho contenido
-                            .padding(8.dp)
-                    ) {
-                        InfoCard(
-                            nombre = local.nombre,
-                            categoria = local.categoria,
-                            ubicacion = local.ubicacion,
-                            ecosostenible = local.ecosostenible,
-                            accesibilidad = local.accesibilidad,
-                            inclusion_social = local.inclusionSocial
-                        )
-                    }
+                //  insertamos las InfoCards
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()) // Permite desplazarse si hay mucho contenido
+                        .padding(8.dp)
+                ) {
+                    InfoCard(
+                        nombre = local.nombre,
+                        categoria = local.categoria,
+                        direccion = resolvedAddress,
+                        ecosostenible = local.ecosostenible,
+                        accesibilidad = local.accesibilidad,
+                        inclusion_social = local.inclusionSocial
+                    )
                 }
+            }
 
                 // Mostrar el diálogo de opiniones si se activa
                 if (showOpinionsDialog) {
@@ -274,7 +277,7 @@ class MapComponents {
     fun InfoCard(
         nombre: String,
         categoria: String,
-        ubicacion: String,
+        direccion: String?,
         ecosostenible: Int,
         accesibilidad: Int,
         inclusion_social: Int
@@ -353,7 +356,7 @@ class MapComponents {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp), // Tarjeta más fina
+                    .height(60.dp),
                 elevation = 6.dp,
                 backgroundColor = colorResource(id = R.color.white)
             ) {
@@ -371,7 +374,7 @@ class MapComponents {
                         modifier = Modifier.weight(0.3f)
                     )
                     Text(
-                        text = ubicacion,
+                        text = direccion.toString(),
                         style = MaterialTheme.typography.body2,
                         color = colorResource(id = R.color.black),
                         maxLines = 1,

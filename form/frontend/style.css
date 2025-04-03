@@ -8,6 +8,18 @@
 body {
   font-family: Arial, sans-serif;
   background-color: #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+main {
+  flex: 1; 
+  display: flex;
+  margin-bottom: 100px;
+  align-items: center; 
+  justify-content: center; 
 }
 
 /* Estilos del header */
@@ -35,9 +47,9 @@ header .icon {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center; 
+  font-size: 14px;
 }
 
-/* Texto de agradecimiento */
 .headline {
   font-size: 24px;
   font-weight: bold;
@@ -45,7 +57,6 @@ header .icon {
   text-align: center;
 }
 
-/* Estilos del formulario */
 form {
   display: flex;
   flex-direction: column;
@@ -64,7 +75,7 @@ form button {
   background-color: #318b82;
   border: none;
   color: #fff;
-  font-size: 16px;
+  font-size: 18px;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -79,7 +90,6 @@ form button:hover {
   margin-top: 20px;
 }
 
-/* Ajuste para que el input muestre un borde completo */
 .input-container input {
   width: 100%;
   padding: 12px;
@@ -96,6 +106,11 @@ form button:hover {
   border: 1px solid #318b82;
 }
 
+#endline {
+  margin-top: 10px;
+  font-size: 15px;
+}
+
 /* Posicionamiento de la etiqueta para el efecto flotante */
 .input-container label {
   position: absolute;
@@ -105,11 +120,10 @@ form button:hover {
   color: #999;
   pointer-events: none;
   transition: 0.2s ease all;
-  background-color: #fff; /* Para que la etiqueta no se superponga visualmente al borde */
-  padding: 0 5px;         /* Ajuste para que la etiqueta tenga un fondo */
+  background-color: #fff; 
+  padding: 0 5px;
 }
 
-/* Cuando el input está en foco o tiene contenido, la etiqueta se "eleva" */
 .input-container input:focus ~ label,
 .input-container input:not(:placeholder-shown) ~ label {
   top: 0;

@@ -163,6 +163,7 @@ class MapFragment : Fragment() {
         val markerLocal = remember { mutableStateOf<Local?>(null) }
         var allLocales by remember { mutableStateOf<List<Local>>(emptyList()) }
         var showNewOpinionForm by remember { mutableStateOf(false) }
+        var resolvedAddress by remember { mutableStateOf<String?>(null) }
 
         LaunchedEffect(Unit) {
             MapUtils().fetchAllLocales(context) { locales ->
@@ -232,6 +233,12 @@ class MapFragment : Fragment() {
                                 interactionsState.onClicked {
                                     markerLocal.value = local
                                     showMarkerInfo = true
+                                    resolvedAddress = local.ubicacion
+                                    MapUtils().fetchAddressFromCoordinates(lat, lng, "AÑADIR CLAVE AQUÍ") { address ->
+                                        address?.let {
+                                            resolvedAddress = it
+                                        }
+                                    }
                                     true
                                 }
                             }
@@ -250,7 +257,6 @@ class MapFragment : Fragment() {
             }
             FloatingActionButton(
                 onClick = {
-                    // Llama a tu método para centrar el mapa en la ubicación actual
                     mapViewportState.transitionToFollowPuckState()
                 },
                 backgroundColor = colorResource(id = R.color.green500),
@@ -286,6 +292,7 @@ class MapFragment : Fragment() {
             if (showMarkerInfo && markerLocal.value != null) {
                 MapComponents().MarkerInfoSheet(
                     local = markerLocal.value!!,
+                    resolvedAddress = resolvedAddress,
                     onClose = { showMarkerInfo = false },
                     onAddOpinion = { showNewOpinionForm = true }
                 )
