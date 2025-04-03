@@ -234,6 +234,7 @@ class MapFragment : Fragment() {
                                     markerLocal.value = local
                                     showMarkerInfo = true
                                     resolvedAddress = local.ubicacion
+                                    //val accessToken = ""
                                     val accessToken = context.getString(R.string.mapbox_access_token)
                                     MapUtils().fetchAddressFromCoordinates(lat, lng, accessToken) { address ->
                                         address?.let {
