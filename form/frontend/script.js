@@ -1,38 +1,39 @@
 // Traducciones para cada idioma
 const translations = {
   es: {
-    headline: "¿Quieres ser el primero en enterarte de las últimas novedades de GreenDots?",
-    description: "Déjanos tu nombre y correo para recibir información exclusiva sobre nuestras fases beta, el lanzamiento de la app y mucho más.",
-    endline: "¡Únete a nuestra comunidad y no te pierdas ninguna novedad!",
+    headline: "Entérate de nuestras novedades.",
+    description: "Déjanos tus datos para recibir información exclusiva de nuestra fase beta, el lanzamiento de la app y mucho más.",
+    endline: "¡Únete a nuestra comunidad y no te pierdas nada!",
     nameLabel: "Nombre",
     emailLabel: "Correo electrónico",
     submit: "Enviar"
   },
   gl: {
-    headline: "Queres ser o primeiro en saber as últimas novidades de GreenDots?",
-    description: "Deixanos o teu nome e correo para recibir información exclusiva sobre as nosas fases beta, o lanzamento da aplicación e moito máis.",
-    endline: "Únete á nosa comunidade e non perdas ningunha novidade!",
+    headline: "Infórmate das nosas novidades.",
+    description: "Déixanos os teus datos para recibir información exclusiva sobre a nosa fase beta, o lanzamento da app e moito máis.",
+    endline: "Únete á nosa comunidade e non perdas nada!",
     nameLabel: "Nome",
     emailLabel: "Correo electrónico",
     submit: "Enviar"
   },
   pt: {
-    headline: "Quer ser o primeiro a saber das últimas novidades do GreenDots?",
-    description: "Deixe-nos o seu nome e e-mail para receber informações exclusivas sobre as nossas fases beta, o lançamento da aplicação e muito mais.",
-    endline: "Junte-se à nossa comunidade e não perca nenhuma novidade!",
+    headline: "Fique por dentro das nossas novidades.",
+    description: "Deixe seus dados para receber informações exclusivas sobre nossa fase beta, o lançamento do app e muito mais.",
+    endline: "Junte-se à nossa comunidade e não perca nada!",
     nameLabel: "Nome",
     emailLabel: "E-mail",
     submit: "Enviar"
   },
   en: {
-    headline: "Do you want to be the first to hear the latest news about GreenDots?",
-    description: "Leave us your name and email to receive exclusive information about our beta phases, the app launch and much more.",
-    endline: "Join our community and don't miss any news!",
+    headline: "Stay up to date with our news.",
+    description: "Leave us your details to receive exclusive information about our beta phase, the app launch, and much more.",
+    endline: "Join our community and don't miss a thing!",
     nameLabel: "Name",
     emailLabel: "Email",
     submit: "Submit"
   }
 };
+
 
 // Función para actualizar el idioma en la página
 function updateLanguage(lang) {
@@ -52,7 +53,6 @@ const browserLang = navigator.language.slice(0, 2);
 if (translations[browserLang]) {
   updateLanguage(browserLang);
 } else {
-  // Si el idioma del navegador no está disponible, se puede establecer uno por defecto, por ejemplo "es"
   updateLanguage("es");
 }
 
