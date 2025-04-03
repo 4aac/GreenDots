@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Nombre app -->
-
     <!-- Login -->
     <string name="hint_username">Nombre de usuario</string>
     <string name="hint_passwd">Contraseña</string>
@@ -49,5 +46,6 @@
     <string name="error_send_opinion">Error al enviar la opinión</string>
     <string name="title_opinions">Opiniones</string>
     <string name="text_must_loggin">Debes iniciar sesion primero</string>
+    <string name="title_portuguese">Portugués</string>
 
 </resources>

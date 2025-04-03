@@ -49,5 +49,6 @@
     <string name="error_send_opinion">Error ao enviar a opinión</string>
     <string name="title_opinions">Opinións</string>
     <string name="text_must_loggin">Deber iniciar sesión primeiro</string>
+    <string name="title_portuguese">Portugués</string>
 
 </resources>
