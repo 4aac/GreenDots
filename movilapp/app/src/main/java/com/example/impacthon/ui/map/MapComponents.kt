@@ -12,6 +12,9 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +42,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,29 +79,39 @@ class MapComponents {
         var showOpinionsDialog by remember { mutableStateOf(false) }
         var opinionesList by remember { mutableStateOf<List<Opinion>>(emptyList()) }
         val context = LocalContext.current
+        var spacerHeight by remember { mutableStateOf(0.6f) }
 
         Column {
             Spacer(
                 modifier = Modifier
-                    .fillMaxHeight(0.5f)
+                    .fillMaxHeight(spacerHeight)
             )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .background(MaterialTheme.colors.surface)
-                    .padding(bottom = 72.dp) // Para no estar encima de la barra de estado
+                    .padding(bottom = 72.dp)
+                    .draggable(
+                        orientation = Orientation.Vertical,
+                        state = rememberDraggableState { delta ->
+                            spacerHeight = (spacerHeight + delta / 1000).coerceIn(0.3f, 0.85f)
+                        }
+                    )
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     // Título y botón de cierre
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
+                            .padding(horizontal = 20.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = stringResource(id = R.string.title_place_information), style = MaterialTheme.typography.h6)
+                        Text(
+                            text = stringResource(id = R.string.title_place_information),
+                            style = MaterialTheme.typography.h6,
+                        )
                         IconButton(onClick = { onClose() }) {
                             Icon(
                                 imageVector = Icons.Default.Close,
@@ -234,7 +248,6 @@ class MapComponents {
                 }
             }
         }
-
     }
 
     @Composable
