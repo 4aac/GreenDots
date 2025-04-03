@@ -57,7 +57,7 @@
                 android:id="@+id/button_espanhol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="4dp"
                 android:layout_weight="1"
                 android:text="@string/title_español" />
 
@@ -65,7 +65,7 @@
                 android:id="@+id/button_galego"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="4dp"
                 android:layout_weight="1"
                 android:text="@string/title_galego" />
 
@@ -73,9 +73,17 @@
                 android:id="@+id/button_english"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="4dp"
                 android:layout_weight="1"
                 android:text="@string/title_english" />
+
+            <Button
+                android:id="@+id/button_portugues"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:text="@string/title_portuguese" />
         </LinearLayout>
     </LinearLayout>
 

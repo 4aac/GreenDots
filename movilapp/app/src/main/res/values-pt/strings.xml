@@ -1,0 +1,51 @@
+<resources>
+
+    <!-- Login -->
+    <string name="hint_username">Nome de usuário</string>
+    <string name="hint_passwd">Senha</string>
+    <string name="title_login">Login</string>
+    <string name="error_login">Nome de usuário ou senha incorretos</string>
+
+    <!-- Perfil -->
+    <string name="title_profile">Perfil</string>
+    <string name="title_logout">Sair</string>
+
+    <!-- Configuração -->
+    <string name="title_settings">Configuração</string>
+    <string name="title_language">Idioma</string>
+    <string name="title_español">Espanhol</string>
+    <string name="title_galego">Galego</string>
+    <string name="title_english">Inglês</string>
+    <string name="title_github">Repositório do Github</string>
+    <string name="description_icon_mode">Ícone do modo claro/escuro</string>
+
+    <!-- Mapa -->
+    <string name="title_map">Mapa</string>
+    <string name="permision_denied">As permissões de localização foram negadas. Alguns recursos serão desativados</string>
+    <string name="permision_button">Solicitar permissões</string>
+    <string name="select_city">Escolha uma cidade</string>
+    <string name="text_no_permisions">As permissões de localização são necessárias para exibir o mapa</string>
+    <string name="title_place_information">Informações do local</string>
+    <string name="add_opinion_buton">Adicionar opinião</string>
+    <string name="show_opinions_button">Mostrar opiniões</string>
+    <string name="title_local_opinions">Opiniões locais</string>
+    <string name="text_no_opinions">Nenhuma opinião disponível</string>
+    <string name="title_user">Usuário</string>
+    <string name="title_opinion">Opinião</string>
+    <string name="title_close">Fechar</string>
+    <string name="title_name">Nome</string>
+    <string name="title_category">Categoria</string>
+    <string name="title_location">Localização</string>
+    <string name="title_ecosustainable">Eco-sustentável</string>
+    <string name="title_accessibility">Acessibilidade</string>
+    <string name="title_socialinclusion">Inclusão social</string>
+    <string name="add_photo_button">Adicionar foto</string>
+    <string name="send_opinion_button">Enviar opinião</string>
+    <string name="cancel_button">Cancelar</string>
+    <string name="text_sent_opinion">Opinião enviada com sucesso</string>
+    <string name="error_send_opinion">Erro ao enviar opinião</string>
+    <string name="title_opinions">Opiniões</string>
+    <string name="text_must_loggin">Você deve fazer login primeiro</string>
+    <string name="title_portuguese">Português</string>
+
+</resources>

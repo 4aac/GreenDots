@@ -49,6 +49,11 @@ class SettingsFragment : Fragment() {
             updateAppConfiguration("en")
         }
 
+        binding.buttonPortugues.setOnClickListener {
+            settingsViewModel.changeLanguage("pt")
+            updateAppConfiguration("pt")
+        }
+
         // Configurar botón de enlace externo
         binding.buttonGithub.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/martindios/GreenDots/"))
