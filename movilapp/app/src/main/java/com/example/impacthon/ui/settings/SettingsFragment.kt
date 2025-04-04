@@ -98,6 +98,7 @@ class SettingsFragment : Fragment() {
         binding.buttonEspanhol.setText(R.string.title_español)
         binding.buttonGalego.setText(R.string.title_galego)
         binding.buttonEnglish.setText(R.string.title_english)
+        binding.buttonPortugues.setText(R.string.title_portuguese)
         binding.buttonGithub.setText(R.string.title_github)
     }
 

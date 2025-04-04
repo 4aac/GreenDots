@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static com.asiercl.server.utils.ImageUtils.redimensionarImagen;
+
 @RestController
 @RequestMapping("/user")
 public class UsuarioController {
@@ -78,15 +80,15 @@ public class UsuarioController {
             }
 
             byte[] imagenBytes = file.getBytes();
-
-            // Verificar que la imagen no esté vacía
-            System.out.println("Tamaño de la imagen recibida: " + imagenBytes.length + " bytes");
-
             if (imagenBytes.length == 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Archivo vacío.");
             }
 
-            usuario.setFotoPerfil(file.getBytes());
+            // Convertir imagen a 120x120
+            byte[] imagenRedimensionada = redimensionarImagen(imagenBytes, 120, 120);
+
+            // Guardar la imagen redimensionada
+            usuario.setFotoPerfil(imagenRedimensionada);
             usuarioDAO.actualizarUsuario(usuario);
             return ResponseEntity.ok("Imagen subida con éxito.");
         } catch (IOException e) {

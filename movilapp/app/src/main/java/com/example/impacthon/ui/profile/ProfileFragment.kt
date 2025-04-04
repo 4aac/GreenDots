@@ -1,8 +1,10 @@
 package com.example.impacthon.ui.profile
 
-import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Base64
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +13,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
@@ -78,16 +76,52 @@ class ProfileFragment : Fragment() {
             binding.textNickname.text = it.nickname
             binding.profileContainer.visibility = View.VISIBLE
 
+            if (!it.fotoPerfil.isNullOrEmpty()) {
+                val bitmap = decodeBase64ToBitmap(it.fotoPerfil)
+                if (bitmap != null) {
+                    binding.imageProfile.setImageBitmap(bitmap)
+                } else {
+                    binding.imageProfile.setImageResource(R.mipmap.logo_app_redondo)
+                }
+            } else {
+                binding.imageProfile.setImageResource(R.mipmap.logo_app_redondo)
+            }
+
             fetchOpiniones(it.nickname)
         } ?: run {
             // Manejo si el usuario es nulo
             usuario = profileViewModel.usuarioLogueado()
+
+            if (!usuario!!.fotoPerfil.isNullOrEmpty()) {
+                val bitmap = decodeBase64ToBitmap(usuario!!.fotoPerfil!!)
+                if (bitmap != null) {
+                    binding.imageProfile.setImageBitmap(bitmap)
+                } else {
+                    binding.imageProfile.setImageResource(R.mipmap.logo_app_redondo)
+                }
+            } else {
+                binding.imageProfile.setImageResource(R.mipmap.logo_app_redondo)
+            }
 
             binding.textFullName.text = usuario!!.nombre
             binding.textNickname.text = usuario!!.nickname
             binding.profileContainer.visibility = View.VISIBLE
 
             fetchOpiniones(usuario!!.nickname)
+        }
+    }
+
+    private fun decodeBase64ToBitmap(base64Str: String): Bitmap? {
+        return try {
+            // Remover prefijo si existe (ej. "data:image/jpeg;base64,")
+            val pureBase64 = if (base64Str.contains(",")) {
+                base64Str.substringAfter(",")
+            } else base64Str
+            val decodedBytes = Base64.decode(pureBase64, Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
