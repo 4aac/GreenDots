@@ -63,20 +63,24 @@ import com.mapbox.maps.plugin.locationcomponent.location
 import kotlinx.coroutines.delay
 
 class MapFragment : Fragment() {
+    // Controla el estado de permisos de localización
     private var permissionsGranted by mutableStateOf(false)
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var mapViewModel: MapViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Configuración del launcher para pedir permisos al usuario
         permissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
                 val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
                         permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
                 onPermissionResult(granted)
             }
+        // Comprueba si los permisos ya están concedidos
         permissionsGranted = PermissionsManager.areLocationPermissionsGranted(requireContext())
         if (!permissionsGranted) {
+            // Solicitar permisos de localización
             permissionLauncher.launch(
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -93,11 +97,13 @@ class MapFragment : Fragment() {
     ): View {
         mapViewModel = ViewModelProvider(this, ViewModelFactory(requireContext())).get(MapViewModel::class.java)
 
+        // Retorna una vista Compose que muestra la pantalla del mapa con permisos
         return ComposeView(requireContext()).apply {
             setContent { MapScreenWithPermissions(permissionsGranted) }
         }
     }
 
+    // Actualiza el estado de permisos y la UI según el resultado
     private fun onPermissionResult(granted: Boolean) {
         permissionsGranted = granted
         if (granted) {
@@ -111,6 +117,7 @@ class MapFragment : Fragment() {
         }
     }
 
+    // Muestra la pantalla del mapa o la solicitud de permisos según el estado
     @Composable
     fun MapScreenWithPermissions(permissionsGranted: Boolean) {
         if (permissionsGranted) {
@@ -120,6 +127,7 @@ class MapFragment : Fragment() {
         }
     }
 
+    // Pantalla que solicita al usuario activar los permisos de localización
     @Composable
     fun PermissionRequestScreen() {
         Box(
@@ -154,23 +162,26 @@ class MapFragment : Fragment() {
         }
     }
 
+    // Pantalla principal del mapa con lógica de interacción y animaciones
     @Composable
     fun MapScreen() {
         val context = LocalContext.current
 
-        // Estados y lógica existente
+        // Estados para controlar la visualización de información, opiniones y lista de locales
         var showMarkerInfo by remember { mutableStateOf(false) }
         val markerLocal = remember { mutableStateOf<Local?>(null) }
         var allLocales by remember { mutableStateOf<List<Local>>(emptyList()) }
         var showNewOpinionForm by remember { mutableStateOf(false) }
         var resolvedAddress by remember { mutableStateOf<String?>(null) }
 
+        // Carga asíncrona de locales desde el backend
         LaunchedEffect(Unit) {
             MapUtils().fetchAllLocales(context) { locales ->
                 locales?.let { allLocales = it }
             }
         }
 
+        // Configura el estado de la cámara del mapa
         val mapViewportState = rememberMapViewportState {
             setCameraOptions {
                 zoom(2.5)
@@ -183,6 +194,7 @@ class MapFragment : Fragment() {
         val mapboxMapRef = remember { mutableStateOf<MapboxMap?>(null) }
         var animationStarted by remember { mutableStateOf(false) }
 
+        // Ejecuta la animación inicial de la cámara si aún no se ha realizado
         LaunchedEffect(mapboxMapRef.value) {
             if (mapboxMapRef.value != null && !animationStarted && !mapViewModel.initialAnimationDone) {
                 mapViewModel.initialAnimationDone = true
@@ -207,6 +219,7 @@ class MapFragment : Fragment() {
                     .padding(bottom = 80.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
+                // Configuración del mapa utilizando Compose y Mapbox
                 MapboxMap(
                     modifier = Modifier
                         .weight(1f)
@@ -223,14 +236,17 @@ class MapFragment : Fragment() {
                     mapViewportState = mapViewportState,
                     style = { MapStyle(style = "mapbox://styles/martindios/cm851rhgo004q01qzbcrg0fb9") }
                 ) {
+                    // Configura el marcador con el recurso definido
                     val markerResourceId = R.drawable.red_marker
                     val markerIcon = rememberIconImage(key = markerResourceId, painter = painterResource(markerResourceId))
+                    // Agrega un marcador para cada local obtenido
                     allLocales.forEach { local ->
                         MapUtils().parseLocation(local.ubicacion)?.let { (lat, lng) ->
                             PointAnnotation(
                                 point = Point.fromLngLat(lng, lat)
                             ) {
                                 iconImage = markerIcon
+                                // Al pulsar sobre el marcador, se muestran los detalles e inicia la petición para la dirección
                                 interactionsState.onClicked {
                                     markerLocal.value = local
                                     showMarkerInfo = true
@@ -246,6 +262,7 @@ class MapFragment : Fragment() {
                             }
                         }
                     }
+                    // Inicializa la configuración del componente de ubicación en el mapa
                     MapEffect(Unit) { mapView ->
                         mapboxMapRef.value = mapView.mapboxMap
                         mapView.location.updateSettings {
@@ -257,6 +274,7 @@ class MapFragment : Fragment() {
                     }
                 }
             }
+            // Botón para centrar el mapa en la ubicación del usuario
             FloatingActionButton(
                 onClick = {
                     mapViewportState.transitionToFollowPuckState()
@@ -273,6 +291,7 @@ class MapFragment : Fragment() {
                     modifier = Modifier.size(24.dp)
                 )
             }
+            // Barra de búsqueda para seleccionar ciudad
             MapComponents().SearchBarDropdown(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -280,6 +299,7 @@ class MapFragment : Fragment() {
                     .offset(y = 50.dp),
                 onCitySelected = { city ->
 
+                    // Evita animación si la ciudad ya está seleccionada
                     if(mapViewModel.selectedCity == city) return@SearchBarDropdown
 
                     mapViewModel.selectedCity = city
@@ -292,10 +312,12 @@ class MapFragment : Fragment() {
                         "Santiago de Compostela" -> Pair(-8.546, 42.878)
                         else -> Pair(-3.74922, 40.463667)
                     }
+                    // Anima la cámara hacia la ciudad seleccionada
                     MapUtils().animateFlyTo(mapboxMapRef, lng, lat)
                 }
             )
 
+            // Muestra la hoja de información del marcador
             if (showMarkerInfo && markerLocal.value != null) {
                 MapComponents().MarkerInfoSheet(
                     local = markerLocal.value!!,
@@ -306,6 +328,7 @@ class MapFragment : Fragment() {
             }
         }
 
+        // Muestra el formulario para añadir opinión si se activa y existe un local seleccionado
         if (showNewOpinionForm && markerLocal.value != null) {
             if(mapViewModel.nicknameUsuario() == null){
                 Toast.makeText(
