@@ -184,7 +184,8 @@ class MapFragment : Fragment() {
         var animationStarted by remember { mutableStateOf(false) }
 
         LaunchedEffect(mapboxMapRef.value) {
-            if (mapboxMapRef.value != null && !animationStarted) {
+            if (mapboxMapRef.value != null && !animationStarted && !mapViewModel.initialAnimationDone) {
+                mapViewModel.initialAnimationDone = true
                 animationStarted = true
                 delay(1500L)
                 mapboxMapRef.value?.flyTo(
@@ -278,6 +279,11 @@ class MapFragment : Fragment() {
                     .padding(horizontal = 16.dp)
                     .offset(y = 50.dp),
                 onCitySelected = { city ->
+
+                    if(mapViewModel.selectedCity == city) return@SearchBarDropdown
+
+                    mapViewModel.selectedCity = city
+
                     // Define las coordenadas para cada ciudad
                     val (lng, lat) = when (city) {
                         "Vigo" -> Pair(-8.720, 42.240)
