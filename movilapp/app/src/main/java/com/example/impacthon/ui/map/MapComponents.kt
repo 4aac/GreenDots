@@ -86,8 +86,7 @@ class MapComponents {
 
         Column {
             Spacer(
-                modifier = Modifier
-                    .fillMaxHeight(spacerHeight)
+                modifier = Modifier.fillMaxHeight(spacerHeight)
             )
             Box(
                 modifier = Modifier
@@ -181,24 +180,23 @@ class MapComponents {
                             Text(stringResource(id = R.string.show_opinions_button))
                         }
                     }
-
-                //  insertamos las InfoCards
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState()) // Permite desplazarse si hay mucho contenido
-                        .padding(8.dp)
-                ) {
-                    InfoCard(
-                        nombre = local.nombre,
-                        categoria = local.categoria,
-                        direccion = resolvedAddress,
-                        ecosostenible = local.ecosostenible,
-                        accesibilidad = local.accesibilidad,
-                        inclusion_social = local.inclusionSocial
-                    )
+                    //  insertamos las InfoCards
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState()) // Permite desplazarse si hay mucho contenido
+                            .padding(8.dp)
+                    ) {
+                        InfoCard(
+                            nombre = local.nombre,
+                            categoria = local.categoria,
+                            direccion = resolvedAddress,
+                            ecosostenible = local.ecosostenible,
+                            accesibilidad = local.accesibilidad,
+                            inclusion_social = local.inclusionSocial
+                        )
+                    }
                 }
-            }
 
                 // Mostrar el diálogo de opiniones si se activa
                 if (showOpinionsDialog) {
@@ -254,11 +252,11 @@ class MapComponents {
     }
 
     @Composable
-    fun AddRatingWithStars(label: String, rating: Int) {
+    fun AddRatingWithStars(label: String, rating: Int, bold: Boolean = false) {
         Row(modifier = Modifier.padding(vertical = 4.dp)) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.body2,
+                style = if (bold) MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold) else MaterialTheme.typography.body2,
                 modifier = Modifier.weight(1f)
             )
             Row {
@@ -399,19 +397,8 @@ class MapComponents {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = String.format("%s:", stringResource(id = R.string.title_ecosustainable)),
-                        style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
-                        color = colorResource(id = R.color.black),
-                        modifier = Modifier.weight(0.5f)
-                    )
-                    // Mostrar el puntaje del ecosostenible
-                    Text(
-                        text = "$ecosostenible/5",
-                        style = MaterialTheme.typography.body2,
-                        color = colorResource(id = R.color.black),
-                        modifier = Modifier.weight(0.5f)
-                    )
+                    // Mostrar la valoración de ecosostenible como estrellas
+                    AddRatingWithStars(label = stringResource(id = R.string.title_ecosustainable), rating = ecosostenible, true)
                 }
             }
 
@@ -430,19 +417,8 @@ class MapComponents {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = String.format("%s:", stringResource(id = R.string.title_accessibility)),
-                        style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
-                        color = colorResource(id = R.color.black),
-                        modifier = Modifier.weight(0.5f)
-                    )
-                    // Mostrar el puntaje de accesibilidad
-                    Text(
-                        text = "$accesibilidad/5",
-                        style = MaterialTheme.typography.body2,
-                        color = colorResource(id = R.color.black),
-                        modifier = Modifier.weight(0.5f)
-                    )
+                    // Mostrar la valoración de accesibilidad como estrellas
+                    AddRatingWithStars(label = stringResource(id = R.string.title_accessibility), rating = accesibilidad, true)
                 }
             }
 
@@ -461,21 +437,11 @@ class MapComponents {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = String.format("%s:", stringResource(id = R.string.title_socialinclusion)),
-                        style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Bold),
-                        color = colorResource(id = R.color.black),
-                        modifier = Modifier.weight(0.5f)
-                    )
-                    // Mostrar el puntaje de inclusión social
-                    Text(
-                        text = "$inclusion_social/5",
-                        style = MaterialTheme.typography.body2,
-                        color = colorResource(id = R.color.black),
-                        modifier = Modifier.weight(0.5f)
-                    )
+                    // Mostrar la valoración de inclusión social como estrellas
+                    AddRatingWithStars(label = stringResource(id = R.string.title_socialinclusion), rating = inclusion_social, true)
                 }
             }
+
         }
     }
 

@@ -66,7 +66,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 
     implementation("androidx.compose.material:material-icons-extended:1.3.1")
-
+    implementation ("com.google.android.material:material:1.9.0")
 
 
     implementation("androidx.core:core-ktx:1.15.0")

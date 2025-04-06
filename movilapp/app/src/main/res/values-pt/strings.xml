@@ -47,5 +47,6 @@
     <string name="title_opinions">Opiniões</string>
     <string name="text_must_loggin">Você deve fazer login primeiro</string>
     <string name="title_portuguese">Português</string>
+    <string name="title_profile_image">Foto do perfil</string>
 
 </resources>

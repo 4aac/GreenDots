@@ -50,5 +50,6 @@
     <string name="title_opinions">Opinions</string>
     <string name="text_must_loggin">You shoud log in first</string>
     <string name="title_portuguese">Portuguese</string>
+    <string name="title_profile_image">Profile image</string>
 
 </resources>
