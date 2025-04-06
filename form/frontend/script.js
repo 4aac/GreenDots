@@ -72,26 +72,34 @@ document.getElementById('contactForm').addEventListener('submit', function(event
   const name = document.getElementById('name').value;
   const email = document.getElementById('email').value;
   
-  // Crear el objeto con los datos a enviar usando las claves que espera el backend
-  const data = { nombre: name, correo: email };
+    // [START Realtime Database Fetch]
+    // Firebase Realtime Database URL
+    const firebaseDBUrl = 'https://greendotsform-default-rtdb.europe-west1.firebasedatabase.app/user.json';
 
-  // Enviar datos al endpoint /usuarios en el puerto 4444
-  fetch('http://127.0.0.1:4444/usuarios', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  })
-  .then(response => {
-    if(response.ok) {
-      alert('Datos enviados correctamente');
-    } else {
-      alert('Error al enviar los datos');
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    alert('Error al enviar los datos');
-  });
+    // Data to be sent to Firebase
+    const userData = {
+      name: name,
+      email: email
+    };
+
+    // Send data to Firebase Realtime Database
+    fetch(firebaseDBUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log('Data sent to Firebase successfully!');
+      } else {
+        console.error('Error sending data to Firebase:', response.status);
+      }
+    })
+    .catch(error => {
+      console.error('Error sending data to Firebase:', error);
+    });
+    // [END Realtime Database Fetch]
+
 });

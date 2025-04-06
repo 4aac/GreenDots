@@ -8,7 +8,7 @@ CORS(app)
 
 # Configuración de la conexión a PostgreSQL
 DB_HOST = os.getenv('DB_HOST', 'db')
-DB_NAME = os.getenv('DB_NAME', 'dbFinancialTracker')
+DB_NAME = os.getenv('DB_NAME', 'formgreendotsdb')
 DB_USER = os.getenv('DB_USER', 'testuser')
 DB_PASSWORD = os.getenv('DB_PASSWORD', 'testpassword')
 
