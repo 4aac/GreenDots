@@ -40,14 +40,16 @@ CREATE TABLE Opiniones (
     ResenaTexto TEXT,
     Ecosostenible INT CHECK (Ecosostenible BETWEEN 0 AND 5),
     InclusionSocial INT CHECK (InclusionSocial BETWEEN 0 AND 5),
-    Accesibilidad INT CHECK (Accesibilidad BETWEEN 0 AND 5)
+    Accesibilidad INT CHECK (Accesibilidad BETWEEN 0 AND 5),
+    Foto BYTEA
 );
 
+/*
 CREATE TABLE OpinionesFotos (
     ID SERIAL PRIMARY KEY,
     OpinionID INT REFERENCES Opiniones(ID) ON DELETE CASCADE,
     Foto BYTEA  -- Se almacena la imagen en formato binario
-);
+);*/
 
 
 ------- INSERTAMOS DATOS --------

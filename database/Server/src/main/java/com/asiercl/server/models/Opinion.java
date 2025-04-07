@@ -12,9 +12,9 @@ public class Opinion {
     private int ecosostenible;
     private int inclusionSocial;
     private int accesibilidad;
-    private ArrayList<byte[]> fotos;
+    private byte[] foto;
 
-    public Opinion(int id, Usuario usuario, Local local, Timestamp fechaPublicacion, String resenaTexto, int ecosostenible, int inclusionSocial, int accesibilidad, ArrayList<byte[]> fotos) {
+    public Opinion(int id, Usuario usuario, Local local, Timestamp fechaPublicacion, String resenaTexto, int ecosostenible, int inclusionSocial, int accesibilidad, byte[] foto) {
         this.id = id;
         this.usuario = usuario;
         this.local = local;
@@ -23,8 +23,7 @@ public class Opinion {
         this.ecosostenible = ecosostenible;
         this.inclusionSocial = inclusionSocial;
         this.accesibilidad = accesibilidad;
-        if(fotos == null) { fotos = new ArrayList<>(); }
-        else{ this.fotos = fotos; }
+        this.foto = foto;
     }
 
     // Getters
@@ -36,7 +35,7 @@ public class Opinion {
     public int getEcosostenible() { return ecosostenible; }
     public int getInclusionSocial() { return inclusionSocial; }
     public int getAccesibilidad() { return accesibilidad; }
-    public ArrayList<byte[]> getFotos() { return fotos; }
+    public byte[] getfoto() { return foto; }
 
     // Setters
     public void setId(int id) { this.id = id; }
@@ -47,7 +46,5 @@ public class Opinion {
     public void setEcosostenible(int ecosostenible) { this.ecosostenible = ecosostenible; }
     public void setInclusionSocial(int inclusionSocial) { this.inclusionSocial = inclusionSocial; }
     public void setAccesibilidad(int accesibilidad) { this.accesibilidad = accesibilidad; }
-    public void setFotos(ArrayList<byte[]> fotos) { this.fotos = fotos; }
-
-    public void addFoto(byte[] foto) { fotos.add(foto); }
+    public void setfoto(byte[] foto) { this.foto = foto; }
 }

@@ -13,7 +13,7 @@ public class OpinionDAO {
 
     // Método para insertar una opinión en la base de datos
     public void insertarOpinion(Opinion opinion) {
-        String sql = "INSERT INTO Opiniones (usuarioNickname, localId, fechaPublicacion, resenaTexto, ecosostenible, inclusionSocial, accesibilidad) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Opiniones (usuarioNickname, localId, fechaPublicacion, resenaTexto, ecosostenible, inclusionSocial, accesibilidad, foto) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -25,6 +25,7 @@ public class OpinionDAO {
             pstmt.setInt(5, opinion.getEcosostenible());
             pstmt.setInt(6, opinion.getInclusionSocial());
             pstmt.setInt(7, opinion.getAccesibilidad());
+            pstmt.setBytes(8, opinion.getfoto());
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -32,18 +33,18 @@ public class OpinionDAO {
         }
     }
 
-    // Método para obtener opinion en especifico
-    public Opinion obtenerOpinionesPorId(int Id) {
+    // Método para obtener una opinión específica por ID
+    public Opinion obtenerOpinionesPorId(int id) {
         Opinion opinion = null;
-        String sql = "SELECT * FROM Opiniones WHERE Id = ?";
+        String sql = "SELECT * FROM Opiniones WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(1, Id);
+            pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
 
-            while (rs.next()) {
+            if (rs.next()) {
                 opinion = new Opinion(
                         rs.getInt("id"),
                         new Usuario(rs.getString("usuarioNickname"), "", "", "", null, false, null, new ArrayList<>()),
@@ -53,7 +54,7 @@ public class OpinionDAO {
                         rs.getInt("ecosostenible"),
                         rs.getInt("inclusionSocial"),
                         rs.getInt("accesibilidad"),
-                        new ArrayList<>()
+                        rs.getBytes("foto")
                 );
             }
         } catch (SQLException e) {
@@ -83,7 +84,7 @@ public class OpinionDAO {
                         rs.getInt("ecosostenible"),
                         rs.getInt("inclusionSocial"),
                         rs.getInt("accesibilidad"),
-                        new ArrayList<>()
+                        rs.getBytes("foto")
                 );
                 opiniones.add(opinion);
             }
@@ -113,7 +114,7 @@ public class OpinionDAO {
                         rs.getInt("ecosostenible"),
                         rs.getInt("inclusionSocial"),
                         rs.getInt("accesibilidad"),
-                        new ArrayList<>()
+                        rs.getBytes("foto")
                 );
                 opiniones.add(opinion);
             }
@@ -123,12 +124,12 @@ public class OpinionDAO {
         return opiniones;
     }
 
-
+    // Método para actualizar una opinión
     public void actualizarOpinion(Opinion opinion) {
-        String sql = "UPDATE Opiniones SET usuarioNickname = ?, localId = ?, resenaTexto = ?, ecosostenible = ?, inclusionSocial = ?, accesibilidad = ?, WHERE id = ?";
+        String sql = "UPDATE Opiniones SET usuarioNickname = ?, localId = ?, resenaTexto = ?, ecosostenible = ?, inclusionSocial = ?, accesibilidad = ?, foto = ? WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, opinion.getUsuario().getNickname());
             pstmt.setInt(2, opinion.getLocal().getId());
@@ -136,8 +137,8 @@ public class OpinionDAO {
             pstmt.setInt(4, opinion.getEcosostenible());
             pstmt.setInt(5, opinion.getInclusionSocial());
             pstmt.setInt(6, opinion.getAccesibilidad());
-
-            pstmt.setInt(7, opinion.getId());
+            pstmt.setBytes(7, opinion.getfoto());
+            pstmt.setInt(8, opinion.getId());
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
