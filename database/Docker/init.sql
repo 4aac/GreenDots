@@ -354,10 +354,3 @@ INSERT INTO Opiniones (UsuarioNickname, LocalID, ResenaTexto, Ecosostenible, Inc
 
 ('joao', 2, 'É acessível a deficientes, o pessoal da escola é muito simpático e ajudou-me em tudo.', 4, 3, 5),
 ('vascoVieira', 2, 'Têm um micro-ondas para levar comida em tupperware, o que é muito positivo para evitar o uso de plástico.', 5, 4, 3);
-
-
-
--- Insertar OpinionesFotos (Ejemplo sin datos binarios reales)
-INSERT INTO OpinionesFotos (OpinionID) VALUES
-(1), (2), (3);
-
