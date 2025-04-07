@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.impacthon.MainActivity
 import com.example.impacthon.R
 import com.example.impacthon.databinding.FragmentSettingsBinding
-import com.example.impacthon.ui.SettingsUtil
+import com.example.impacthon.utils.SettingsUtil
 import com.example.impacthon.ui.ViewModelFactory
 
 class SettingsFragment : Fragment() {

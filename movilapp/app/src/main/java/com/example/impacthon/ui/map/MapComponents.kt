@@ -64,6 +64,8 @@ import com.example.impacthon.backend.models.Local
 import com.example.impacthon.backend.models.LocalForOpinion
 import com.example.impacthon.backend.models.Opinion
 import com.example.impacthon.backend.models.UsuarioForOpinion
+import com.example.impacthon.utils.AuxUtils
+import com.example.impacthon.utils.MapUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -180,7 +182,7 @@ class MapComponents {
                             Text(stringResource(id = R.string.show_opinions_button))
                         }
                     }
-                    //  insertamos las InfoCards
+                    // Insertamos las InfoCards
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -224,7 +226,7 @@ class MapComponents {
                                                 AddRatingWithStars(stringResource(id = R.string.title_accessibility), opinion.accesibilidad)
                                             }
                                             Text(
-                                                text = MapUtils().formatDate(opinion.fechaPublicacion),
+                                                text = AuxUtils.formatDate(opinion.fechaPublicacion),
                                                 style = MaterialTheme.typography.body2.copy(textAlign = TextAlign.End),
                                                 modifier = Modifier.padding(vertical = 4.dp)
                                             )
@@ -252,7 +254,7 @@ class MapComponents {
     }
 
     @Composable
-    fun AddRatingWithStars(label: String, rating: Int, bold: Boolean = false) {
+    private fun AddRatingWithStars(label: String, rating: Int, bold: Boolean = false) {
         Row(modifier = Modifier.padding(vertical = 4.dp)) {
             Text(
                 text = label,
@@ -290,7 +292,7 @@ class MapComponents {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp), // Tarjeta más fina
+                    .height(60.dp),
                 elevation = 6.dp,
                 backgroundColor = colorResource(id = R.color.white)
             ) {
@@ -322,7 +324,7 @@ class MapComponents {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp), // Tarjeta más fina
+                    .height(60.dp),
                 elevation = 6.dp,
                 backgroundColor = colorResource(id = R.color.white)
             ) {
@@ -386,7 +388,7 @@ class MapComponents {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp), // Tarjeta más fina
+                    .height(60.dp),
                 elevation = 6.dp,
                 backgroundColor = colorResource(id = R.color.white)
             ) {
@@ -406,7 +408,7 @@ class MapComponents {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp), // Tarjeta más fina
+                    .height(60.dp),
                 elevation = 6.dp,
                 backgroundColor = colorResource(id = R.color.white)
             ) {
@@ -426,7 +428,7 @@ class MapComponents {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp), // Tarjeta más fina
+                    .height(60.dp),
                 elevation = 6.dp,
                 backgroundColor = colorResource(id = R.color.white)
             ) {
@@ -656,14 +658,6 @@ class MapComponents {
                             inclusionSocial = inclusionSocial.toInt(),
                             accesibilidad = accesibilidad.toInt(),
                             fotos = fotosList
-                        )
-
-                        Log.e(
-                            "NewOpinion",
-                            "id: ${newOpinion.id}, usuario: ${newOpinion.usuario.nickname}, local: ${newOpinion.local.id}, " +
-                                    "fechaPublicacion: ${newOpinion.fechaPublicacion}, resenaTexto: ${newOpinion.resenaTexto}, " +
-                                    "ecosostenible: ${newOpinion.ecosostenible}, inclusionSocial: ${newOpinion.inclusionSocial}, " +
-                                    "accesibilidad: ${newOpinion.accesibilidad}, fotos: ${newOpinion.fotos}"
                         )
 
                         RetrofitClient.instance.createOpinion(newOpinion)

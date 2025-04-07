@@ -24,6 +24,7 @@ import com.example.impacthon.backend.models.Usuario
 import com.example.impacthon.databinding.FragmentProfileBinding
 import com.example.impacthon.ui.ViewModelFactory
 import com.example.impacthon.ui.login.LoginFragment
+import com.example.impacthon.utils.AuxUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -77,7 +78,7 @@ class ProfileFragment : Fragment() {
             binding.profileContainer.visibility = View.VISIBLE
 
             if (!it.fotoPerfil.isNullOrEmpty()) {
-                val bitmap = decodeBase64ToBitmap(it.fotoPerfil)
+                val bitmap = AuxUtils.decodeBase64ToBitmap(it.fotoPerfil)
                 if (bitmap != null) {
                     binding.imageProfile.setImageBitmap(bitmap)
                 } else {
@@ -93,7 +94,7 @@ class ProfileFragment : Fragment() {
             usuario = profileViewModel.usuarioLogueado()
 
             if (!usuario!!.fotoPerfil.isNullOrEmpty()) {
-                val bitmap = decodeBase64ToBitmap(usuario!!.fotoPerfil!!)
+                val bitmap = AuxUtils.decodeBase64ToBitmap(usuario!!.fotoPerfil!!)
                 if (bitmap != null) {
                     binding.imageProfile.setImageBitmap(bitmap)
                 } else {
@@ -108,20 +109,6 @@ class ProfileFragment : Fragment() {
             binding.profileContainer.visibility = View.VISIBLE
 
             fetchOpiniones(usuario!!.nickname)
-        }
-    }
-
-    private fun decodeBase64ToBitmap(base64Str: String): Bitmap? {
-        return try {
-            // Remover prefijo si existe (ej. "data:image/jpeg;base64,")
-            val pureBase64 = if (base64Str.contains(",")) {
-                base64Str.substringAfter(",")
-            } else base64Str
-            val decodedBytes = Base64.decode(pureBase64, Base64.DEFAULT)
-            BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
         }
     }
 
@@ -154,22 +141,6 @@ class ProfileFragment : Fragment() {
                 ).show()
             }
         })
-    }
-
-    private fun formatDate(dateString: String): String {
-        // Definir el formato de entrada
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
-        // Definir el formato de salida
-        val outputFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-        outputFormat.timeZone = TimeZone.getDefault() // Ajustar a la zona horaria local
-
-        return try {
-            val date = inputFormat.parse(dateString) // Parsear la fecha
-            outputFormat.format(date) // Formatear la fecha en el nuevo formato
-        } catch (e: Exception) {
-            e.printStackTrace()
-            dateString // Retornar el string original en caso de error
-        }
     }
 
     private fun updateOpinionesUI(opinionesList: List<Opinion>) {
@@ -263,7 +234,7 @@ class ProfileFragment : Fragment() {
                     addRatingWithStars(getString(R.string.title_accessibility), opinion.accesibilidad)
 
                     val dateText = TextView(context).apply {
-                        text = formatDate(opinion.fechaPublicacion)
+                        text = AuxUtils.formatDate(opinion.fechaPublicacion)
                         setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
                         textAlignment = View.TEXT_ALIGNMENT_VIEW_END
                     }

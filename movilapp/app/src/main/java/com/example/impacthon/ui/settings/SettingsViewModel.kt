@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class SettingsViewModel(private val context: Context) : ViewModel() {
+class SettingsViewModel(context: Context) : ViewModel() {
     private val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
 
     // LiveData para el idioma
