@@ -42,6 +42,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.impacthon.R
 import com.example.impacthon.backend.models.Local
 import com.example.impacthon.ui.ViewModelFactory
+import com.example.impacthon.utils.MapUtils
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.geojson.Point
 import com.mapbox.maps.EdgeInsets
@@ -119,7 +120,7 @@ class MapFragment : Fragment() {
 
     // Muestra la pantalla del mapa o la solicitud de permisos según el estado
     @Composable
-    fun MapScreenWithPermissions(permissionsGranted: Boolean) {
+    private fun MapScreenWithPermissions(permissionsGranted: Boolean) {
         if (permissionsGranted) {
             MapScreen()
         } else {
@@ -129,7 +130,7 @@ class MapFragment : Fragment() {
 
     // Pantalla que solicita al usuario activar los permisos de localización
     @Composable
-    fun PermissionRequestScreen() {
+    private fun PermissionRequestScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -164,7 +165,7 @@ class MapFragment : Fragment() {
 
     // Pantalla principal del mapa con lógica de interacción y animaciones
     @Composable
-    fun MapScreen() {
+    private fun MapScreen() {
         val context = LocalContext.current
 
         // Estados para controlar la visualización de información, opiniones y lista de locales
@@ -176,7 +177,7 @@ class MapFragment : Fragment() {
 
         // Carga asíncrona de locales desde el backend
         LaunchedEffect(Unit) {
-            MapUtils().fetchAllLocales(context) { locales ->
+            MapUtils.fetchAllLocales(context) { locales ->
                 locales?.let { allLocales = it }
             }
         }
@@ -241,7 +242,7 @@ class MapFragment : Fragment() {
                     val markerIcon = rememberIconImage(key = markerResourceId, painter = painterResource(markerResourceId))
                     // Agrega un marcador para cada local obtenido
                     allLocales.forEach { local ->
-                        MapUtils().parseLocation(local.ubicacion)?.let { (lat, lng) ->
+                        MapUtils.parseLocation(local.ubicacion)?.let { (lat, lng) ->
                             PointAnnotation(
                                 point = Point.fromLngLat(lng, lat)
                             ) {
@@ -253,7 +254,7 @@ class MapFragment : Fragment() {
                                     resolvedAddress = local.ubicacion
                                     //val accessToken = ""
                                     val accessToken = context.getString(R.string.mapbox_access_token)
-                                    MapUtils().fetchAddressFromCoordinates(lat, lng, accessToken) { address ->
+                                    MapUtils.fetchAddressFromCoordinates(lat, lng, accessToken) { address ->
                                         address?.let {
                                             resolvedAddress = it
                                         }
@@ -314,7 +315,7 @@ class MapFragment : Fragment() {
                         else -> Pair(-3.74922, 40.463667)
                     }
                     // Anima la cámara hacia la ciudad seleccionada
-                    MapUtils().animateFlyTo(mapboxMapRef, lng, lat)
+                    MapUtils.animateFlyTo(mapboxMapRef, lng, lat)
                 }
             )
 

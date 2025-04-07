@@ -1,4 +1,4 @@
-package com.example.impacthon.ui.map
+package com.example.impacthon.utils
 
 import android.animation.Animator
 import android.content.Context
@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
 
-class MapUtils {
+object MapUtils {
     fun animateFlyTo(mapboxMapRef: MutableState<MapboxMap?>, lng: Double, lat: Double) {
         mapboxMapRef.value?.flyTo(
             cameraOptions {
@@ -74,7 +74,6 @@ class MapUtils {
         })
     }
 
-
     // Función para obtener todos los locales usando Retrofit.
     fun fetchAllLocales(context: Context, onResult: (List<Local>?) -> Unit) {
         RetrofitClient.instance.getAllLocales().enqueue(object : Callback<List<Local>> {
@@ -102,23 +101,6 @@ class MapUtils {
             val lng = parts[1].trim().toDoubleOrNull()
             if (lat != null && lng != null) Pair(lat, lng) else null
         } else null
-    }
-
-    // Función auxiliar para formatear la fecha en un formato sencillo
-    fun formatDate(dateString: String): String {
-        // Definir el formato de entrada
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
-        // Definir el formato de salida
-        val outputFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-        outputFormat.timeZone = TimeZone.getDefault() // Ajustar a la zona horaria local
-
-        return try {
-            val date = inputFormat.parse(dateString) // Parsear la fecha
-            outputFormat.format(date) // Formatear la fecha en el nuevo formato
-        } catch (e: Exception) {
-            e.printStackTrace()
-            dateString // Retornar el string original en caso de error
-        }
     }
 
 }

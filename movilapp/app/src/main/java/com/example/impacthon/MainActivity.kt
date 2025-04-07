@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.impacthon.databinding.ActivityMainBinding
-import com.example.impacthon.ui.SettingsUtil
+import com.example.impacthon.utils.SettingsUtil
 
 class MainActivity : AppCompatActivity() {
 

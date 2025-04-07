@@ -1,4 +1,4 @@
-package com.example.impacthon.ui
+package com.example.impacthon.utils
 
 import android.content.Context
 import android.content.res.Configuration
