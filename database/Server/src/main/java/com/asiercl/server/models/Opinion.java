@@ -46,5 +46,5 @@ public class Opinion {
     public void setEcosostenible(int ecosostenible) { this.ecosostenible = ecosostenible; }
     public void setInclusionSocial(int inclusionSocial) { this.inclusionSocial = inclusionSocial; }
     public void setAccesibilidad(int accesibilidad) { this.accesibilidad = accesibilidad; }
-    public void setfoto(byte[] foto) { this.foto = foto; }
+    public void setFoto(byte[] foto) { this.foto = foto; }
 }
