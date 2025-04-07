@@ -59,10 +59,17 @@ INSERT INTO Usuarios (Nickname, NombreCompleto, Email, Password, Admin) VALUES
 ('asier', 'Asier Cabo', 'asier@example.com', 'e507f1a62080a184a06e719846ce6bb64542ad1789e70982a8ecc6cedf5ea20e', TRUE),
 ('juan23', 'Juan Pérez', 'juan@example.com', 'ed08c290d7e22f7bb324b15cbadce35b0b348564fd2d5f95752388d86d71bcca', TRUE),
 ('maria89', 'María López', 'maria@example.com', '94aec9fbed989ece189a7e172c9cf41669050495152bc4c1dbf2a38d7fd85627', FALSE),
-('carlos_m', 'Carlos Martínez', 'carlos@example.com', '7b85175b455060e3237e925f023053ca9515e8682a83c8b09911c724a1f8b75f', FALSE);
+('carlos_m', 'Carlos Martínez', 'carlos@example.com', '7b85175b455060e3237e925f023053ca9515e8682a83c8b09911c724a1f8b75f', FALSE),
+('joao', 'Joao Da Silva', 'joao@example.com', '04f81f37b041866648606d78c023d0ac016a80dd9bb3f437bead883da64473da', FALSE), -- siu
+('vascoVieira', 'Vasco Vieira', 'dobleV@example.com', '312b4da888c45c745ba087a258003c408c952f04f9be605fa7df389c8f225ae3', FALSE), -- dobleV
+('martin', 'Martín González', 'martin@example.com', 'b6f8d434a847fb0f0c1a8d9b936b8ca952e224f205a55f4ba9b2c20f88fdc9e7', TRUE); -- martin
+
 
 -- Insertar Locales
 INSERT INTO Locales (Nombre, Categoria, Ubicacion, DescripcionTextual, Ecosostenible, InclusionSocial, Accesibilidad) VALUES
+('Beach Solpor ETSE', 'Cafetería', '42.87307979630885, -8.56034246628424', 'Cafetería acogedora de la facultad.', 5, 4, 5),
+('Coimbra Business School', 'Universidad', '40.2096384221346, -8.452569866954976', 'Institución de educación superior con enfoque en negocios y administración.', 4, 5, 5),
+
 ('Reserva de la Biosfera - Los Ancares', 'Reserva natural', '42.78396673770446, -6.744427809139001', 'Espacio protegido con gran biodiversidad y paisajes espectaculares.', 5, 4, 3),
 ('Llera Cafetería Restaurante', 'Restaurante', '42.81999067014897, -6.491244547915142', 'Restaurante con cocina casera y ambiente acogedor.', 3, 2, 4),
 ('Cabaña Asociación Peña Rubia', 'Cabaña de montaña', '42.99468094357585, -6.3307931274437985', 'Cabaña en plena naturaleza ideal para senderismo y descanso.', 4, 3, 2),
@@ -306,7 +313,23 @@ INSERT INTO Locales (Nombre, Categoria, Ubicacion, DescripcionTextual, Ecososten
 ('Quai', 'Cafetería', '43.369640418124064, -8.399840109054118', 'Cafetería con ambiente moderno y una gran selección de cafés y tés.', 3, 4, 4),
 ('Cantante', 'Cafetería', '43.36971864133606, -8.39961305628122', 'Cafetería con repostería casera y ambiente acogedor.', 3, 4, 4),
 ('Los Hippies', 'Mercadillo', '43.370264582556345, -8.398785594799083', 'Mercadillo con una variedad de productos artesanales y ropa vintage.', 3, 3, 4),
-('General Optica - Visión y Audición', 'Óptica', '43.37042301459721, -8.399470970037909', 'Óptica con revisiones visuales y audífonos de última tecnología.', 4, 4, 5);
+('General Optica - Visión y Audición', 'Óptica', '43.37042301459721, -8.399470970037909', 'Óptica con revisiones visuales y audífonos de última tecnología.', 4, 4, 5),
+('Supermercado Quaresma-Amanhecer', 'Supermercado', '40.20964475208557, -8.455992185375562', 'Supermercado local con productos de proximidad y atención cercana.', 4, 4, 5),
+('Parque Infantil Piscinas São Martinho do Bispo', 'Parque infantil', '40.20965781043842, -8.453785702609794', 'Espacio recreativo para niños con juegos seguros y entorno familiar.', 4, 4, 4),
+('Loja Agrária', 'Tienda de alimentación', '40.21279486325248, -8.452532118468865', 'Tienda con productos frescos, locales y de origen agrícola.', 4, 4, 4),
+('Claires', 'Piercing de orejas', '40.21260852732691, -8.446829741703434', 'Tienda especializada en accesorios y servicios de piercing con enfoque juvenil.', 4, 4, 4),
+('Palhaços dOpital', 'Artista', '40.20970847868682, -8.448916586438262', 'Colectivo artístico dedicado a la animación hospitalaria y apoyo emocional.', 5, 5, 4),
+('Polytechnic Institute of Coimbra', 'Universidad', '40.20480000433043, -8.453829504382684', 'Centro universitario con diversas facultades y enfoque en innovación.', 4, 5, 5),
+('Juliana Sá Rico - Terapia da fala', 'Logopeda', '40.20584876173212, -8.46310010481257', 'Especialista en terapia del lenguaje con atención personalizada.', 4, 5, 5),
+('Quinta da Palmeira - Country House Retreat & Spa', 'Hotel', '40.258969697266146, -7.939674630765688', 'Alojamiento rural con spa, rodeado de naturaleza y tranquilidad.', 5, 4, 4),
+('Luís Ismael Xavier Lourenço', 'Taller de reparación de automóviles', '40.81828766615519, -7.258591458933494', 'Taller mecánico con servicio eficiente y atención personalizada.', 4, 4, 4),
+('Estadio do Dragão- Portugal', 'Estadio', '41.1617004682546, -8.583724312239333', 'Estadio emblemático y moderno, sede del FC Porto.', 4, 4, 5),
+('Tasca da Badalhoca', 'Restaurante', '41.16642955016132, -8.65550793712052', 'Restaurante tradicional con platos típicos y ambiente animado.', 4, 4, 4),
+('Vale Pisão - Nature Resort - Golfe', 'Campo de golf', '41.27575336707433, -8.501733444095429', 'Campo de golf integrado en un resort ecológico en plena naturaleza.', 5, 4, 4),
+('Junta de Freguesia de Vilares de Vilariça', 'Oficina de gobierno local', '41.391103057282635, -7.036558625353761', 'Institución pública que gestiona los servicios y eventos comunitarios.', 4, 5, 4),
+('SHS - Unidade de Braga', 'Endoscopista', '41.54727174398203, -8.423802637763453', 'Centro médico especializado con instalaciones modernas y atención inclusiva.', 4, 5, 5),
+('Sonho Da Seara - Turismo Rural E Natureza, Lda.', 'Hotel', '41.88066934130262, -8.526459789777922', 'Hotel rural con enfoque ecológico y entorno natural privilegiado.', 5, 4, 4),
+('Café Sol Nascente', 'Cafetería', '41.798281635435714, -7.666867026152312', 'Cafetería acogedora con productos locales y ambiente relajado.', 4, 4, 4);
 
 -- Insertar LocalesFotos (Ejemplo sin datos binarios reales)
 INSERT INTO LocalesFotos (LocalID) VALUES
@@ -321,9 +344,18 @@ INSERT INTO Favoritos (UsuarioNickname, LocalID) VALUES
 
 -- Insertar Opiniones
 INSERT INTO Opiniones (UsuarioNickname, LocalID, ResenaTexto, Ecosostenible, InclusionSocial, Accesibilidad) VALUES
-('juan23', 1, 'Excelente lugar con opciones saludables.', 5, 4, 5),
+('juan23', 6, 'Excelente lugar con opciones saludables.', 5, 4, 5),
 ('maria89', 2, 'Un ambiente perfecto para leer y tomar algo.', 3, 5, 4),
-('carlos_m', 3, 'Muy buen sitio para pasar el día.', 5, 5, 5);
+('carlos_m', 3, 'Muy buen sitio para pasar el día.', 5, 5, 5),
+
+('juan23', 1, 'Si llevas tus propios tupper, puedes ahorrarte 1,5€ en tu menú para llevar, ¡ahorras y reduces consumo de plásticos!', 4, 3, 4),
+('maria89', 1, 'He visto que la gente lleva sus propias tazas para llevarse el café, un 5/5 en ecosostenibilidad sin duda.', 5, 4, 4),
+('carlos_m', 1, 'En tooGoodToGo tienen menú del día para llevar. Puedes comer los mismo a mitad de precio evitando que se tire comida. Yo lo pillo todos los viernes y está riquísimo.', 4, 2, 3),
+
+('joao', 2, 'É acessível a deficientes, o pessoal da escola é muito simpático e ajudou-me em tudo.', 4, 3, 5),
+('vascoVieira', 2, 'Têm um micro-ondas para levar comida em tupperware, o que é muito positivo para evitar o uso de plástico.', 5, 4, 3);
+
+
 
 -- Insertar OpinionesFotos (Ejemplo sin datos binarios reales)
 INSERT INTO OpinionesFotos (OpinionID) VALUES
