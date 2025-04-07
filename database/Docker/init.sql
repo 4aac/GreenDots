@@ -57,58 +57,17 @@ INSERT INTO Usuarios (Nickname, NombreCompleto, Email, Password, Admin) VALUES
 ('asier', 'Asier Cabo', 'asier@example.com', 'e507f1a62080a184a06e719846ce6bb64542ad1789e70982a8ecc6cedf5ea20e', TRUE),
 ('juan23', 'Juan Pérez', 'juan@example.com', 'ed08c290d7e22f7bb324b15cbadce35b0b348564fd2d5f95752388d86d71bcca', TRUE),
 ('maria89', 'María López', 'maria@example.com', '94aec9fbed989ece189a7e172c9cf41669050495152bc4c1dbf2a38d7fd85627', FALSE),
-('carlos_m', 'Carlos Martínez', 'carlos@example.com', '7b85175b455060e3237e925f023053ca9515e8682a83c8b09911c724a1f8b75f', FALSE);
+('carlos_m', 'Carlos Martínez', 'carlos@example.com', '7b85175b455060e3237e925f023053ca9515e8682a83c8b09911c724a1f8b75f', FALSE),
+('joao', 'Joao Da Silva', 'joao@example.com', '04f81f37b041866648606d78c023d0ac016a80dd9bb3f437bead883da64473da', FALSE), -- siu
+('vascoVieira', 'Vasco Vieira', 'dobleV@example.com', '312b4da888c45c745ba087a258003c408c952f04f9be605fa7df389c8f225ae3', FALSE), -- dobleV
+('martin', 'Martín González', 'martin@example.com', 'b6f8d434a847fb0f0c1a8d9b936b8ca952e224f205a55f4ba9b2c20f88fdc9e7', TRUE); -- martin
 
-INSERT INTO Usuarios (Nickname, NombreCompleto, Email, Password, Admin, FotoPerfil) VALUES
-('martin', 'Martín González', 'martin@example.com', '1e14a4d0c2521e93e85da877dcda9b17d5d85f33af2c52cf60b3a6468d4c343d', FALSE, '/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0a
-HBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIy
-MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAB4AHgDASIA
-AhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
-AAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3
-ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm
-p6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA
-AwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx
-BhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK
-U1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3
-uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwCgKeBT
-BT6wOhCinUgpM0hjxTs1japrcdhbORzLyFH071gS+OkjmMflFguBkd6LNhc7mlzXCt8QY95VbNgQ
-eNzYz9akHjyISAtbShAPmGQcH29aOVhdHa5pM1kad4h07UwqwTjzCMmNuGFagbIzUlElLTAacDQA
-6jFFLQA00UpooAqAYp1G2lxVkIKoaxO0Glzup+YKcVeqjqdtJdWrRIRz1DDg/wCFIZ5deahLdbXL
-MZFG1qqxnB3Ny1bOr6A1gpmQkEHkZzWpZeCZ7q3jlkO12AyAKcqkYLUdOjOo/dOPLeazbhnuDTI5
-ShI3cV3sXgGYM2Ig2ehaopfh/MjkupAA6A0liIMuWDqrU4iKeS2nWWJykinKsO1eleFPEZ1WBoLk
-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');
 
 -- Insertar Locales
 INSERT INTO Locales (Nombre, Categoria, Ubicacion, DescripcionTextual, Ecosostenible, InclusionSocial, Accesibilidad) VALUES
+('Beach Solpor ETSE', 'Cafetería', '42.87307979630885, -8.56034246628424', 'Cafetería acogedora de la facultad.', 5, 4, 5),
+('Coimbra Business School', 'Universidad', '40.2096384221346, -8.452569866954976', 'Institución de educación superior con enfoque en negocios y administración.', 4, 5, 5),
+
 ('Reserva de la Biosfera - Los Ancares', 'Reserva natural', '42.78396673770446, -6.744427809139001', 'Espacio protegido con gran biodiversidad y paisajes espectaculares.', 5, 4, 3),
 ('Llera Cafetería Restaurante', 'Restaurante', '42.81999067014897, -6.491244547915142', 'Restaurante con cocina casera y ambiente acogedor.', 3, 2, 4),
 ('Cabaña Asociación Peña Rubia', 'Cabaña de montaña', '42.99468094357585, -6.3307931274437985', 'Cabaña en plena naturaleza ideal para senderismo y descanso.', 4, 3, 2),
@@ -353,7 +312,6 @@ INSERT INTO Locales (Nombre, Categoria, Ubicacion, DescripcionTextual, Ecososten
 ('Cantante', 'Cafetería', '43.36971864133606, -8.39961305628122', 'Cafetería con repostería casera y ambiente acogedor.', 3, 4, 4),
 ('Los Hippies', 'Mercadillo', '43.370264582556345, -8.398785594799083', 'Mercadillo con una variedad de productos artesanales y ropa vintage.', 3, 3, 4),
 ('General Optica - Visión y Audición', 'Óptica', '43.37042301459721, -8.399470970037909', 'Óptica con revisiones visuales y audífonos de última tecnología.', 4, 4, 5),
-('Coimbra Business School', 'Universidad', '40.2096384221346, -8.452569866954976', 'Institución de educación superior con enfoque en negocios y administración.', 4, 5, 5),
 ('Supermercado Quaresma-Amanhecer', 'Supermercado', '40.20964475208557, -8.455992185375562', 'Supermercado local con productos de proximidad y atención cercana.', 4, 4, 5),
 ('Parque Infantil Piscinas São Martinho do Bispo', 'Parque infantil', '40.20965781043842, -8.453785702609794', 'Espacio recreativo para niños con juegos seguros y entorno familiar.', 4, 4, 4),
 ('Loja Agrária', 'Tienda de alimentación', '40.21279486325248, -8.452532118468865', 'Tienda con productos frescos, locales y de origen agrícola.', 4, 4, 4),
@@ -384,9 +342,18 @@ INSERT INTO Favoritos (UsuarioNickname, LocalID) VALUES
 
 -- Insertar Opiniones
 INSERT INTO Opiniones (UsuarioNickname, LocalID, ResenaTexto, Ecosostenible, InclusionSocial, Accesibilidad) VALUES
-('juan23', 1, 'Excelente lugar con opciones saludables.', 5, 4, 5),
+('juan23', 6, 'Excelente lugar con opciones saludables.', 5, 4, 5),
 ('maria89', 2, 'Un ambiente perfecto para leer y tomar algo.', 3, 5, 4),
-('carlos_m', 3, 'Muy buen sitio para pasar el día.', 5, 5, 5);
+('carlos_m', 3, 'Muy buen sitio para pasar el día.', 5, 5, 5),
+
+('juan23', 1, 'Si llevas tus propios tupper, puedes ahorrarte 1,5€ en tu menú para llevar, ¡ahorras y reduces consumo de plásticos!', 4, 3, 4),
+('maria89', 1, 'He visto que la gente lleva sus propias tazas para llevarse el café, un 5/5 en ecosostenibilidad sin duda.', 5, 4, 4),
+('carlos_m', 1, 'En tooGoodToGo tienen menú del día para llevar. Puedes comer los mismo a mitad de precio evitando que se tire comida. Yo lo pillo todos los viernes y está riquísimo.', 4, 2, 3),
+
+('joao', 2, 'É acessível a deficientes, o pessoal da escola é muito simpático e ajudou-me em tudo.', 4, 3, 5),
+('vascoVieira', 2, 'Têm um micro-ondas para levar comida em tupperware, o que é muito positivo para evitar o uso de plástico.', 5, 4, 3);
+
+
 
 -- Insertar OpinionesFotos (Ejemplo sin datos binarios reales)
 INSERT INTO OpinionesFotos (OpinionID) VALUES
