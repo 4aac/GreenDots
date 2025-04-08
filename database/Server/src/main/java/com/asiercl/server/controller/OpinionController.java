@@ -75,7 +75,7 @@ public class OpinionController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Archivo vacío.");
             }
 
-            byte[] imagenRedimensionada = redimensionarImagen(imagenBytes, 120,120);
+            byte[] imagenRedimensionada = redimensionarImagen(imagenBytes, 512,512);
 
             opinion.setFoto(file.getBytes());
             opinionDAO.actualizarOpinion(opinion);
