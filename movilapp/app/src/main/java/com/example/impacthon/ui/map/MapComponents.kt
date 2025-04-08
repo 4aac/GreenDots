@@ -2,7 +2,6 @@ package com.example.impacthon.ui.map
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
@@ -25,11 +24,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -66,6 +66,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.example.impacthon.R
 import com.example.impacthon.backend.api.RetrofitClient
@@ -82,10 +83,6 @@ import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.ui.window.Dialog
 
 class MapComponents {
     @Composable
@@ -217,7 +214,7 @@ class MapComponents {
                 if (showOpinionsDialog) {
                     Dialog(onDismissRequest = { showOpinionsDialog = false }) {
                         Card(
-                            elevation = 8.dp,
+                            elevation = 18.dp,
                             shape = MaterialTheme.shapes.medium,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -226,7 +223,7 @@ class MapComponents {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .heightIn(max = 600.dp)
+                                    .fillMaxHeight(0.9f)
                                     .padding(16.dp)
                             ) {
                                 // Header fijo
@@ -267,21 +264,37 @@ class MapComponents {
                                                 // Aquí se coloca la UI de cada opinión (tal y como la tienes actualmente)
                                                     Column(modifier = Modifier.padding(vertical = 8.dp)) {
                                                         Row(verticalAlignment = Alignment.CenterVertically) {
-                                                            // Imagen de perfil y nombre del usuario
+                                                            val painter = remember { mutableStateOf<Any>(R.mipmap.logo_app_redondo) }
+                                                            val isImageLoaded = remember { mutableStateOf(false) }
+
+                                                            if (!isImageLoaded.value) {
+                                                                MapUtils.fetchUser(opinion.usuario.nickname) { usuario ->
+                                                                    usuario?.fotoPerfil?.let { base64Image ->
+                                                                        AuxUtils.decodeBase64ToBitmap(base64Image)?.let { bitmap ->
+                                                                            painter.value = bitmap
+                                                                            isImageLoaded.value = true
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
                                                             Image(
-                                                                painter = rememberAsyncImagePainter(model = R.mipmap.logo_app_redondo),
+                                                                painter = rememberAsyncImagePainter(model = painter.value),
                                                                 contentDescription = null,
                                                                 modifier = Modifier
                                                                     .size(36.dp)
                                                                     .clip(CircleShape)
                                                                     .background(MaterialTheme.colors.onSurface)
                                                             )
+
                                                             Spacer(modifier = Modifier.width(8.dp))
+
                                                             Text(
                                                                 text = opinion.usuario.nickname,
                                                                 style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)
                                                             )
                                                         }
+
                                                         Spacer(modifier = Modifier.height(8.dp))
                                                         Text(
                                                             text = opinion.resenaTexto,
@@ -302,6 +315,8 @@ class MapComponents {
                                                                 opinion.accesibilidad
                                                             )
                                                         }
+                                                        Spacer(modifier = Modifier.height(8.dp))
+
                                                         // Mostrar la imagen de la opinión si existe
                                                         if (!opinion.foto.isNullOrEmpty()) {
                                                             val decodedImage = AuxUtils.decodeBase64ToBitmap(opinion.foto)
