@@ -27,6 +27,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -52,6 +55,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -62,6 +66,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.example.impacthon.R
 import com.example.impacthon.backend.api.RetrofitClient
@@ -207,80 +212,159 @@ class MapComponents {
 
                 // Mostrar el diálogo de opiniones si se activa
                 if (showOpinionsDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showOpinionsDialog = false },
-                        title = { Text(stringResource(id = R.string.title_local_opinions), style = MaterialTheme.typography.h5) },
-                        text = {
-                            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                                if (opinionesList.isEmpty()) {
-                                    Text(stringResource(id = R.string.text_no_opinions))
-                                } else {
-                                    opinionesList.forEach { opinion ->
-                                        Column(modifier = Modifier.padding(vertical = 8.dp)) {
-                                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                                val painter = remember { mutableStateOf<Any>(R.mipmap.logo_app_redondo) }
-                                                val isImageLoaded = remember { mutableStateOf(false) }
+                    Dialog(onDismissRequest = { showOpinionsDialog = false }) {
+                        Card(
+                            elevation = 18.dp,
+                            shape = MaterialTheme.shapes.medium,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.9f)
+                                    .padding(16.dp)
+                            ) {
+                                // Header fijo
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = stringResource(id = R.string.title_local_opinions),
+                                        style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold)
+                                    )
+                                    IconButton(onClick = { showOpinionsDialog = false }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = "Cerrar"
+                                        )
+                                    }
+                                }
+                                Divider()
+                                Spacer(modifier = Modifier.height(8.dp))
 
-                                                if (!isImageLoaded.value) {
-                                                    MapUtils.fetchUser(opinion.usuario.nickname) { usuario ->
-                                                        usuario?.fotoPerfil?.let { base64Image ->
-                                                            val bitmap = AuxUtils.decodeBase64ToBitmap(base64Image)
-                                                            if (bitmap != null) {
-                                                                painter.value = bitmap
-                                                                isImageLoaded.value = true
+                                // Lista scrollable de opiniones
+                                Box(modifier = Modifier.weight(1f)) {
+                                    LazyColumn(
+                                        modifier = Modifier.fillMaxSize(),
+                                        state = rememberLazyListState()
+                                    ) {
+                                        if (opinionesList.isEmpty()) {
+                                            item {
+                                                Text(
+                                                    text = stringResource(id = R.string.text_no_opinions),
+                                                    modifier = Modifier.padding(8.dp)
+                                                )
+                                            }
+                                        } else {
+                                            items(opinionesList) { opinion ->
+                                                // Aquí se coloca la UI de cada opinión (tal y como la tienes actualmente)
+                                                    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                                            val painter = remember { mutableStateOf<Any>(R.mipmap.logo_app_redondo) }
+                                                            val isImageLoaded = remember { mutableStateOf(false) }
+
+                                                            if (!isImageLoaded.value) {
+                                                                MapUtils.fetchUser(opinion.usuario.nickname) { usuario ->
+                                                                    usuario?.fotoPerfil?.let { base64Image ->
+                                                                        AuxUtils.decodeBase64ToBitmap(base64Image)?.let { bitmap ->
+                                                                            painter.value = bitmap
+                                                                            isImageLoaded.value = true
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            Image(
+                                                                painter = rememberAsyncImagePainter(model = painter.value),
+                                                                contentDescription = null,
+                                                                modifier = Modifier
+                                                                    .size(36.dp)
+                                                                    .clip(CircleShape)
+                                                                    .background(MaterialTheme.colors.onSurface)
+                                                            )
+
+                                                            Spacer(modifier = Modifier.width(8.dp))
+
+                                                            Text(
+                                                                text = opinion.usuario.nickname,
+                                                                style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)
+                                                            )
+                                                        }
+
+                                                        Spacer(modifier = Modifier.height(8.dp))
+                                                        Text(
+                                                            text = opinion.resenaTexto,
+                                                            style = MaterialTheme.typography.subtitle1
+                                                        )
+                                                        // Mostrar las valoraciones con estrellas
+                                                        Column {
+                                                            AddRatingWithStars(
+                                                                stringResource(id = R.string.title_ecosustainable),
+                                                                opinion.ecosostenible
+                                                            )
+                                                            AddRatingWithStars(
+                                                                stringResource(id = R.string.title_socialinclusion),
+                                                                opinion.inclusionSocial
+                                                            )
+                                                            AddRatingWithStars(
+                                                                stringResource(id = R.string.title_accessibility),
+                                                                opinion.accesibilidad
+                                                            )
+                                                        }
+                                                        Spacer(modifier = Modifier.height(8.dp))
+
+                                                        // Mostrar la imagen de la opinión si existe
+                                                        if (!opinion.foto.isNullOrEmpty()) {
+                                                            val decodedImage = AuxUtils.decodeBase64ToBitmap(opinion.foto)
+                                                            decodedImage?.let {
+                                                                Image(
+                                                                    bitmap = it.asImageBitmap(),
+                                                                    contentDescription = null,
+                                                                    modifier = Modifier
+                                                                        .fillMaxWidth()
+                                                                        .height(200.dp)
+                                                                        .clip(MaterialTheme.shapes.medium)
+                                                                )
+                                                                Spacer(modifier = Modifier.height(8.dp))
                                                             }
                                                         }
+                                                        Text(
+                                                            text = AuxUtils.formatDate(opinion.fechaPublicacion),
+                                                            style = MaterialTheme.typography.body2,
+                                                            modifier = Modifier
+                                                                .padding(vertical = 4.dp)
+                                                                .fillMaxWidth(),
+                                                            textAlign = TextAlign.End
+                                                        )
+                                                        Divider(modifier = Modifier.padding(vertical = 8.dp))
                                                     }
-                                                }
-
-                                                Image(
-                                                    painter = rememberAsyncImagePainter(model = painter.value),
-                                                    contentDescription = null,
-                                                    modifier = Modifier
-                                                        .size(36.dp)
-                                                        .clip(CircleShape)
-                                                        .background(MaterialTheme.colors.onSurface)
-                                                )
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                Text(
-                                                    text = opinion.usuario.nickname,
-                                                    style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)
-                                                )
                                             }
-                                            Spacer(modifier = Modifier.height(8.dp))
-                                            Text(
-                                                text = String.format("%s", opinion.resenaTexto),
-                                                style = MaterialTheme.typography.subtitle1
-                                            )
-                                            Column {
-                                                AddRatingWithStars(stringResource(id = R.string.title_ecosustainable), opinion.ecosostenible)
-                                                AddRatingWithStars(stringResource(id = R.string.title_socialinclusion), opinion.inclusionSocial)
-                                                AddRatingWithStars(stringResource(id = R.string.title_accessibility), opinion.accesibilidad)
-                                            }
-                                            Text(
-                                                text = AuxUtils.formatDate(opinion.fechaPublicacion),
-                                                style = MaterialTheme.typography.body2.copy(textAlign = TextAlign.End),
-                                                modifier = Modifier.padding(vertical = 4.dp)
-                                            )
-                                            Divider(modifier = Modifier.padding(vertical = 8.dp))
                                         }
                                     }
                                 }
-                            }
-                        },
-                        confirmButton = {
-                            Button(
-                                onClick = { showOpinionsDialog = false },
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = colorResource(R.color.green500),
-                                    contentColor = colorResource(R.color.white)
-                                )
-                            ) {
-                                Text(stringResource(id = R.string.title_close))
+
+                                Spacer(modifier = Modifier.height(8.dp))
+                                // Botón de cierre fijo en el pie
+                                Button(
+                                    onClick = { showOpinionsDialog = false },
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                                    colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = colorResource(R.color.green500),
+                                        contentColor = colorResource(R.color.white)
+                                    )
+                                ) {
+                                    Text(text = stringResource(id = R.string.title_close))
+                                }
                             }
                         }
-                    )
+                    }
                 }
+
+
             }
         }
     }
@@ -679,9 +763,7 @@ class MapComponents {
                 Button(
                     onClick = {
                         // Se convierte el ByteArray a Base64 y se guarda en la lista de fotos (si se seleccionó imagen)
-                        val fotosList = if (selectedImageByteArray != null)
-                            listOf(byteArrayToBase64(selectedImageByteArray!!))
-                        else emptyList()
+                        val fotosList = if (selectedImageByteArray != null) byteArrayToBase64(selectedImageByteArray!!) else ""
 
                         val newOpinion = Opinion(
                             id = 0, // El backend generará el id
@@ -692,7 +774,7 @@ class MapComponents {
                             ecosostenible = ecosostenible.toInt(),
                             inclusionSocial = inclusionSocial.toInt(),
                             accesibilidad = accesibilidad.toInt(),
-                            fotos = fotosList
+                            foto = fotosList
                         )
 
                         RetrofitClient.instance.createOpinion(newOpinion)
