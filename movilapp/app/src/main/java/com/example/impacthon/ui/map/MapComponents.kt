@@ -508,6 +508,9 @@ class MapComponents {
                             if (position > 0) {
                                 val city = parent?.getItemAtPosition(position) as String
                                 onCitySelected(city)
+
+                                // Restablecer la selección a la opción por defecto
+                                (parent as? Spinner)?.setSelection(0)
                             }
                         }
                         override fun onNothingSelected(parent: AdapterView<*>?) { }

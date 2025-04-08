@@ -3,13 +3,17 @@ package com.asiercl.server.controller;
 import com.asiercl.server.dao.OpinionDAO;
 import com.asiercl.server.models.Local;
 import com.asiercl.server.models.Opinion;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+
+import static com.asiercl.server.utils.ImageUtils.redimensionarImagen;
 
 @RestController
 @RequestMapping("/opiniones")
@@ -71,11 +75,27 @@ public class OpinionController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Archivo vacío.");
             }
 
-            opinion.addFoto(file.getBytes());
+            byte[] imagenRedimensionada = redimensionarImagen(imagenBytes, 120,120);
+
+            opinion.setFoto(file.getBytes());
             opinionDAO.actualizarOpinion(opinion);
             return ResponseEntity.ok("Imagen subida con éxito.");
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al subir la imagen.");
         }
+    }
+
+    // Obtener imagen de una opinión por ID
+    @GetMapping("/image/{id}")
+    public ResponseEntity<byte[]> obtenerImagenOpinion(@PathVariable int id) {
+        Opinion opinion = opinionDAO.obtenerOpinionesPorId(id);
+        if (opinion == null || opinion.getfoto() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG) // O IMAGE_PNG si usas PNGs
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"opinion_" + id + ".jpg\"")
+                .body(opinion.getfoto());
     }
 }
