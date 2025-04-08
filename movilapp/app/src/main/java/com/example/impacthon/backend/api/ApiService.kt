@@ -1,12 +1,17 @@
 package com.example.impacthon.backend.api
 
 import com.example.impacthon.backend.models.Local
+import com.example.impacthon.backend.models.Opinion
 import com.example.impacthon.backend.models.Usuario
 import okhttp3.MultipartBody
-import okhttp3.ResponseBody
-import com.example.impacthon.backend.models.Opinion
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.Path
 
 interface ApiService {
 
@@ -28,7 +33,7 @@ interface ApiService {
 
     // Obtener foto de usuario
     @GET("/user/image/{nickname}")
-    fun getUserImage(@Path("nickname") nickname: String): Call<ResponseBody>
+    fun getUserImage(@Path("nickname") nickname: String): Call<String>
 
     // Subir foto de usuario
     @Multipart
