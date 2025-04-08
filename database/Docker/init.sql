@@ -344,9 +344,6 @@ INSERT INTO Favoritos (UsuarioNickname, LocalID) VALUES
 
 -- Insertar Opiniones
 INSERT INTO Opiniones (UsuarioNickname, LocalID, ResenaTexto, Ecosostenible, InclusionSocial, Accesibilidad) VALUES
-('juan23', 6, 'Excelente lugar con opciones saludables.', 5, 4, 5),
-('maria89', 2, 'Un ambiente perfecto para leer y tomar algo.', 3, 5, 4),
-('carlos_m', 3, 'Muy buen sitio para pasar el día.', 5, 5, 5),
 
 ('juan23', 1, 'Si llevas tus propios tupper, puedes ahorrarte 1,5€ en tu menú para llevar, ¡ahorras y reduces consumo de plásticos!', 4, 3, 4),
 ('maria89', 1, 'He visto que la gente lleva sus propias tazas para llevarse el café, un 5/5 en ecosostenibilidad sin duda.', 5, 4, 4),
