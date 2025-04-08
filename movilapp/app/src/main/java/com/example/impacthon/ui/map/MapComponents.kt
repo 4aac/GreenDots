@@ -2,6 +2,7 @@ package com.example.impacthon.ui.map
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
@@ -24,9 +25,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -52,6 +55,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -209,60 +213,113 @@ class MapComponents {
                 if (showOpinionsDialog) {
                     AlertDialog(
                         onDismissRequest = { showOpinionsDialog = false },
-                        title = { Text(stringResource(id = R.string.title_local_opinions), style = MaterialTheme.typography.h5) },
+                        modifier = Modifier
+                            .fillMaxHeight(0.85f),
                         text = {
-                            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                                if (opinionesList.isEmpty()) {
-                                    Text(stringResource(id = R.string.text_no_opinions))
-                                } else {
-                                    opinionesList.forEach { opinion ->
-                                        Column(modifier = Modifier.padding(vertical = 8.dp)) {
-                                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                                val painter = remember { mutableStateOf<Any>(R.mipmap.logo_app_redondo) }
-                                                val isImageLoaded = remember { mutableStateOf(false) }
+                            if (opinionesList.isEmpty()) {
+                                Text(stringResource(id = R.string.text_no_opinions))
+                            } else {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                ) {
+                                    Text(
+                                        stringResource(id = R.string.title_local_opinions),
+                                        style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.Bold),
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                    Column(
+                                        modifier = Modifier
+                                            .verticalScroll(rememberScrollState())
+                                    ) {
+                                        opinionesList.forEach { opinion ->
+                                            Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                                    val painter =
+                                                        remember { mutableStateOf<Any>(R.mipmap.logo_app_redondo) }
+                                                    val isImageLoaded =
+                                                        remember { mutableStateOf(false) }
 
-                                                if (!isImageLoaded.value) {
-                                                    MapUtils.fetchUser(opinion.usuario.nickname) { usuario ->
-                                                        usuario?.fotoPerfil?.let { base64Image ->
-                                                            val bitmap = AuxUtils.decodeBase64ToBitmap(base64Image)
-                                                            if (bitmap != null) {
-                                                                painter.value = bitmap
-                                                                isImageLoaded.value = true
+                                                    if (!isImageLoaded.value) {
+                                                        MapUtils.fetchUser(opinion.usuario.nickname) { usuario ->
+                                                            usuario?.fotoPerfil?.let { base64Image ->
+                                                                val bitmap =
+                                                                    AuxUtils.decodeBase64ToBitmap(
+                                                                        base64Image
+                                                                    )
+                                                                if (bitmap != null) {
+                                                                    painter.value = bitmap
+                                                                    isImageLoaded.value = true
+                                                                }
                                                             }
                                                         }
                                                     }
+
+                                                    Image(
+                                                        painter = rememberAsyncImagePainter(model = painter.value),
+                                                        contentDescription = null,
+                                                        modifier = Modifier
+                                                            .size(36.dp)
+                                                            .clip(CircleShape)
+                                                            .background(MaterialTheme.colors.onSurface)
+                                                    )
+                                                    Spacer(modifier = Modifier.width(8.dp))
+                                                    Text(
+                                                        text = opinion.usuario.nickname,
+                                                        style = MaterialTheme.typography.h6.copy(
+                                                            fontWeight = FontWeight.Bold
+                                                        )
+                                                    )
                                                 }
 
-                                                Image(
-                                                    painter = rememberAsyncImagePainter(model = painter.value),
-                                                    contentDescription = null,
-                                                    modifier = Modifier
-                                                        .size(36.dp)
-                                                        .clip(CircleShape)
-                                                        .background(MaterialTheme.colors.onSurface)
-                                                )
-                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Spacer(modifier = Modifier.height(8.dp))
                                                 Text(
-                                                    text = opinion.usuario.nickname,
-                                                    style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)
+                                                    text = String.format("%s", opinion.resenaTexto),
+                                                    style = MaterialTheme.typography.subtitle1
                                                 )
+                                                Column {
+                                                    AddRatingWithStars(
+                                                        stringResource(id = R.string.title_ecosustainable),
+                                                        opinion.ecosostenible
+                                                    )
+                                                    AddRatingWithStars(
+                                                        stringResource(id = R.string.title_socialinclusion),
+                                                        opinion.inclusionSocial
+                                                    )
+                                                    AddRatingWithStars(
+                                                        stringResource(id = R.string.title_accessibility),
+                                                        opinion.accesibilidad
+                                                    )
+                                                }
+
+                                                if(opinion.foto != null)
+                                                    Log.e("Photo Op. 1", opinion.foto)
+                                                else
+                                                    Log.e("Photo Op. 2", "null")
+
+                                                if (!opinion.foto.isNullOrEmpty()) {
+                                                    val decodedImage = AuxUtils.decodeBase64ToBitmap(opinion.foto)
+                                                    if (decodedImage != null) {
+                                                        Image(
+                                                            bitmap = decodedImage.asImageBitmap(),
+                                                            contentDescription = null,
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .height(200.dp)
+                                                                .clip(MaterialTheme.shapes.medium)
+                                                        )
+                                                        Spacer(modifier = Modifier.height(8.dp))
+                                                    }
+                                                }
+                                                Text(
+                                                    text = AuxUtils.formatDate(opinion.fechaPublicacion),
+                                                    style = MaterialTheme.typography.body2.copy(
+                                                        textAlign = TextAlign.End
+                                                    ),
+                                                    modifier = Modifier.padding(vertical = 4.dp)
+                                                )
+                                                Divider(modifier = Modifier.padding(vertical = 8.dp))
                                             }
-                                            Spacer(modifier = Modifier.height(8.dp))
-                                            Text(
-                                                text = String.format("%s", opinion.resenaTexto),
-                                                style = MaterialTheme.typography.subtitle1
-                                            )
-                                            Column {
-                                                AddRatingWithStars(stringResource(id = R.string.title_ecosustainable), opinion.ecosostenible)
-                                                AddRatingWithStars(stringResource(id = R.string.title_socialinclusion), opinion.inclusionSocial)
-                                                AddRatingWithStars(stringResource(id = R.string.title_accessibility), opinion.accesibilidad)
-                                            }
-                                            Text(
-                                                text = AuxUtils.formatDate(opinion.fechaPublicacion),
-                                                style = MaterialTheme.typography.body2.copy(textAlign = TextAlign.End),
-                                                modifier = Modifier.padding(vertical = 4.dp)
-                                            )
-                                            Divider(modifier = Modifier.padding(vertical = 8.dp))
                                         }
                                     }
                                 }
@@ -679,9 +736,7 @@ class MapComponents {
                 Button(
                     onClick = {
                         // Se convierte el ByteArray a Base64 y se guarda en la lista de fotos (si se seleccionó imagen)
-                        val fotosList = if (selectedImageByteArray != null)
-                            listOf(byteArrayToBase64(selectedImageByteArray!!))
-                        else emptyList()
+                        val fotosList = if (selectedImageByteArray != null) byteArrayToBase64(selectedImageByteArray!!) else ""
 
                         val newOpinion = Opinion(
                             id = 0, // El backend generará el id
@@ -692,7 +747,7 @@ class MapComponents {
                             ecosostenible = ecosostenible.toInt(),
                             inclusionSocial = inclusionSocial.toInt(),
                             accesibilidad = accesibilidad.toInt(),
-                            fotos = fotosList
+                            foto = fotosList
                         )
 
                         RetrofitClient.instance.createOpinion(newOpinion)

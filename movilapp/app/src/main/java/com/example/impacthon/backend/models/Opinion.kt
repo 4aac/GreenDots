@@ -19,8 +19,8 @@ data class Opinion(
     val inclusionSocial: Int,
     @SerializedName("accesibilidad")
     val accesibilidad: Int,
-    @SerializedName("fotos")
-    val fotos: List<String> = emptyList()
+    @SerializedName("foto")
+    val foto: String?
     //val fotos: List<ByteArray>
 )
 
