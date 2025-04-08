@@ -12,7 +12,6 @@ class SettingsViewModel(context: Context) : ViewModel() {
     private val _selectedLanguage = MutableLiveData<String>().apply {
         value = sharedPreferences.getString("selected_language", "es") // Valor predeterminado (español)
     }
-    val selectedLanguage: LiveData<String> = _selectedLanguage
 
     // Método para cambiar el idioma
     fun changeLanguage(language: String) {

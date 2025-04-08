@@ -9,6 +9,7 @@ import com.example.impacthon.backend.api.MapboxRetrofitClient
 import com.example.impacthon.backend.api.RetrofitClient
 import com.example.impacthon.backend.models.Local
 import com.example.impacthon.backend.models.MapboxResponse
+import com.example.impacthon.backend.models.Usuario
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.dsl.cameraOptions
@@ -17,9 +18,6 @@ import com.mapbox.maps.plugin.animation.flyTo
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.TimeZone
 
 object MapUtils {
     fun animateFlyTo(mapboxMapRef: MutableState<MapboxMap?>, lng: Double, lat: Double) {
@@ -103,4 +101,50 @@ object MapUtils {
         } else null
     }
 
+    // Función para obtener la foto de usuario usando Retrofit.
+    fun fetchUserPhoto(nickname: String, callback: (String?) -> Unit) {
+        RetrofitClient.instance.getUserImage(nickname).enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful && response.body() != null) {
+                    Log.e("RetrofitError", nickname)
+                    val responseBodyString = response.body()
+                    Log.d("ResponseBody", "Response: $responseBodyString")
+                    callback(responseBodyString)
+                    Log.e("RetrofitError", response.isSuccessful.toString())
+                    Log.e("RetrofitError", response.body().toString())
+                } else {
+                    Log.e("RetrofitError", nickname)
+                    Log.e("RetrofitError", response.isSuccessful.toString())
+                    Log.e("RetrofitError", response.body().toString())
+                    callback(null)
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Log.e("RetrofitError", "Fallo en la petición", t)
+                callback(null)
+            }
+        })
+    }
+
+    // Función para obtener un usuario
+    fun fetchUser(nickname: String, onResult: (Usuario?) -> Unit) {
+        RetrofitClient.instance.getUser(nickname).enqueue(object : Callback<Usuario> {
+            override fun onResponse(call: Call<Usuario>, response: Response<Usuario>) {
+                if (response.isSuccessful) {
+                    onResult(response.body())
+                } else {
+                    Log.e("RetrofitError", "Error al obtener el usuario: ${response.code()}")
+                    onResult(null)
+                }
+            }
+
+            override fun onFailure(call: Call<Usuario>, t: Throwable) {
+                Log.e("RetrofitError", "Fallo en la petición", t)
+                onResult(null)
+            }
+        })
+    }
+
 }
+

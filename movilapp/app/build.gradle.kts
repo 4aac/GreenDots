@@ -68,6 +68,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.3.1")
     implementation ("com.google.android.material:material:1.9.0")
 
+    implementation("io.coil-kt:coil-compose:2.0.0")
+
 
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.compose.ui:ui:1.7.8")

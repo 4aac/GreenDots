@@ -2,7 +2,6 @@ package com.example.impacthon.ui.map
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
@@ -11,6 +10,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -25,7 +25,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
@@ -48,6 +51,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -58,6 +62,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import coil.compose.rememberAsyncImagePainter
 import com.example.impacthon.R
 import com.example.impacthon.backend.api.RetrofitClient
 import com.example.impacthon.backend.models.Local
@@ -204,18 +209,45 @@ class MapComponents {
                 if (showOpinionsDialog) {
                     AlertDialog(
                         onDismissRequest = { showOpinionsDialog = false },
-                        title = { Text(stringResource(id = R.string.title_local_opinions)) },
+                        title = { Text(stringResource(id = R.string.title_local_opinions), style = MaterialTheme.typography.h5) },
                         text = {
                             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                                 if (opinionesList.isEmpty()) {
                                     Text(stringResource(id = R.string.text_no_opinions))
                                 } else {
                                     opinionesList.forEach { opinion ->
-                                        Column(modifier = Modifier.padding(vertical = 4.dp)) {
-                                            Text(
-                                                text = String.format("%s: %s", stringResource(id = R.string.title_user), opinion.usuario.nickname),
-                                                style = MaterialTheme.typography.subtitle2
-                                            )
+                                        Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                val painter = remember { mutableStateOf<Any>(R.mipmap.logo_app_redondo) }
+                                                val isImageLoaded = remember { mutableStateOf(false) }
+
+                                                if (!isImageLoaded.value) {
+                                                    MapUtils.fetchUser(opinion.usuario.nickname) { usuario ->
+                                                        usuario?.fotoPerfil?.let { base64Image ->
+                                                            val bitmap = AuxUtils.decodeBase64ToBitmap(base64Image)
+                                                            if (bitmap != null) {
+                                                                painter.value = bitmap
+                                                                isImageLoaded.value = true
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                Image(
+                                                    painter = rememberAsyncImagePainter(model = painter.value),
+                                                    contentDescription = null,
+                                                    modifier = Modifier
+                                                        .size(36.dp)
+                                                        .clip(CircleShape)
+                                                        .background(MaterialTheme.colors.onSurface)
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Text(
+                                                    text = opinion.usuario.nickname,
+                                                    style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)
+                                                )
+                                            }
+                                            Spacer(modifier = Modifier.height(8.dp))
                                             Text(
                                                 text = String.format("%s", opinion.resenaTexto),
                                                 style = MaterialTheme.typography.subtitle1
@@ -230,7 +262,7 @@ class MapComponents {
                                                 style = MaterialTheme.typography.body2.copy(textAlign = TextAlign.End),
                                                 modifier = Modifier.padding(vertical = 4.dp)
                                             )
-                                            Divider(modifier = Modifier.padding(vertical = 4.dp))
+                                            Divider(modifier = Modifier.padding(vertical = 8.dp))
                                         }
                                     }
                                 }
@@ -586,7 +618,7 @@ class MapComponents {
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Text(text = String.format("%s: %d", stringResource(id = R.string.title_ecosustainable), ecosostenible.toInt()))
+                    Text(text = "${stringResource(id = R.string.title_ecosustainable)}: ${ecosostenible.toInt()}")
                     Slider(
                         value = ecosostenible,
                         onValueChange = { ecosostenible = it },
@@ -599,7 +631,7 @@ class MapComponents {
                         )
                     )
 
-                    Text(text = String.format("%s: %d", stringResource(id = R.string.title_socialinclusion), inclusionSocial.toInt()))
+                    Text(text = "${stringResource(id = R.string.title_socialinclusion)}: ${inclusionSocial.toInt()}")
                     Slider(
                         value = inclusionSocial,
                         onValueChange = { inclusionSocial = it },
@@ -612,7 +644,7 @@ class MapComponents {
                         )
                     )
 
-                    Text(text = String.format("%s: %d", stringResource(id = R.string.title_accessibility), accesibilidad.toInt()))
+                    Text(text = "${stringResource(id = R.string.title_accessibility)}: ${accesibilidad.toInt()}")
                     Slider(
                         value = accesibilidad,
                         onValueChange = { accesibilidad = it },
@@ -713,7 +745,6 @@ class MapComponents {
                     Text(stringResource(id = R.string.cancel_button))
                 }
             }
-
         )
     }
 

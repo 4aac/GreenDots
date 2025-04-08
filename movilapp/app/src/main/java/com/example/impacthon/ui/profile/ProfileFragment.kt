@@ -1,10 +1,8 @@
 package com.example.impacthon.ui.profile
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Base64
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -28,9 +26,6 @@ import com.example.impacthon.utils.AuxUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.TimeZone
 
 class ProfileFragment : Fragment() {
 
@@ -95,6 +90,8 @@ class ProfileFragment : Fragment() {
 
             if (!usuario!!.fotoPerfil.isNullOrEmpty()) {
                 val bitmap = AuxUtils.decodeBase64ToBitmap(usuario!!.fotoPerfil!!)
+                Log.e("Imagen Base64", usuario!!.fotoPerfil!!)
+                Log.e("Imagen Bitmap", bitmap.toString())
                 if (bitmap != null) {
                     binding.imageProfile.setImageBitmap(bitmap)
                 } else {

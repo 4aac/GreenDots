@@ -36,22 +36,22 @@ class SettingsFragment : Fragment() {
         // Configurar botones de idioma
         binding.buttonEspanhol.setOnClickListener {
             settingsViewModel.changeLanguage("es")
-            updateAppConfiguration("es")
+            updateAppConfiguration()
         }
 
         binding.buttonGalego.setOnClickListener {
             settingsViewModel.changeLanguage("gl")
-            updateAppConfiguration("gl")
+            updateAppConfiguration()
         }
 
         binding.buttonEnglish.setOnClickListener {
             settingsViewModel.changeLanguage("en")
-            updateAppConfiguration("en")
+            updateAppConfiguration()
         }
 
         binding.buttonPortugues.setOnClickListener {
             settingsViewModel.changeLanguage("pt")
-            updateAppConfiguration("pt")
+            updateAppConfiguration()
         }
 
         // Configurar botón de enlace externo
@@ -83,7 +83,7 @@ class SettingsFragment : Fragment() {
         return root
     }
 
-    private fun updateAppConfiguration(language: String) {
+    private fun updateAppConfiguration() {
         // Se actualiza la configuración global usando la clase utilitaria
         SettingsUtil.applySettings(requireContext())
         // Actualiza el BottomNavigationView para reflejar el idioma
